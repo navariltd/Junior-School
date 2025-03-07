@@ -5,14 +5,19 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         single_column: true
     });
 
-	$(page.body).append(`
+    $(page.body).append(`
+        <div style="position: absolute; top: 10px; right: 20px;">
+            <button class="btn btn-success" id="btn-print">Print</button>
+        </div>
+
         <div class="text-center p-3">
             <button class="btn btn-primary" id="btn-home">Home</button>
             <button class="btn btn-secondary" id="btn-teacher">Teacher</button>
-            <button class="btn btn-secondary" id="btn-stream">Stream</button>
+            <button class="btn btn-secondary" id="btn-stream">Streams</button>
             <input type="text" id="search-input" class="form-control d-none mt-2" placeholder="Enter Teacher or Stream">
         </div>
         <div id="calendar"></div>
+        <div id="printable-timetable" class="d-none"></div>
     `);
 
     let css_link = document.createElement('link');
@@ -25,11 +30,13 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
     script.onload = render_calendar;
     document.head.appendChild(script);
 
-	let calendar; 
+    let calendar;
+    let selectedFilter = null;
+    let selectedValue = "";
 
     function render_calendar(filter_by = "home", filter_value = "") {
         let calendarEl = document.getElementById('calendar');
-
+        
         if (calendar) {
             calendar.destroy();
         }
@@ -41,6 +48,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
+            slotDuration: '00:45:00',
             slotMinTime: "06:00:00",
             slotMaxTime: "18:00:00",
             allDaySlot: false,
@@ -50,22 +58,21 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
                     args: {},
                     callback: function(response) {
-
                         let events = response.message
-                            .filter(event => {
-                                if (filter_by === "teacher") {
-                                    return event.instructor.toLowerCase().includes(filter_value.toLowerCase());
-                                } else if (filter_by === "stream") {
-                                    return event.student_group.toLowerCase().includes(filter_value.toLowerCase());
-                                }
-                                return true; 
-                            })
+                        .filter(event => {
+                            if (filter_by === "teacher") {
+                                return event.instructor.toLowerCase().includes(filter_value.toLowerCase());
+                            } else if (filter_by === "stream") {
+                                return event.stream.toLowerCase().includes(filter_value.toLowerCase());
+                            }
+                            return true; 
+                        })
                             .map(event => ({
                                 id: event.name,
                                 title: `${event.course} - ${event.instructor}`,
                                 start: `${event.schedule_date}T${event.from_time}`,
                                 end: `${event.schedule_date}T${event.to_time}`,
-                                backgroundColor: "#007bff",
+                                backgroundColor: event.course.includes("Break") || event.course.includes("Lunch") ? "#f8d7da" : "#007bff",
                             }));
                         successCallback(events);
                     }
@@ -76,12 +83,12 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         calendar.render();
     }
 
-	  document.getElementById('btn-home').addEventListener('click', function () {
+    document.getElementById('btn-home').addEventListener('click', function () {
         document.getElementById('search-input').classList.add('d-none');
         render_calendar("home");
     });
 
-	document.getElementById('btn-teacher').addEventListener('click', function () {
+    document.getElementById('btn-teacher').addEventListener('click', function () {
         let searchInput = document.getElementById('search-input');
         searchInput.classList.remove('d-none');
         searchInput.placeholder = "Enter Teacher's Name";
@@ -89,7 +96,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         searchInput.dataset.filter = "teacher";
     });
 
-	document.getElementById('btn-stream').addEventListener('click', function () {
+    document.getElementById('btn-stream').addEventListener('click', function () {
         let searchInput = document.getElementById('search-input');
         searchInput.classList.remove('d-none');
         searchInput.placeholder = "Enter Stream Name";
@@ -100,197 +107,119 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
     document.getElementById('search-input').addEventListener('input', function () {
         let filter_type = this.dataset.filter;
         let filter_value = this.value.trim();
+        selectedFilter = filter_type;
+        selectedValue = filter_value;
         render_calendar(filter_type, filter_value);
     });
 
+    document.getElementById('btn-print').addEventListener('click', function () {
+        generatePrintableTimetable(selectedFilter, selectedValue);
+    });
 
-};
-
-
-// frappe.pages['school-timetable'].on_page_load = function(wrapper) {
-//     var page = frappe.ui.make_app_page({
-//         parent: wrapper,
-//         title: 'School Timetable',
-//         single_column: true
-//     });
-
-//     // Add a container for the calendar
-//     $(page.body).append(`
-//         <div class="text-center p-3">
-//             <button class="btn btn-primary" id="btn-home">Home</button>
-//             <button class="btn btn-secondary" id="btn-teacher">Teacher</button>
-//             <button class="btn btn-secondary" id="btn-stream">Stream</button>
-//             <input type="text" id="search-input" class="form-control d-none mt-2" placeholder="Enter Teacher or Stream">
-//             <button class="btn btn-success d-none mt-2" id="btn-print">Print Timetable</button>
-//         </div>
-//         <div id="calendar"></div>
-//         <div id="printable-timetable" class="d-none"></div>
-//     `);
-
-//     let calendar; // Store the calendar instance
-//     let selectedFilter = null; // Track selected filter (teacher/stream)
-//     let selectedValue = ""; // Track entered value
-
-//     function render_calendar(filter_by = "home", filter_value = "") {
-//         let calendarEl = document.getElementById('calendar');
-
-//         // Destroy previous calendar instance if exists
-//         if (calendar) {
-//             calendar.destroy();
-//         }
-
-//         calendar = new FullCalendar.Calendar(calendarEl, {
-//             initialView: 'timeGridWeek',
-//             headerToolbar: {
-//                 left: 'prev,next today',
-//                 center: 'title',
-//                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
-//             },
-//             slotMinTime: "06:00:00",
-//             slotMaxTime: "18:00:00",
-//             allDaySlot: false,
-//             nowIndicator: true,
-//             events: function(fetchInfo, successCallback, failureCallback) {
-//                 frappe.call({
-//                     method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
-//                     args: {},
-//                     callback: function(response) {
-//                         let events = response.message
-//                             .filter(event => {
-//                                 if (filter_by === "teacher") {
-//                                     return event.instructor.toLowerCase().includes(filter_value.toLowerCase());
-//                                 } else if (filter_by === "stream") {
-//                                     return event.stream.toLowerCase().includes(filter_value.toLowerCase());
-//                                 }
-//                                 return true; // Show all events by default
-//                             })
-//                             .map(event => ({
-//                                 id: event.name,
-//                                 title: `${event.course} - ${event.instructor}`,
-//                                 start: `${event.schedule_date}T${event.from_time}`,
-//                                 end: `${event.schedule_date}T${event.to_time}`,
-//                                 backgroundColor: "#007bff",
-//                             }));
-//                         successCallback(events);
-//                     }
-//                 });
-//             }
-//         });
-
-//         calendar.render();
-//     }
-
-//     // Button Click Handlers
-//     document.getElementById('btn-home').addEventListener('click', function () {
-//         document.getElementById('search-input').classList.add('d-none');
-//         document.getElementById('btn-print').classList.add('d-none');
-//         selectedFilter = null;
-//         // render_calendar("home");
-//     });
-
-//     document.getElementById('btn-teacher').addEventListener('click', function () {
-//         let searchInput = document.getElementById('search-input');
-//         searchInput.classList.remove('d-none');
-//         searchInput.placeholder = "Enter Teacher's Name";
-//         searchInput.value = "";
-//         searchInput.dataset.filter = "teacher";
-//         document.getElementById('btn-print').classList.add('d-none');
-//     });
-
-//     document.getElementById('btn-stream').addEventListener('click', function () {
-//         let searchInput = document.getElementById('search-input');
-//         searchInput.classList.remove('d-none');
-//         searchInput.placeholder = "Enter Stream Name";
-//         searchInput.value = "";
-//         searchInput.dataset.filter = "stream";
-//         document.getElementById('btn-print').classList.add('d-none');
-//     });
-
-//     // Search Input Handler
-//     document.getElementById('search-input').addEventListener('input', function () {
-//         let filter_type = this.dataset.filter;
-//         let filter_value = this.value.trim();
-//         selectedFilter = filter_type;
-//         selectedValue = filter_value;
-
-//         if (filter_value) {
-//             document.getElementById('btn-print').classList.remove('d-none'); // Show print button
-//         } else {
-//             document.getElementById('btn-print').classList.add('d-none'); // Hide print button
-//         }
-
-//         render_calendar(filter_type, filter_value);
-//     });
-
-//     // Print Button Handler
-//     document.getElementById('btn-print').addEventListener('click', function () {
-//         generatePrintableTimetable(selectedFilter, selectedValue);
-//     });
-
-//     function generatePrintableTimetable(filter_type, filter_value) {
-//         frappe.call({
-//             method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
-//             args: { [filter_type]: filter_value },
-//             callback: function(response) {
-//                 let schedules = response.message;
-
-//                 let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-//                 let timeSlots = ["08:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"]; // Customize as needed
-
-//                 let tableHTML = `
-//                     <h3 class="text-center">${filter_value} Timetable</h3>
-//                     <table class="table table-bordered">
-//                         <thead>
-//                             <tr>
-//                                 <th>Day</th>
-//                                 ${timeSlots.map(time => `<th>${time}</th>`).join("")}
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                 `;
-
-//                 weekdays.forEach(day => {
-//                     tableHTML += `<tr><td>${day}</td>`;
-
-//                     timeSlots.forEach(time => {
-//                         let matchedSchedule = schedules.find(schedule =>
-//                             new Date(schedule.schedule_date).toLocaleString('en-us', { weekday: 'long' }) === day &&
-//                             schedule.from_time.startsWith(time.split(" ")[0])
-//                         );
-
-//                         tableHTML += `<td>${matchedSchedule ? `${matchedSchedule.course} (${matchedSchedule.stream})` : ""}</td>`;
-//                     });
-
-//                     tableHTML += `</tr>`;
-//                 });
-
-//                 tableHTML += `</tbody></table>`;
-
-//                 let printableDiv = document.getElementById('printable-timetable');
-//                 printableDiv.innerHTML = tableHTML;
-//                 printableDiv.classList.remove('d-none');
-
-//                 printTimetable();
-//             }
-//         });
-//     }
-
-//     function printTimetable() {
-//         let printContent = document.getElementById('printable-timetable').innerHTML;
-//         let newWindow = window.open("", "", "width=800,height=600");
-//         newWindow.document.write(`
-//             <html>
-//             <head>
-//                 <title>School Timetable</title>
-//                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-//             </head>
-//             <body class="container mt-3">
-//                 ${printContent}
-//             </body>
-//             </html>
-//         `);
-//         newWindow.document.close();
-//         newWindow.print();
-//     }
-// };
-
+    function generatePrintableTimetable(filter_type, filter_value) {
+        frappe.call({
+            method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
+            args: { [filter_type]: filter_value },
+            callback: function(response) {
+                let schedules = response.message;
+                console.log("Schedules Data:", schedules); // Debugging: Inspect the data
+    
+                let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                let timeSlots = [
+                    { start: "08:00 AM", end: "08:15 AM" }, // Breakfast
+                    { start: "08:15 AM", end: "09:00 AM" }, // First Lesson
+                    { start: "09:00 AM", end: "09:45 AM" }, // Second Lesson
+                    { start: "09:45 AM", end: "10:30 AM" }, // Third Lesson
+                    { start: "10:30 AM", end: "11:15 AM" }, // Break
+                    { start: "11:15 AM", end: "12:00 PM" }, // Fourth Lesson
+                    { start: "12:00 PM", end: "12:45 PM" }, // Fifth Lesson
+                    { start: "12:45 PM", end: "02:00 PM" }, // Lunch
+                    { start: "02:00 PM", end: "02:45 PM" }, // Sixth Lesson
+                    { start: "02:45 PM", end: "03:30 PM" }, // Seventh Lesson
+                    { start: "03:30 PM", end: "04:15 PM" }  // Eighth Lesson
+                ];
+    
+                let tableHTML = `
+                    <h3 class="text-center">${filter_value} Timetable</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                ${timeSlots.map(slot => `<th>${slot.start} - ${slot.end}</th>`).join("")}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+    
+                weekdays.forEach(day => {
+                    tableHTML += `<tr><td>${day}</td>`;
+    
+                    timeSlots.forEach(slot => {
+                        // Find matching schedule for the day and time slot
+                        let matchedSchedule = schedules.find(schedule => {
+                            // Convert schedule date to weekday
+                            let scheduleDay = new Date(schedule.schedule_date).toLocaleDateString('en-US', { weekday: 'long' }).trim();
+    
+                            // Convert schedule time to 12-hour format
+                            let scheduleTime = convertTo12HourFormat(schedule.from_time);
+    
+                            // Debugging logs
+                            console.log(`Checking: ${scheduleDay} == ${day}, ${scheduleTime} == ${slot.start}`);
+    
+                            return scheduleDay === day && scheduleTime === slot.start;
+                        });
+    
+                        // Add the matched schedule or placeholder
+                        if (matchedSchedule) {
+                            tableHTML += `<td>${matchedSchedule.course} (${matchedSchedule.stream})</td>`;
+                        } else if (slot.start === "08:00 AM" || slot.start === "10:30 AM" || slot.start === "12:45 PM") {
+                            tableHTML += `<td><strong>${slot.start === "08:00 AM" ? "Breakfast" : slot.start === "10:30 AM" ? "Break" : "Lunch"}</strong></td>`;
+                        } else {
+                            tableHTML += `<td></td>`;
+                        }
+                    });
+    
+                    tableHTML += `</tr>`;
+                });
+    
+                tableHTML += `</tbody></table>`;
+    
+                let printableDiv = document.getElementById('printable-timetable');
+                printableDiv.innerHTML = tableHTML;
+                printableDiv.classList.remove('d-none');
+                printTimetable();
+            }
+        });
+    }
+    
+    // ✅ Function to convert time to 12-hour format
+    function convertTo12HourFormat(timeString) {
+        let timeParts = timeString.split(":");
+        let hours = parseInt(timeParts[0], 10);
+        let minutes = timeParts.length > 1 ? timeParts[1] : "00";
+    
+        let period = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12; // Convert 0, 12, 13, etc., to 12-hour format
+    
+        return `${hours}:${minutes} ${period}`;
+    }
+    
+    // ✅ Print function remains the same
+    function printTimetable() {
+        let printContent = document.getElementById('printable-timetable').innerHTML;
+        let newWindow = window.open("", "", "width=1000,height=800");
+        newWindow.document.write(`
+            <html>
+            <head>
+                <title>School Timetable</title>
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+            </head>
+            <body class="container mt-3">
+                ${printContent}
+            </body>
+            </html>
+        `);
+        newWindow.document.close();
+        newWindow.print();
+    }
+}
