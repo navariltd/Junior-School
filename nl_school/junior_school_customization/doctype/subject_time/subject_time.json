@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-07 07:41:47.135580",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "day",
+  "from_time",
+  "column_break_qwgk",
+  "to_time",
+  "reschedule"
+ ],
+ "fields": [
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Day",
+   "options": "\nMonday\nTuesday\nWednesday\nThursday\nFriday\nSaturday\nSunday"
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "From Time"
+  },
+  {
+   "fieldname": "column_break_qwgk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "To Time"
+  },
+  {
+   "default": "0",
+   "fieldname": "reschedule",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Reschedule"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-07 07:53:01.390296",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Subject Time",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

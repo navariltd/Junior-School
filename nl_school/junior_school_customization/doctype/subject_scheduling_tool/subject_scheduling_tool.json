@@ -1,0 +1,176 @@
+{
+ "actions": [],
+ "allow_copy": 1,
+ "creation": "2025-03-07 07:39:48.896451",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "student_group",
+  "course",
+  "program",
+  "column_break_3",
+  "academic_year",
+  "academic_term",
+  "section_break_6",
+  "instructor",
+  "instructor_name",
+  "column_break_9",
+  "room",
+  "class_schedule_color",
+  "section_break_7",
+  "days_html",
+  "section_break_14",
+  "course_start_date",
+  "column_break_15",
+  "course_end_date",
+  "reschedule",
+  "section_break_meer",
+  "course_schedule"
+ ],
+ "fields": [
+  {
+   "fieldname": "student_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Group",
+   "options": "Student Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Course",
+   "options": "Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "program",
+   "fieldtype": "Link",
+   "label": "Program",
+   "options": "Program",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "Academic Year",
+   "read_only": 1
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "instructor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Instructor",
+   "options": "Instructor",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "instructor.instructor_name",
+   "fieldname": "instructor_name",
+   "fieldtype": "Read Only",
+   "label": "Instructor Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "room",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Room",
+   "options": "Room",
+   "reqd": 1
+  },
+  {
+   "fieldname": "class_schedule_color",
+   "fieldtype": "Select",
+   "label": "Class Schedule Color",
+   "options": "blue\ngreen\nred\norange\nyellow\nteal\nviolet\ncyan\namber\npink\npurple"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "days_html",
+   "fieldtype": "HTML",
+   "label": "Days HTML"
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "course_start_date",
+   "fieldtype": "Date",
+   "label": "Course Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "course_end_date",
+   "fieldtype": "Date",
+   "label": "Course End Date",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "reschedule",
+   "fieldtype": "Check",
+   "label": "Reschedule"
+  },
+  {
+   "fieldname": "section_break_meer",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "course_schedule",
+   "fieldtype": "Table",
+   "label": "Course Schedule",
+   "options": "Subject Time"
+  }
+ ],
+ "hide_toolbar": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-03-07 07:46:51.270268",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Subject Scheduling Tool",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Academics User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
