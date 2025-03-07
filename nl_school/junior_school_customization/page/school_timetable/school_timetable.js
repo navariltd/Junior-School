@@ -122,21 +122,20 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
             args: { [filter_type]: filter_value },
             callback: function(response) {
                 let schedules = response.message;
-                console.log("Schedules Data:", schedules); // Debugging: Inspect the data
     
                 let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
                 let timeSlots = [
-                    { start: "08:00 AM", end: "08:15 AM" }, // Breakfast
-                    { start: "08:15 AM", end: "09:00 AM" }, // First Lesson
-                    { start: "09:00 AM", end: "09:45 AM" }, // Second Lesson
-                    { start: "09:45 AM", end: "10:30 AM" }, // Third Lesson
-                    { start: "10:30 AM", end: "11:15 AM" }, // Break
-                    { start: "11:15 AM", end: "12:00 PM" }, // Fourth Lesson
-                    { start: "12:00 PM", end: "12:45 PM" }, // Fifth Lesson
-                    { start: "12:45 PM", end: "02:00 PM" }, // Lunch
-                    { start: "02:00 PM", end: "02:45 PM" }, // Sixth Lesson
-                    { start: "02:45 PM", end: "03:30 PM" }, // Seventh Lesson
-                    { start: "03:30 PM", end: "04:15 PM" }  // Eighth Lesson
+                    { start: "08:00 AM", end: "08:15 AM" }, 
+                    { start: "08:15 AM", end: "09:00 AM" }, 
+                    { start: "09:00 AM", end: "09:45 AM" }, 
+                    { start: "09:45 AM", end: "10:30 AM" },
+                    { start: "10:30 AM", end: "11:15 AM" }, 
+                    { start: "11:15 AM", end: "12:00 PM" }, 
+                    { start: "12:00 PM", end: "12:45 PM" },
+                    { start: "12:45 PM", end: "02:00 PM" },
+                    { start: "02:00 PM", end: "02:45 PM" }, 
+                    { start: "02:45 PM", end: "03:30 PM" },
+                    { start: "03:30 PM", end: "04:15 PM" }  
                 ];
     
                 let tableHTML = `
@@ -155,21 +154,16 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     tableHTML += `<tr><td>${day}</td>`;
     
                     timeSlots.forEach(slot => {
-                        // Find matching schedule for the day and time slot
                         let matchedSchedule = schedules.find(schedule => {
-                            // Convert schedule date to weekday
                             let scheduleDay = new Date(schedule.schedule_date).toLocaleDateString('en-US', { weekday: 'long' }).trim();
     
-                            // Convert schedule time to 12-hour format
                             let scheduleTime = convertTo12HourFormat(schedule.from_time);
     
-                            // Debugging logs
                             console.log(`Checking: ${scheduleDay} == ${day}, ${scheduleTime} == ${slot.start}`);
     
                             return scheduleDay === day && scheduleTime === slot.start;
                         });
     
-                        // Add the matched schedule or placeholder
                         if (matchedSchedule) {
                             tableHTML += `<td>${matchedSchedule.course} (${matchedSchedule.stream})</td>`;
                         } else if (slot.start === "08:00 AM" || slot.start === "10:30 AM" || slot.start === "12:45 PM") {
@@ -199,7 +193,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         let minutes = timeParts.length > 1 ? timeParts[1] : "00";
     
         let period = hours >= 12 ? "PM" : "AM";
-        hours = hours % 12 || 12; // Convert 0, 12, 13, etc., to 12-hour format
+        hours = hours % 12 || 12; 
     
         return `${hours}:${minutes} ${period}`;
     }
