@@ -124,19 +124,41 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                 let schedules = response.message;
         
                 let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+                //This is for pre-primary school
+                // let timeSlots = [
+                //     { start: "8:00 AM", end: "8:15 AM" }, 
+                //     { start: "8:15 AM", end: "9:00 AM" }, 
+                //     { start: "9:00 AM", end: "9:45 AM" }, 
+                //     { start: "9:45 AM", end: "10:30 AM" },
+                //     { start: "10:30 AM", end: "11:15 AM" }, 
+                //     { start: "11:15 AM", end: "12:00 PM" }, 
+                //     { start: "12:00 PM", end: "12:45 PM" },
+                //     { start: "12:45 PM", end: "2:00 PM" },
+                //     { start: "2:00 PM", end: "2:45 PM" }, 
+                //     { start: "2:45 PM", end: "3:30 PM" },
+                //     { start: "3:30 PM", end: "4:15 PM" }  
+                // ];
+
                 let timeSlots = [
-                    { start: "8:00 AM", end: "8:15 AM" }, 
-                    { start: "8:15 AM", end: "9:00 AM" }, 
-                    { start: "9:00 AM", end: "9:45 AM" }, 
-                    { start: "9:45 AM", end: "10:30 AM" },
-                    { start: "10:30 AM", end: "11:15 AM" }, 
-                    { start: "11:15 AM", end: "12:00 PM" }, 
-                    { start: "12:00 PM", end: "12:45 PM" },
-                    { start: "12:45 PM", end: "2:00 PM" },
-                    { start: "2:00 PM", end: "2:45 PM" }, 
-                    { start: "2:45 PM", end: "3:30 PM" },
-                    { start: "3:30 PM", end: "4:15 PM" }  
+                    { start: "6:45 AM", end: "7:40 AM" },
+                    { start: "7:40 AM", end: "8:10 AM" },
+                    { start: "8:10 AM", end: "8:55 AM" },
+                    { start: "8:55 AM", end: "9:40 AM" },
+                    { start: "9:40 AM", end: "9:50 AM" },
+                    {start: "9:50 AM", end: "10:35 AM"},
+                    {start: "10:35 AM", end: "11:20 AM"},
+                    {start: "11:20 AM", end: "11:30 AM"},
+                    {start: "11:30 AM", end: "12:15 PM"},
+                    {start: "12:15 PM", end: "1:00 PM"},
+                    {start: "1:00 PM", end: "1:45 PM"},
+                    {start: "1:45 PM", end: "1:55 PM"},
+                    {start: "1:55 PM", end: "2:40 PM"},
+                    {start: "2:40 PM", end: "3:25 PM"},
+                    {start: "3:25 PM", end: "4:10 PM"},
+
                 ];
+
     
                 let showInstructor = filter_type === "stream";
     
@@ -170,8 +192,12 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                         
                             tableHTML += `<td>${displayText}</td>`;
                                                 
-                        } else if (slot.start === "8:00 AM" || slot.start === "10:30 AM" || slot.start === "12:45 PM") {
-                            tableHTML += `<td><strong>${slot.start === "8:00 AM" ? "Breakfast" : slot.start === "10:30 AM" ? "Break" : "Lunch"}</strong></td>`;
+                        }
+                        //  else if (slot.start === ":00 AM" || slot.start === "10:30 AM" || slot.start === "12:45 PM") {
+                        //     tableHTML += `<td><strong>${slot.start === "8:00 AM" ? "Breakfast" : slot.start === "10:30 AM" ? "Break" : "Lunch"}</strong></td>`;
+
+                        else if (slot.start === "7:40 AM" || slot.start === "9:40 AM" || slot.start === "11:20 PM" || slot.start === "1:00 PM" ) {
+                            tableHTML += `<td><strong>${slot.start === "7:40 AM" ? "Breakfast" : slot.start === "9:40 AM"? "First Break" : slot.start === "11:20 AM" ? "second Break" : "Lunch"}</strong></td>`;
                         } else {
                             tableHTML += `<td></td>`;
                         }
