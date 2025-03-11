@@ -23,9 +23,8 @@ def get_teachers():
     teachers = frappe.get_all("Instructor", fields=["name", "instructor_name"])
     return [{"value": t.name, "label": t.instructor_name} for t in teachers]
 
-
 @frappe.whitelist()
 def get_streams():
     """Fetch all streams."""
     streams = frappe.get_all("Student Group", fields=["name", "program"])
-    return [{"value": s.name, "label": s.group_name} for s in streams]
+    return [{"value": s.name, "label": s.program} for s in streams]

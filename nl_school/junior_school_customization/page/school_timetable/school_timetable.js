@@ -5,16 +5,32 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         single_column: true
     });
 
+    // $(page.body).append(`
+    //     <div style="position: absolute; top: 10px; right: 20px;">
+    //         <button class="btn btn-success" id="btn-print">Print</button>
+    //     </div>
+
+    //     <div class="text-center p-3">
+    //         <button class="btn btn-primary" id="btn-home">Home</button>
+    //         <button class="btn btn-secondary" id="btn-teacher">Teacher</button>
+    //         <button class="btn btn-secondary" id="btn-stream">Streams</button>
+    //         <input type="text" id="search-input" class="form-control d-none mt-2" placeholder="Enter Teacher or Stream">
+    //     </div>
+    //     <div id="calendar"></div>
+    //     <div id="printable-timetable" class="d-none"></div>
+    // `);
+
     $(page.body).append(`
         <div style="position: absolute; top: 10px; right: 20px;">
             <button class="btn btn-success" id="btn-print">Print</button>
         </div>
-
+    
         <div class="text-center p-3">
             <button class="btn btn-primary" id="btn-home">Home</button>
             <button class="btn btn-secondary" id="btn-teacher">Teacher</button>
             <button class="btn btn-secondary" id="btn-stream">Streams</button>
-            <input type="text" id="search-input" class="form-control d-none mt-2" placeholder="Enter Teacher or Stream">
+            <select id="teacher-dropdown" class="form-control d-none mt-2"></select>
+            <select id="stream-dropdown" class="form-control d-none mt-2"></select>
         </div>
         <div id="calendar"></div>
         <div id="printable-timetable" class="d-none"></div>
@@ -33,6 +49,30 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
     let calendar;
     let selectedFilter = null;
     let selectedValue = "";
+
+// Fetch teachers and populate dropdown
+frappe.call({
+    method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_teachers",
+    callback: function(response) {
+        let teacherDropdown = $("#teacher-dropdown");
+        teacherDropdown.append(`<option value="">Select a Teacher</option>`);
+        response.message.forEach(teacher => {
+            teacherDropdown.append(`<option value="${teacher.value}">${teacher.label}</option>`);
+        });
+    }
+});
+
+// Fetch streams and populate dropdown
+frappe.call({
+    method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_streams",
+    callback: function(response) {
+        let streamDropdown = $("#stream-dropdown");
+        streamDropdown.append(`<option value="">Select a Stream</option>`);
+        response.message.forEach(stream => {
+            streamDropdown.append(`<option value="${stream.value}">${stream.label}</option>`);
+        });
+    }
+});
 
     function render_calendar(filter_by = "home", filter_value = "") {
         let calendarEl = document.getElementById('calendar');
@@ -88,33 +128,64 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         render_calendar("home");
     });
 
-    document.getElementById('btn-teacher').addEventListener('click', function () {
-        let searchInput = document.getElementById('search-input');
-        searchInput.classList.remove('d-none');
-        searchInput.placeholder = "Enter Teacher's Name";
-        searchInput.value = "";
-        searchInput.dataset.filter = "teacher";
-    });
+    // document.getElementById('btn-teacher').addEventListener('click', function () {
+    //     let searchInput = document.getElementById('search-input');
+    //     searchInput.classList.remove('d-none');
+    //     searchInput.placeholder = "Enter Teacher's Name";
+    //     searchInput.value = "";
+    //     searchInput.dataset.filter = "teacher";
+    // });
 
-    document.getElementById('btn-stream').addEventListener('click', function () {
-        let searchInput = document.getElementById('search-input');
-        searchInput.classList.remove('d-none');
-        searchInput.placeholder = "Enter Stream Name";
-        searchInput.value = "";
-        searchInput.dataset.filter = "stream";
-    });
+    // document.getElementById('btn-stream').addEventListener('click', function () {
+    //     let searchInput = document.getElementById('search-input');
+    //     // searchInput.classList.remove('d-none');
+    //     searchInput.placeholder = "Enter Stream Name";
+    //     searchInput.value = "";
+    //     searchInput.dataset.filter = "stream";
+    // });
 
-    document.getElementById('search-input').addEventListener('input', function () {
-        let filter_type = this.dataset.filter;
-        let filter_value = this.value.trim();
-        selectedFilter = filter_type;
-        selectedValue = filter_value;
-        render_calendar(filter_type, filter_value);
-    });
+    // document.getElementById('search-input').addEventListener('input', function () {
+    //     let filter_type = this.dataset.filter;
+    //     let filter_value = this.value.trim();
+    //     selectedFilter = filter_type;
+    //     selectedValue = filter_value;
+    //     render_calendar(filter_type, filter_value);
+    // });
 
     document.getElementById('btn-print').addEventListener('click', function () {
         generatePrintableTimetable(selectedFilter, selectedValue);
     });
+
+    // Event listeners for buttons
+$("#btn-home").on("click", function () {
+    $("#teacher-dropdown, #stream-dropdown").addClass("d-none");
+    render_calendar("home");
+});
+
+$("#btn-teacher").on("click", function () {
+    $("#teacher-dropdown").removeClass("d-none");
+    $("#stream-dropdown").addClass("d-none");
+});
+
+$("#btn-stream").on("click", function () {
+    $("#stream-dropdown").removeClass("d-none");
+    $("#teacher-dropdown").addClass("d-none");
+});
+
+// Event listener for dropdown changes
+$("#teacher-dropdown").on("change", function () {
+    let selectedTeacher = $(this).val();
+    render_calendar("teacher", selectedTeacher);
+    selectedFilter = "instructor";
+    selectedValue = selectedTeacher;
+});
+
+$("#stream-dropdown").on("change", function () {
+    let selectedStream = $(this).val();
+    render_calendar("stream", selectedStream);
+    selectedFilter = "stream";
+    selectedValue = selectedStream;
+});
 
     function generatePrintableTimetable(filter_type, filter_value) {
         frappe.call({
