@@ -15,3 +15,16 @@ def get_course_schedule(instructor=None, stream=None):
         fields=["name", "course", "instructor", "student_group", "schedule_date", "from_time", "to_time","room","program"]
     )
     return schedules
+
+
+@frappe.whitelist()
+def get_teachers():
+    """Fetch all teachers."""
+    teachers = frappe.get_all("Instructor", fields=["name", "instructor_name"])
+    return [{"value": t.name, "label": t.instructor_name} for t in teachers]
+
+@frappe.whitelist()
+def get_streams():
+    """Fetch all streams."""
+    streams = frappe.get_all("Student Group", fields=["name", "program"])
+    return [{"value": s.name, "label": s.program} for s in streams]
