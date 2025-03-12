@@ -16,7 +16,6 @@ def get_course_schedule(instructor=None, stream=None):
     )
     return schedules
 
-
 @frappe.whitelist()
 def get_teachers():
     """Fetch all teachers."""
