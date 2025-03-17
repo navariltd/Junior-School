@@ -4,15 +4,17 @@ import { createApp } from 'vue'
 import router from './router'
 import App from './App.vue'
 
-
-import { Button, setConfig, frappeRequest, resourcesPlugin } from 'frappe-ui'
+import { FrappeUI, setConfig, frappeRequest, pageMetaPlugin, Button} from 'frappe-ui'
 
 let app = createApp(App)
 
 setConfig('resourceFetcher', frappeRequest)
 
 app.use(router)
-app.use(resourcesPlugin)
+app.use(FrappeUI)
+app.use(pageMetaPlugin)
+app.component("Button", Button)
 
-app.component('Button', Button)
+
+
 app.mount('#app')
