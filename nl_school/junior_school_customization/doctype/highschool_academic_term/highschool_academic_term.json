@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-18 12:54:44.173036",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "academic_term",
+  "amount",
+  "paid",
+  "column_break_kvze",
+  "outstanding_balance",
+  "report_card"
+ ],
+ "fields": [
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "non_negative": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "paid",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Paid "
+  },
+  {
+   "fieldname": "column_break_kvze",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "outstanding_balance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Outstanding Balance"
+  },
+  {
+   "fieldname": "report_card",
+   "fieldtype": "Attach",
+   "label": "Report Card"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-18 12:57:17.704975",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "HighSchool Academic Term",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

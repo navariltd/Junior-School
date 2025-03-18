@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{student_name}-{YY}",
+ "creation": "2025-03-18 12:48:41.751794",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student",
+  "current_year",
+  "from_date",
+  "student_name",
+  "column_break_xmsu",
+  "sponser",
+  "to_date",
+  "school_fees_disctibution_section",
+  "table_xgxw",
+  "section_break_sggd",
+  "amount",
+  "column_break_jvbz",
+  "paid",
+  "column_break_hsam",
+  "outstanding_balance",
+  "section_break_pvyd",
+  "yearly_report"
+ ],
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "Student",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_xmsu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sponser",
+   "fieldtype": "Data",
+   "label": "Sponser"
+  },
+  {
+   "fieldname": "section_break_pvyd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "yearly_report",
+   "fieldtype": "Small Text",
+   "label": "Yearly Report"
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "school_fees_disctibution_section",
+   "fieldtype": "Section Break",
+   "label": "School Fees Disctibution"
+  },
+  {
+   "fieldname": "table_xgxw",
+   "fieldtype": "Table",
+   "options": "HighSchool Academic Term"
+  },
+  {
+   "fieldname": "section_break_sggd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount"
+  },
+  {
+   "fieldname": "column_break_jvbz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paid",
+   "fieldtype": "Currency",
+   "label": "Paid"
+  },
+  {
+   "fieldname": "column_break_hsam",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "outstanding_balance",
+   "fieldtype": "Currency",
+   "label": "Outstanding Balance"
+  },
+  {
+   "fieldname": "current_year",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Current Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-18 13:14:55.734761",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Scholarship",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-18 13:26:16.032242",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student",
+  "is_graduated",
+  "graduation_year",
+  "column_break_exam",
+  "current_eductionemployment_status",
+  "institution_name",
+  "career_path",
+  "section_break_osue",
+  "shofco_sponsership_beneficiary",
+  "column_break_lnky",
+  "mentorship_participation",
+  "section_break_xsko",
+  "event_participation",
+  "personal_details_section",
+  "email",
+  "phone_number",
+  "column_break_lkvx",
+  "current_country",
+  "city"
+ ],
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "Student",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_graduated",
+   "fieldtype": "Check",
+   "label": "Graduated?"
+  },
+  {
+   "depends_on": "eval: doc.is_graduated==1",
+   "fieldname": "graduation_year",
+   "fieldtype": "Data",
+   "label": "Graduation Year"
+  },
+  {
+   "fieldname": "column_break_exam",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_eductionemployment_status",
+   "fieldtype": "Select",
+   "label": "Current Eduction/Employment Status",
+   "options": "\nStudying\nEmployed\nUnemployed\nEntrepreneur",
+   "reqd": 1
+  },
+  {
+   "fieldname": "institution_name",
+   "fieldtype": "Data",
+   "label": "Institution Name"
+  },
+  {
+   "fieldname": "career_path",
+   "fieldtype": "Data",
+   "label": "Career Path"
+  },
+  {
+   "fieldname": "section_break_osue",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "shofco_sponsership_beneficiary",
+   "fieldtype": "Check",
+   "label": "SHOFCO Sponsership Beneficiary"
+  },
+  {
+   "fieldname": "mentorship_participation",
+   "fieldtype": "Select",
+   "label": "Mentorship Participation",
+   "options": "\nMentor\nMentee\nNot Participating"
+  },
+  {
+   "fieldname": "section_break_xsko",
+   "fieldtype": "Section Break",
+   "label": "Participation"
+  },
+  {
+   "fieldname": "event_participation",
+   "fieldtype": "Table",
+   "label": "Event Participation",
+   "options": "Alumni Events Participation"
+  },
+  {
+   "fieldname": "personal_details_section",
+   "fieldtype": "Section Break",
+   "label": "Personal Details"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Email",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Phone",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_lkvx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "current_country",
+   "fieldtype": "Link",
+   "label": "Current Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "column_break_lnky",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-18 13:40:59.287077",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Alumni",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

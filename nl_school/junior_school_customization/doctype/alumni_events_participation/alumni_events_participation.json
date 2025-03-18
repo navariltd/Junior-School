@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-18 13:32:04.499275",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "event",
+  "date_attended",
+  "conttibutions"
+ ],
+ "fields": [
+  {
+   "fieldname": "event",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Event",
+   "options": "Event",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date_attended",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date Attended",
+   "reqd": 1
+  },
+  {
+   "fieldname": "conttibutions",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Conttibutions"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-18 13:35:49.067351",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Alumni Events Participation",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
