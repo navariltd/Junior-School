@@ -9,4 +9,7 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  presets: [
+    require('frappe-ui/src/utils/tailwind.config')
+  ],
 }

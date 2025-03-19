@@ -6,6 +6,11 @@ const routes = [
     name: 'Home',
     component: () => import('@/pages/Home.vue'),
   },
+  {
+    path:'/timetable',
+    name:'Timetable',
+    component: () => import('@/pages/Timetable.vue'),
+  }
 ]
 
 let router = createRouter({

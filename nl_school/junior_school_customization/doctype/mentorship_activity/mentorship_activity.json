@@ -1,0 +1,135 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-03-18 12:17:29.237724",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "mentors",
+  "date_and_time",
+  "column_break_uaxk",
+  "teachers",
+  "education_level",
+  "section_break_yffd",
+  "location",
+  "filters_section",
+  "stream",
+  "column_break_jvhr",
+  "class",
+  "student_attended_section",
+  "student_in_attendance",
+  "discussions_tab",
+  "topic_of_discussion",
+  "feedbackoutcomes"
+ ],
+ "fields": [
+  {
+   "fieldname": "mentors",
+   "fieldtype": "Table MultiSelect",
+   "label": "Mentors",
+   "options": "Mentor Doctype"
+  },
+  {
+   "fieldname": "teachers",
+   "fieldtype": "Table MultiSelect",
+   "label": "Teachers",
+   "options": "Teacher Multiselect"
+  },
+  {
+   "fieldname": "date_and_time",
+   "fieldtype": "Datetime",
+   "label": "Date & Time"
+  },
+  {
+   "fieldname": "column_break_uaxk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "education_level",
+   "fieldtype": "Select",
+   "label": "Education Level",
+   "options": "\nPrimary\nHighschool\nHigher Education"
+  },
+  {
+   "fieldname": "section_break_yffd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location"
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "fieldname": "stream",
+   "fieldtype": "Link",
+   "label": "Stream",
+   "options": "Student Group"
+  },
+  {
+   "fieldname": "column_break_jvhr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "class",
+   "fieldtype": "Link",
+   "label": "Class",
+   "options": "Program"
+  },
+  {
+   "fieldname": "discussions_tab",
+   "fieldtype": "Tab Break",
+   "label": "Discussions"
+  },
+  {
+   "fieldname": "topic_of_discussion",
+   "fieldtype": "Text Editor",
+   "label": "Topic of Discussion"
+  },
+  {
+   "fieldname": "feedbackoutcomes",
+   "fieldtype": "Small Text",
+   "label": "Feedback/Outcomes"
+  },
+  {
+   "fieldname": "student_attended_section",
+   "fieldtype": "Section Break",
+   "label": "Student Attended"
+  },
+  {
+   "fieldname": "student_in_attendance",
+   "fieldtype": "Table",
+   "label": "Student In Attendance",
+   "options": "Mentored Students"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-18 12:32:45.144952",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Mentorship Activity",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
