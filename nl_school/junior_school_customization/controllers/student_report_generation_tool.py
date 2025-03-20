@@ -32,7 +32,6 @@ def preview_report_card(doc):
 	assessment_groups = get_child_assessment_groups(doc.assessment_group)
 	letterhead = get_letter_head(doc, not doc.add_letterhead)
 
-	# Get the attendance of the student for that period of time.
 	doc.attendance = get_attendance_count(
 		doc.students[0], doc.academic_year, doc.academic_term
 	)

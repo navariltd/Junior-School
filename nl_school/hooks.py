@@ -144,7 +144,11 @@ doctype_js = {"Student Report Generation Tool" : "public/js/student_report_gener
 # 		"on_trash": "method"
 # 	}
 # }
-
+doc_events = {
+    "Assessment Result": {
+        "on_submit": "nl_school.junior_school_customization.controllers.assessment_result.before_submit"
+    }
+}
 # Scheduled Tasks
 # ---------------
 
