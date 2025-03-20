@@ -5,7 +5,10 @@ from frappe import _
 from frappe.desk.treeview import get_children
 
 import json
-
+import frappe
+from frappe import _
+from frappe.utils.pdf import get_pdf
+from frappe.www.printview import get_letter_head
 import frappe
 from frappe import _
 from frappe.model.document import Document
@@ -20,7 +23,6 @@ from education.education.report.course_wise_assessment_report.course_wise_assess
 class StudentReportGenerationTool(Document):
 	pass
 
-
 @frappe.whitelist()
 def preview_report_card(doc):
 	doc = frappe._dict(json.loads(doc))
@@ -30,13 +32,12 @@ def preview_report_card(doc):
 	assessment_groups = get_child_assessment_groups(doc.assessment_group)
 	letterhead = get_letter_head(doc, not doc.add_letterhead)
 
-	# get the attendance of the student for that peroid of time.
+	# Get the attendance of the student for that period of time.
 	doc.attendance = get_attendance_count(
 		doc.students[0], doc.academic_year, doc.academic_term
 	)
 	averages = calculate_averages(values.get("assessment_result", []))
- 
-	# frappe.throw(str(frappe.get_value("Student Group", doc.program, "custom_class_teacher"),))
+
 	html = frappe.render_template(
 		"nl_school/public/js/student_report_generation_tool.html",
 		{
@@ -52,7 +53,7 @@ def preview_report_card(doc):
 			"class_teacher": frappe.get_value("Student Group", doc.program, "custom_class_teacher"),
 		},
 	)
-	
+
 	final_template = frappe.render_template(
 		"frappe/www/printview.html", {"body": html, "title": "Report Card"}
 	)
@@ -63,42 +64,42 @@ def preview_report_card(doc):
  
 
 def calculate_averages(assessment_result):
-    """
-    Calculate average scores and grades for Opener, Mid Term, and End Term assessments.
-    """
-    opener_scores = []
-    mid_term_scores = []
-    end_term_scores = []
+	"""
+	Calculate average scores and grades for Opener, Mid Term, and End Term assessments.
+	"""
+	opener_scores = []
+	mid_term_scores = []
+	end_term_scores = []
 
-    for result in assessment_result:
-        if result["assessment_group"] == "Opening Term Exam":
-            opener_scores.append(result["total_score"])
-        elif result["assessment_group"] == "Mid Term Exam":
-            mid_term_scores.append(result["total_score"])
-        elif result["assessment_group"] == "End Term Exam":
-            end_term_scores.append(result["total_score"])
+	for result in assessment_result:
+		if result["assessment_group"] == "Opening Term Exam":
+			opener_scores.append(result["total_score"])
+		elif result["assessment_group"] == "Mid Term Exam":
+			mid_term_scores.append(result["total_score"])
+		elif result["assessment_group"] == "End Term Exam":
+			end_term_scores.append(result["total_score"])
 
-    # Calculate averages
-    avg_opener = sum(opener_scores) / len(opener_scores) if opener_scores else 0
-    avg_mid_term = sum(mid_term_scores) / len(mid_term_scores) if mid_term_scores else 0
-    avg_end_term = sum(end_term_scores) / len(end_term_scores) if end_term_scores else 0
+	# Calculate averages
+	avg_opener = sum(opener_scores) / len(opener_scores) if opener_scores else 0
+	avg_mid_term = sum(mid_term_scores) / len(mid_term_scores) if mid_term_scores else 0
+	avg_end_term = sum(end_term_scores) / len(end_term_scores) if end_term_scores else 0
 
-    # Map averages to grades
-    def get_grade(score):
-        if score >= 80:
-            return "E.E"
-        elif score >= 65:
-            return "M.E"
-        elif score >= 50:
-            return "A.E"
-        else:
-            return "B.E"
+	# Map averages to grades
+	def get_grade(score):
+		if score >= 80:
+			return "E.E"
+		elif score >= 65:
+			return "M.E"
+		elif score >= 50:
+			return "A.E"
+		else:
+			return "B.E"
 
-    return {
-        "opener": {"score": round(avg_opener, 2), "grade": get_grade(avg_opener)},
-        "mid_term": {"score": round(avg_mid_term, 2), "grade": get_grade(avg_mid_term)},
-        "end_term": {"score": round(avg_end_term, 2), "grade": get_grade(avg_end_term)},
-    }
+	return {
+		"opener": {"score": round(avg_opener, 2), "grade": get_grade(avg_opener)},
+		"mid_term": {"score": round(avg_mid_term, 2), "grade": get_grade(avg_mid_term)},
+		"end_term": {"score": round(avg_end_term, 2), "grade": get_grade(avg_end_term)},
+	}
 
 def get_attendance_count(student, academic_year, academic_term=None):
 	attendance = frappe._dict()
@@ -130,14 +131,6 @@ def get_attendance_count(student, academic_year, academic_term=None):
 		return attendance
 	else:
 		frappe.throw(_("Please enter the Academic Year and set the Start and End date."))
-
-
-#from education
-# Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
-# For license information, please see license.txt
-
-
-
 
 
 def execute(filters=None):
@@ -305,3 +298,5 @@ def get_child_assessment_groups(assessment_group):
 	else:
 		assessment_groups = [assessment_group]
 	return assessment_groups
+
+

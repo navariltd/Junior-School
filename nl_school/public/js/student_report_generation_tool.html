@@ -24,7 +24,7 @@
     .info-item {
         display: flex;
         justify-content: space-between;
-        gap: 20px; /* Add spacing between the labels */
+        gap: 20px; 
     }
     .table {
         width: 100%;
@@ -46,7 +46,16 @@
         margin-top: 20px;
     }
 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
+<!-- or -->
+<script src="https://unpkg.com/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
+<style>
+    #chart {
+        width: 600px;
+        height: 400px;
+       
+    }
+</style>
 <div class="report-card">
     <div class="header">
         <h1>SHOFCO</h1>
@@ -60,7 +69,7 @@
                 <p><strong>Learner's Name:</strong> {{ doc.student_name or 'None' }}</p>
             </td>
             <td style="text-align: right; padding: 4px;">
-                <p><strong>Grade:</strong> {{ doc.grade or 'None' }}</p>
+                <p><strong>Grade:</strong> {{ doc.program or 'None' }}</p>
             </td>
         </tr>
         <tr>
@@ -77,18 +86,18 @@
         <thead>
             <tr>
                 <th>Learning Area</th>
-                <th colspan="2">Opener Assessment</th>
-                <th colspan="2">Mid Term Assessment</th>
-                <th colspan="2">End Term Assessment</th>
+                <th colspan="2" style="background:orange">Opener Assessment</th>
+                <th colspan="2" style="background:orange">Mid Term Assessment</th>
+                <th colspan="2" style="background:orange">End Term Assessment</th>
             </tr>
             <tr>
                 <th></th>
-                <th>Score</th>
-                <th>Grade</th>
-                <th>Score</th>
-                <th>Grade</th>
-                <th>Score</th>
-                <th>Grade</th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
             </tr>
         </thead>
         <tbody>
@@ -112,7 +121,7 @@
             </tr>
             {% endfor %}
             <tr class="average-row">
-                <td>Average</td>
+                <td style="color:red">Average</td>
                 <td>{{ averages.opener.score }}</td>
                 <td>{{ averages.opener.grade }}</td>
                 <td>{{ averages.mid_term.score }}</td>
@@ -125,12 +134,40 @@
 
     <div class="subject-analysis">
         <h3>Subject Analysis</h3>
-        <!-- Placeholder for the graph -->
-        <div style="width: 100%; height: 200px; background-color: #f2f2f2;"></div>
+        <!-- Display the chart image -->
+        <img src="data:image/png;base64,{{ chart_image }}" alt="Subject Analysis Chart" style="width: 100%; height: auto;">
     </div>
+    <div id="chart"></div>
 
     <div class="teacher-comment">
         <h3>Class Teacher's Comment:</h3>
         <p>{{ doc.teacher_comment or 'No comment available.' }}</p>
     </div>
 </div>
+
+<script>
+    const data = {
+        labels: ["12am-3am", "3am-6pm", "6am-9am", "9am-12am",
+            "12pm-3pm", "3pm-6pm", "6pm-9pm", "9am-12am"
+        ],
+        datasets: [
+            {
+                name: "Some Data", type: "bar",
+                values: [25, 40, 30, 35, 8, 52, 17, -4]
+            },
+            {
+                name: "Another Set", type: "line",
+                values: [25, 50, -10, 15, 18, 32, 27, 14]
+            }
+        ]
+    }
+    
+    const chart = new frappe.Chart("#chart", {  
+                                               
+        title: "My Awesome Chart",
+        data: data,
+        type: 'axis-mixed', 
+        height: 250,
+        colors: ['#7cd6fd', '#743ee2']
+    })
+</script>
