@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "frappe-charts": "^1.6.2"
+  }
+}

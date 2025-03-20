@@ -1,360 +1,173 @@
-
 <style>
-    @media screen {
-    .print-format-gutter {
-        background-color: #ddd;
-        padding: 15px 0px;
+    /* Add your CSS styles here */
+    .report-card {
+        font-family: Arial, sans-serif;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
     }
-    .print-format {
-        background-color: white;
-        box-shadow: 0px 0px 9px rgba(0,0,0,0.5);
-        max-width: 8.3in;
-        min-height: 11.69in;
-        padding: 0.75in;
-        margin: auto;
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
     }
-
-    .print-format.landscape {
-        max-width: 11.69in;
-        padding: 0.2in;
+    .student-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
     }
-
-    .page-break {
-        padding: 30px 0px;
-        border-bottom: 1px dashed #888;
+    .student-info-left, .student-info-right {
+        display: flex;
+        flex-direction: column;
     }
-
-    .page-break:first-child {
-        padding-top: 0px;
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px; 
     }
-
-    .page-break:last-child {
-        border-bottom: 0px;
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
     }
-
-    /* mozilla hack for images in table */
-    body:last-child .print-format td img {
-        width: 100% !important;
+    .table th, .table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
     }
-
-    @media(max-width: 767px) {
-        .print-format {
-            padding: 0.2in;
-        }
+    .table th {
+        background-color: #f2f2f2;
     }
-}
-
-@media print {
-    .print-format p {
-        margin-left: 1px;
-        margin-right: 1px;
+    .average-row {
+        font-weight: bold;
     }
-}
-
-.data-field {
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.data-field .value {
-    word-wrap: break-word;
-}
-
-.important .value {
-    font-size: 120%;
-    font-weight: bold;
-}
-
-.important label {
-    line-height: 1.8;
-    margin: 0px;
-}
-
-.table {
-    margin: 20px 0px;
-}
-
-.square-image {
-    width: 100%;
-    height: 0;
-    padding: 50% 0;
-    background-size: contain;
-    /*background-size: cover;*/
-    background-repeat: no-repeat !important;
-    background-position: center center;
-    border-radius: 4px;
-}
-
-.print-item-image {
-    object-fit: contain;
-}
-
-.pdf-variables,
-.pdf-variable,
-.visible-pdf {
-    display: none !important;
-}
-
-.print-format {
-    font-size: 9pt;
-    font-family: "Helvetica Neue", Helvetica, Arial, "Open Sans", sans-serif;
-    -webkit-print-color-adjust:exact;
-}
-
-.page-break {
-    page-break-after: always;
-}
-
-table.no-border, table.no-border td {
-    border: 0px;
-}
-
-.print-format label {
-    /* wkhtmltopdf breaks label into multiple lines when it is inline-block */
-    display: block;
-}
-
-.print-format img {
-    max-width: 100%;
-}
-
-.print-format table td > .primary:first-child {
-    font-weight: bold;
-}
-
-.print-format td, .print-format th {
-    vertical-align: top !important;
-    padding: 6px !important;
-}
-
-.print-format p {
-    margin: 3px 0px 3px;
-}
-
-table td div {
-
-    /* needed to avoid partial cutting of text between page break in wkhtmltopdf */
-    page-break-inside: avoid !important;
-
-}
-
-/* hack for webkit specific browser */
-@media (-webkit-min-device-pixel-ratio:0) {
-    thead, tfoot { display: table-row-group; }
-}
-
-[document-status] {
-    margin-bottom: 5mm;
-}
-
-.signature-img {
-    background: #fff;
-    border-radius: 3px;
-    margin-top: 5px;
-    max-height: 150px;
-}
-
-.print-heading {
-    text-align: right;
-    text-transform: uppercase;
-    color: #666;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #d1d8dd;
-}
-
-.print-heading h2 {
-    font-size: 24px;
-}
-
-.print-format th {
-    background-color: #eee !important;
-    border-bottom: 0px !important;
-}
-
-/* modern format: for-test */
-
-.pbi_avoid {
-    page-break-inside: avoid !important;
-}
-
-.pb_before {
-    page-break-before: always !important;
-}
-
-.pdf-header {
-    display: inline-block;
-}
+    .teacher-comment {
+        margin-top: 20px;
+    }
 </style>
-
-
-
-<div class="page-break">
-
-<div id="header-html" class="pdf-header">
-    {% if letterhead and add_letterhead %}
-        <div class="">{{ letterhead }}</div>
-    {% endif %}
-    <div class="print-heading">
-        <h2>{{ _("Student Report Card") }}<br>
-            <small>{{ doc.student_name }}</small>
-        </h2>
-    </div>
-</div>
-
-<div class="row section-break">
-    <div class="col-xs-6 column-break">
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Student ID: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.students[0] }}
-            </div>
-        </div>
-
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Student Name: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.student_name }}
-            </div>
-        </div>
-
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Program: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.program }}
-            </div>
-        </div>
-
-        {% if doc.student_batch %}
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Batch: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.student_batch }}
-            </div>
-        </div>
-        {% endif %}
+<script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
+<!-- or -->
+<script src="https://unpkg.com/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
+<style>
+    #chart {
+        width: 600px;
+        height: 400px;
+       
+    }
+</style>
+<div class="report-card">
+    <div class="header">
+        <h1>SHOFCO</h1>
+        <h2>KIBERA SCHOOL FOR GIRLS</h2>
+        <h3>ASSESSMENT REPORT TERM 2 2024</h3>
     </div>
 
-    <div class="col-xs-6 column-break">
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Academic Year: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.academic_year }}
-            </div>
-        </div>
+    <table class="student-info" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="text-align: left; padding: 4px;">
+                <p><strong>Learner's Name:</strong> {{ doc.student_name or 'None' }}</p>
+            </td>
+            <td style="text-align: right; padding: 4px;">
+                <p><strong>Grade:</strong> {{ doc.program or 'None' }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left; padding: 4px;">
+                <p><strong>Class Teacher:</strong> {{ class_teacher }}</p>
+            </td>
+            <td style="text-align: right; padding: 4px;">
+                <p><strong>Term:</strong> {{ doc.academic_term or 'None' }}</p>
+            </td>
+        </tr>
+    </table>
 
-        {% if doc.academic_term %}
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Academic Term: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.academic_term }}
-            </div>
-        </div>
-        {% endif %}
-
-        <div class="row data-field">
-            <div class="col-xs-5">
-                <label>{{ _("Assessment Group: ") }}</label>
-            </div>
-            <div class="col-xs-7">
-                {{ doc.assessment_group }}
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{% for course in courses %}
-
-<div class="row section-break pbi_avoid">
-    <div class="col-xs-12 column-break">
-
-        <div>
-        <table class="table table-bordered table-condensed">
-            <caption>
-                <div class="row">
-                    <div class="col-xs-1">
-                        <label>{{ _("Course: ") }}</label>
-                    </div>
-                    <div class="col-xs-11">
-                        {{ frappe.db.get_value("Course", course, "course_name") }}
-                    </div>
-                </div>
-            </caption>
-            <thead>
-                <tr>
-                    <th> {{ _("Term") }} </th>
-                    <th>{{ _("Assessment Criteria") }}</th>
-                    {% if doc.show_marks %}
-                    <th> {{ _("Score") }} </th>
-                    {% endif %}
-                    <th> {{ _("Grade") }} </th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for result in assessment_result %}
-                {% for criteria in result.details %}
-                {% if result.course == course %}
-                <tr>
-                    <td> {{ result.assessment_group }} </td>
-                    <td>{{ criteria.assessment_criteria }}</td>
-                    {% if doc.show_marks %}
-                    <td> {{ criteria.score }} </td>
-                    {% endif %}
-                    <td> {{ criteria.grade }} </td>
-                </tr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Learning Area</th>
+                <th colspan="2" style="background:orange">Opener Assessment</th>
+                <th colspan="2" style="background:orange">Mid Term Assessment</th>
+                <th colspan="2" style="background:orange">End Term Assessment</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Score</th>
+                <th style="background:#5d93b3">Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set subjects = {} %}
+            {% for result in values.assessment_result %}
+                {% if result.course not in subjects %}
+                    {% set _ = subjects.update({result.course: {}}) %}
                 {% endif %}
-                {% endfor %}
-                {% endfor %}
-            </tbody>
+                {% set _ = subjects[result.course].update({result.assessment_group: {"score": result.total_score, "grade": result.grade}}) %}
+            {% endfor %}
 
-        </table>
-        </div>
+            {% for course, assessments in subjects.items() %}
+            <tr>
+                <td>{{ course }}</td>
+                <td>{{ assessments.get("Opening Term Exam", {}).get("score", "-") }}</td>
+                <td>{{ assessments.get("Opening Term Exam", {}).get("grade", "-") }}</td>
+                <td>{{ assessments.get("Mid Term Exam", {}).get("score", "-") }}</td>
+                <td>{{ assessments.get("Mid Term Exam", {}).get("grade", "-") }}</td>
+                <td>{{ assessments.get("End Term Exam", {}).get("score", "-") }}</td>
+                <td>{{ assessments.get("End Term Exam", {}).get("grade", "-") }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="average-row">
+                <td style="color:red">Average</td>
+                <td>{{ averages.opener.score }}</td>
+                <td>{{ averages.opener.grade }}</td>
+                <td>{{ averages.mid_term.score }}</td>
+                <td>{{ averages.mid_term.grade }}</td>
+                <td>{{ averages.end_term.score }}</td>
+                <td>{{ averages.end_term.grade }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="subject-analysis">
+        <h3>Subject Analysis</h3>
+        <!-- Display the chart image -->
+        <img src="data:image/png;base64,{{ chart_image }}" alt="Subject Analysis Chart" style="width: 100%; height: auto;">
+    </div>
+    <div id="chart"></div>
+
+    <div class="teacher-comment">
+        <h3>Class Teacher's Comment:</h3>
+        <p>{{ doc.teacher_comment or 'No comment available.' }}</p>
     </div>
 </div>
 
-{% endfor %}
-
-<br>
-
-<div class="row section-break pbi_avoid">
-    <div class="col-xs-6 column-break">
-        <h4>{{ _("Student Attendance")}}</h4>
-        <div>
-            {{ _("Present ") }} {{ doc.attendance.present if doc.attendance.present else 0 }} {{ _(" out of ") }} {{ doc.attendance.total }}  {{ _(" days") }}
-        </div>
-    </div>
-
-    <div class="col-xs-6 column-break">
-        <h4>{{ _("Parents Teacher Meeting Attendance")}}</h4>
-        <div>
-            {{ _("Present ") }} {{ doc.parents_attendance if doc.parents_attendance != None else 0 }}
-            {{ _(" out of ") }} {{ doc.parents_meeting if doc.parents_meeting != None else 0 }} {{ _(" meetings") }}
-        </div>
-    </div>
-</div>
-
-<br>
-
-{% if doc.assessment_terms %}
-<div class="row section-break">
-    <div class="col-xs-12">
-        <h4> {{ _("Terms") }} </h4>
-        <p> {{ doc.assessment_terms }} </p>
-    </div>
-</div>
-{% endif %}
-</div>
+<script>
+    const data = {
+        labels: ["12am-3am", "3am-6pm", "6am-9am", "9am-12am",
+            "12pm-3pm", "3pm-6pm", "6pm-9pm", "9am-12am"
+        ],
+        datasets: [
+            {
+                name: "Some Data", type: "bar",
+                values: [25, 40, 30, 35, 8, 52, 17, -4]
+            },
+            {
+                name: "Another Set", type: "line",
+                values: [25, 50, -10, 15, 18, 32, 27, 14]
+            }
+        ]
+    }
+    
+    const chart = new frappe.Chart("#chart", {  
+                                               
+        title: "My Awesome Chart",
+        data: data,
+        type: 'axis-mixed', 
+        height: 250,
+        colors: ['#7cd6fd', '#743ee2']
+    })
+</script>
