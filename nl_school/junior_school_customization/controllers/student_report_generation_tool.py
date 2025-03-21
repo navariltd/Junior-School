@@ -36,7 +36,7 @@ def preview_report_card(doc):
 		doc.students[0], doc.academic_year, doc.academic_term
 	)
 	averages = calculate_averages(values.get("assessment_result", []))
-
+	
 	html = frappe.render_template(
 		"nl_school/public/html/student_report_generation_tool.html",
 		{
@@ -70,8 +70,11 @@ def calculate_averages(assessment_result):
 	opener_scores = []
 	mid_term_scores = []
 	end_term_scores = []
+	grading_scale =""
 
 	for result in assessment_result:
+		grading_scale = frappe.db.get_value("Assessment Result", result["name"], "grading_scale")
+
 		if result["assessment_group"] == "Opening Term Exam":
 			opener_scores.append(result["total_score"])
 		elif result["assessment_group"] == "Mid Term Exam":
@@ -84,23 +87,22 @@ def calculate_averages(assessment_result):
 	avg_mid_term = sum(mid_term_scores) / len(mid_term_scores) if mid_term_scores else 0
 	avg_end_term = sum(end_term_scores) / len(end_term_scores) if end_term_scores else 0
 
-	# Map averages to grades
-	def get_grade(score):
-		if score >= 80:
-			return "E.E"
-		elif score >= 65:
-			return "M.E"
-		elif score >= 50:
-			return "A.E"
-		else:
-			return "B.E"
-
 	return {
-		"opener": {"score": round(avg_opener, 2), "grade": get_grade(avg_opener)},
-		"mid_term": {"score": round(avg_mid_term, 2), "grade": get_grade(avg_mid_term)},
-		"end_term": {"score": round(avg_end_term, 2), "grade": get_grade(avg_end_term)},
+		"opener": {"score": round(avg_opener, 2), "grade": get_grade(avg_opener, grading_scale)},
+		"mid_term": {"score": round(avg_mid_term, 2), "grade": get_grade(avg_mid_term, grading_scale)},
+		"end_term": {"score": round(avg_end_term, 2), "grade": get_grade(avg_end_term, grading_scale)},
 	}
 
+
+def get_grade(score, grading_scale):
+	grading_scale = frappe.get_doc("Grading Scale", grading_scale)
+	grading_intervals = grading_scale.intervals
+ 
+	for interval in sorted(grading_intervals, key=lambda x: x.threshold, reverse=True):
+		if score >= interval.threshold:
+			return interval.grade_code
+	return "B.E"  
+	
 def get_attendance_count(student, academic_year, academic_term=None):
 	attendance = frappe._dict()
 	attendance.total = 0
