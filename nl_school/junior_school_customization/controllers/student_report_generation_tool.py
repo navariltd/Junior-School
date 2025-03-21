@@ -82,7 +82,6 @@ def calculate_averages(assessment_result):
 		elif result["assessment_group"] == "End Term Exam":
 			end_term_scores.append(result["total_score"])
 
-	# Calculate averages
 	avg_opener = sum(opener_scores) / len(opener_scores) if opener_scores else 0
 	avg_mid_term = sum(mid_term_scores) / len(mid_term_scores) if mid_term_scores else 0
 	avg_end_term = sum(end_term_scores) / len(end_term_scores) if end_term_scores else 0
@@ -191,7 +190,6 @@ def get_formatted_result(args, get_course=False):
 		],
 		order_by="",
 	)
-	# frappe.throw(str(assessment_result))
 	for result in assessment_result:
 		if get_course and result.course not in courses:
 			courses.append(result.course)
@@ -223,7 +221,6 @@ def prepare_filters(args):
 	if args.students:
 		filters.update({"student": ["in", args.students]})
   
-	# frappe.throw(str(filters))
 	return filters
 
 def get_column(criterias):
