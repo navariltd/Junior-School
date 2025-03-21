@@ -38,7 +38,7 @@ def preview_report_card(doc):
 	averages = calculate_averages(values.get("assessment_result", []))
 
 	html = frappe.render_template(
-		"nl_school/public/js/student_report_generation_tool.html",
+		"nl_school/public/html/student_report_generation_tool.html",
 		{
 			"doc": doc,
 			"values": values,
@@ -50,6 +50,7 @@ def preview_report_card(doc):
 			"averages": averages,
 			"academic_term": doc.academic_term,
 			"class_teacher": frappe.get_value("Student Group", doc.program, "custom_class_teacher"),
+			"student_image": get_student_image(doc.student),
 		},
 	)
 
@@ -299,3 +300,10 @@ def get_child_assessment_groups(assessment_group):
 	return assessment_groups
 
 
+
+def get_student_image(student):
+	student = frappe.get_doc("Student", student)
+	if student.image:
+		return student.image
+	else:
+		return None
