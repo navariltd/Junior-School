@@ -388,18 +388,18 @@ def get_student_image(student):
 # 		frappe.log_error(f"Error generating PDF: {e}")
 # 		frappe.throw("Error generating PDF. Please check the logs for details.")
 		
-# def get_class_teacher(student_name):
-# 	parent_list = frappe.get_all(
-#     "Student Group Student",
-#     filters={"student": "EDU-STU-2025-00010", "active": 1},
-#     fields=["parent"],
-#     as_list=True
-# )
+def get_class_teacher(student_name):
+	parent_list = frappe.get_all(
+    "Student Group Student",
+    filters={"student": "EDU-STU-2025-00010", "active": 1},
+    fields=["parent"],
+    as_list=True
+)
 
-# 	if parent_list:
-# 		# Get the first parent
-# 		first_parent = parent_list[0][0]
+	if parent_list:
+		# Get the first parent
+		first_parent = parent_list[0][0]
 
-# 		# Fetch the class teacher for the first parent
-# 		class_teacher = frappe.db.get_value("Student Group", first_parent, "custom_class_teacher")
-# 		return class_teacher
+		# Fetch the class teacher for the first parent
+		class_teacher = frappe.db.get_value("Student Group", first_parent, "custom_class_teacher")
+		return class_teacher
