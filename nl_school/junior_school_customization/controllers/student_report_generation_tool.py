@@ -309,97 +309,97 @@ def get_student_image(student):
 	else:
 		return None
 
-import os
-import frappe
-from frappe.utils import scrub_urls
-from frappe.utils.pdf import get_pdf, get_wkhtmltopdf_version
-from distutils.version import LooseVersion
+# import os
+# import frappe
+# from frappe.utils import scrub_urls
+# from frappe.utils.pdf import get_pdf, get_wkhtmltopdf_version
+# from distutils.version import LooseVersion
 
-# Define possible errors (for consistency with the Frappe style)
-PDF_CONTENT_ERRORS = [
-	"ContentNotFoundError",
-	"ContentOperationNotPermittedError",
-	"UnknownContentError",
-	"RemoteHostClosedError",
-]
+# # Define possible errors (for consistency with the Frappe style)
+# PDF_CONTENT_ERRORS = [
+# 	"ContentNotFoundError",
+# 	"ContentOperationNotPermittedError",
+# 	"UnknownContentError",
+# 	"RemoteHostClosedError",
+# ]
 
-@frappe.whitelist()
-def generate_chart_image():
-	# HTML content with Frappe Chart
-	chart_html = """
-<div>
-  <canvas id="myChart" style="background:blue"></canvas>
-  <div>Chart.js Bar Chart</div>
-</div>
+# @frappe.whitelist()
+# def generate_chart_image():
+# 	# HTML content with Frappe Chart
+# 	chart_html = """
+# <div>
+#   <canvas id="myChart" style="background:blue"></canvas>
+#   <div>Chart.js Bar Chart</div>
+# </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script>
-  const ctx = document.getElementById('myChart');
+# <script>
+#   const ctx = document.getElementById('myChart');
 
-  new Chart(ctx, {
-	type: 'bar',
-	data: {
-	  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-	  datasets: [{
-		label: '# of Votes',
-		data: [12, 19, 3, 5, 2, 3],
-		borderWidth: 1
-	  }]
-	},
-	options: {
-	  scales: {
-		y: {
-		  beginAtZero: true
-		}
-	  }
-	}
-  });
-</script>
-	"""
+#   new Chart(ctx, {
+# 	type: 'bar',
+# 	data: {
+# 	  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+# 	  datasets: [{
+# 		label: '# of Votes',
+# 		data: [12, 19, 3, 5, 2, 3],
+# 		borderWidth: 1
+# 	  }]
+# 	},
+# 	options: {
+# 	  scales: {
+# 		y: {
+# 		  beginAtZero: true
+# 		}
+# 	  }
+# 	}
+#   });
+# </script>
+# 	"""
 
-	chart_html = scrub_urls(chart_html)
+# 	chart_html = scrub_urls(chart_html)
 
-	options = {
-		"javascript-delay": "10000",  
-		"disable-local-file-access": "", 
-	}
+# 	options = {
+# 		"javascript-delay": "10000",  
+# 		"disable-local-file-access": "", 
+# 	}
 
-	# Add additional options based on wkhtmltopdf version
-	if LooseVersion(get_wkhtmltopdf_version()) > LooseVersion("0.12.3"):
-		options.update({"disable-smart-shrinking": ""})
+# 	# Add additional options based on wkhtmltopdf version
+# 	if LooseVersion(get_wkhtmltopdf_version()) > LooseVersion("0.12.3"):
+# 		options.update({"disable-smart-shrinking": ""})
 
-	try:
-		# Generate PDF from HTML
-		pdf_data = get_pdf(chart_html, options=options)
+# 	try:
+# 		# Generate PDF from HTML
+# 		pdf_data = get_pdf(chart_html, options=options)
 
-		# Upload the PDF to Frappe File doctype
-		file_doc = frappe.get_doc({
-			"doctype": "File",
-			"file_name": "chart.pdf",
-			"is_private": 0,  # Set to 1 for private files
-			"content": pdf_data
-		})
-		file_doc.save(ignore_permissions=True)
+# 		# Upload the PDF to Frappe File doctype
+# 		file_doc = frappe.get_doc({
+# 			"doctype": "File",
+# 			"file_name": "chart.pdf",
+# 			"is_private": 0,  # Set to 1 for private files
+# 			"content": pdf_data
+# 		})
+# 		file_doc.save(ignore_permissions=True)
 
-		return file_doc.file_url
+# 		return file_doc.file_url
 
-	except Exception as e:
-		frappe.log_error(f"Error generating PDF: {e}")
-		frappe.throw("Error generating PDF. Please check the logs for details.")
+# 	except Exception as e:
+# 		frappe.log_error(f"Error generating PDF: {e}")
+# 		frappe.throw("Error generating PDF. Please check the logs for details.")
 		
-def get_class_teacher(student_name):
-	parent_list = frappe.get_all(
-    "Student Group Student",
-    filters={"student": "EDU-STU-2025-00010", "active": 1},
-    fields=["parent"],
-    as_list=True
-)
+# def get_class_teacher(student_name):
+# 	parent_list = frappe.get_all(
+#     "Student Group Student",
+#     filters={"student": "EDU-STU-2025-00010", "active": 1},
+#     fields=["parent"],
+#     as_list=True
+# )
 
-	if parent_list:
-		# Get the first parent
-		first_parent = parent_list[0][0]
+# 	if parent_list:
+# 		# Get the first parent
+# 		first_parent = parent_list[0][0]
 
-		# Fetch the class teacher for the first parent
-		class_teacher = frappe.db.get_value("Student Group", first_parent, "custom_class_teacher")
-		return class_teacher
+# 		# Fetch the class teacher for the first parent
+# 		class_teacher = frappe.db.get_value("Student Group", first_parent, "custom_class_teacher")
+# 		return class_teacher
