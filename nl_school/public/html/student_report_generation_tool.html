@@ -8,9 +8,21 @@
         padding: 20px;
         border: 1px solid #ccc;
     }
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    .header-table td {
+        vertical-align: top;
+        padding: 0;
+    }
     .header {
         text-align: center;
-        margin-bottom: 20px;
+    }
+    .student-image {
+        width: 150px;
+        height: 150px;
     }
     .student-info {
         display: flex;
@@ -53,15 +65,27 @@
     #chart {
         width: 600px;
         height: 400px;
-       
     }
 </style>
 <div class="report-card">
-    <div class="header">
-        <h1>SHOFCO</h1>
-        <h2>KIBERA SCHOOL FOR GIRLS</h2>
-        <h3>ASSESSMENT REPORT TERM 2 2024</h3>
-    </div>
+    <!-- Header and Image in a Table -->
+    <table class="header-table">
+        <tr>
+            <td style="width: 25%; text-align: left;">
+                <img class="student-image" src="{{ student_image }}" alt="Student Image">
+            </td>
+            <td style="width: 50%; text-align: center;">
+                <div class="header">
+                    <h1>SHOFCO</h1>
+                    <h2>KIBERA SCHOOL FOR GIRLS</h2>
+                    <h3>ASSESSMENT REPORT</h3>
+                </div>
+            </td>
+            <td style="width: 25%; text-align: left;">
+                <!-- Left Space (Optional) -->
+            </td>
+        </tr>
+    </table>
 
     <table class="student-info" style="width: 100%; border-collapse: collapse;">
         <tr>
@@ -81,7 +105,7 @@
             </td>
         </tr>
     </table>
-
+<hr style="background:#5d93b3; height:3px">
     <table class="table">
         <thead>
             <tr>
@@ -134,14 +158,16 @@
 
     <div class="subject-analysis">
         <h3>Subject Analysis</h3>
+        <div>Graph</div>
         <!-- Display the chart image -->
-        <img src="data:image/png;base64,{{ chart_image }}" alt="Subject Analysis Chart" style="width: 100%; height: auto;">
     </div>
-    <div id="chart"></div>
+    <div id="charts"></div>
 
     <div class="teacher-comment">
         <h3>Class Teacher's Comment:</h3>
-        <p>{{ doc.teacher_comment or 'No comment available.' }}</p>
+        <p>{{ doc.teacher_comment or '' }}..........................................................................
+            ............................................................................
+        </p>
     </div>
 </div>
 
@@ -163,11 +189,10 @@
     }
     
     const chart = new frappe.Chart("#chart", {  
-                                               
         title: "My Awesome Chart",
         data: data,
         type: 'axis-mixed', 
-        height: 250,
+        height: 100,
         colors: ['#7cd6fd', '#743ee2']
     })
 </script>
