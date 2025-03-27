@@ -58,16 +58,10 @@
         margin-top: 20px;
     }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
-<!-- or -->
-<script src="https://unpkg.com/frappe-charts@1.2.4/dist/frappe-charts.min.iife.js"></script>
-<style>
-    #chart {
-        width: 600px;
-        height: 400px;
-    }
-</style>
+
 <div class="report-card">
+   
+
     <!-- Header and Image in a Table -->
     <table class="header-table">
         <tr>
@@ -76,8 +70,9 @@
             </td>
             <td style="width: 50%; text-align: center;">
                 <div class="header">
-                    <h1>SHOFCO</h1>
-                    <h2>KIBERA SCHOOL FOR GIRLS</h2>
+                    {% if letterhead %}
+                    <div class="letterhead">{{ letterhead }}</div>
+                    {% endif %}
                     <h3>ASSESSMENT REPORT</h3>
                 </div>
             </td>
@@ -105,23 +100,36 @@
             </td>
         </tr>
     </table>
-<hr style="background:#5d93b3; height:3px">
+    <hr style="background:#5d93b3; height:3px">
+
     <table class="table">
         <thead>
             <tr>
                 <th>Learning Area</th>
+                {% if show_opener %}
                 <th colspan="2" style="background:orange">Opener Assessment</th>
+                {% endif %}
+                {% if show_midterm %}
                 <th colspan="2" style="background:orange">Mid Term Assessment</th>
+                {% endif %}
+                {% if show_endterm %}
                 <th colspan="2" style="background:orange">End Term Assessment</th>
+                {% endif %}
             </tr>
             <tr>
                 <th></th>
+                {% if show_opener %}
                 <th style="background:#5d93b3">Score</th>
-                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Comment</th>
+                {% endif %}
+                {% if show_midterm %}
                 <th style="background:#5d93b3">Score</th>
-                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Comment</th>
+                {% endif %}
+                {% if show_endterm %}
                 <th style="background:#5d93b3">Score</th>
-                <th style="background:#5d93b3">Grade</th>
+                <th style="background:#5d93b3">Comment</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -130,28 +138,40 @@
                 {% if result.course not in subjects %}
                     {% set _ = subjects.update({result.course: {}}) %}
                 {% endif %}
-                {% set _ = subjects[result.course].update({result.assessment_group: {"score": result.total_score, "grade": result.grade}}) %}
+                {% set _ = subjects[result.course].update({result.assessment_group: {"score": result.levels, "grade": result.grade}}) %}
             {% endfor %}
 
             {% for course, assessments in subjects.items() %}
             <tr>
                 <td>{{ course }}</td>
+                {% if show_opener %}
                 <td>{{ assessments.get("Opening Term Exam", {}).get("score", "-") }}</td>
                 <td>{{ assessments.get("Opening Term Exam", {}).get("grade", "-") }}</td>
+                {% endif %}
+                {% if show_midterm %}
                 <td>{{ assessments.get("Mid Term Exam", {}).get("score", "-") }}</td>
                 <td>{{ assessments.get("Mid Term Exam", {}).get("grade", "-") }}</td>
+                {% endif %}
+                {% if show_endterm %}
                 <td>{{ assessments.get("End Term Exam", {}).get("score", "-") }}</td>
                 <td>{{ assessments.get("End Term Exam", {}).get("grade", "-") }}</td>
+                {% endif %}
             </tr>
             {% endfor %}
             <tr class="average-row">
                 <td style="color:red">Average</td>
-                <td>{{ averages.opener.score }}</td>
-                <td>{{ averages.opener.grade }}</td>
-                <td>{{ averages.mid_term.score }}</td>
-                <td>{{ averages.mid_term.grade }}</td>
-                <td>{{ averages.end_term.score }}</td>
-                <td>{{ averages.end_term.grade }}</td>
+                {% if show_opener %}
+                <td>{{ averages.opener.levels if averages.opener.levels != "-" else "-" }}</td>
+                <td>{{ averages.opener.grade if averages.opener.grade != "-" else "-" }}</td>
+                {% endif %}
+                {% if show_midterm %}
+                <td>{{ averages.mid_term.levels if averages.mid_term.levels != "-" else "-" }}</td>
+                <td>{{ averages.mid_term.grade if averages.mid_term.grade != "-" else "-" }}</td>
+                {% endif %}
+                {% if show_endterm %}
+                <td>{{ averages.end_term.levels if averages.end_term.levels != "-" else "-" }}</td>
+                <td>{{ averages.end_term.grade if averages.end_term.grade != "-" else "-" }}</td>
+                {% endif %}
             </tr>
         </tbody>
     </table>
@@ -159,40 +179,15 @@
     <div class="subject-analysis">
         <h3>Subject Analysis</h3>
         <div>Graph</div>
-        <!-- Display the chart image -->
     </div>
-    <div id="charts"></div>
 
     <div class="teacher-comment">
-        <h3>Class Teacher's Comment:</h3>
-        <p>{{ doc.teacher_comment or '' }}..........................................................................
-            ............................................................................
-        </p>
+        <h3>Class Teacher's Comment:........................................................................................................
+            ................................................................................................................</h3>
+        <p>{{ doc.teacher_comment or '' }}</p>
+
+    </div>
+    <div class="footer-image">
+        <img src="/files/WhatsApp Image 2025-03-26 at 10.38.31.jpeg" alt="Footer Image" style="width: 150px;">
     </div>
 </div>
-
-<script>
-    const dat = {
-        labels: ["12am-3am", "3am-6pm", "6am-9am", "9am-12am",
-            "12pm-3pm", "3pm-6pm", "6pm-9pm", "9am-12am"
-        ],
-        datasets: [
-            {
-                name: "Some Data", type: "bar",
-                values: [25, 40, 30, 35, 8, 52, 17, -4]
-            },
-            {
-                name: "Another Set", type: "line",
-                values: [25, 50, -10, 15, 18, 32, 27, 14]
-            }
-        ]
-    }
-    
-    const chart = new frappe.Chart("#chart", {  
-        title: "My Awesome Chart",
-        data: data,
-        type: 'axis-mixed', 
-        height: 100,
-        colors: ['#7cd6fd', '#743ee2']
-    })
-</script>
