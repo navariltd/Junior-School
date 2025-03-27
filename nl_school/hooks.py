@@ -20,7 +20,21 @@ app_license = "agpl-3.0"
 # 		"has_permission": "nl_school.api.permission.has_app_permission"
 # 	}
 # ]
-
+fixtures= [
+    {
+        "doctype":"Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",   
+                ("Student Attendance-custom_end_time",
+                 "Student Attendance-custom_start_time",
+                 "Student Attendance-custom_shift",
+                 )
+            ]
+        ]
+    }
+]
 # Includes in <head>
 # ------------------
 
