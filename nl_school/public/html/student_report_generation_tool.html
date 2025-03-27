@@ -57,6 +57,13 @@
     .teacher-comment {
         margin-top: 20px;
     }
+    .timestamp {
+        color: #555; /* Dark grey color */
+        font-size: 11px; /* Thin font size */
+        font-weight: normal;
+        text-align: right;
+        margin-left: auto; /* Push to right */
+    }
 </style>
 
 <div class="report-card">
@@ -190,4 +197,10 @@
     <div class="footer-image">
         <img src="/files/WhatsApp Image 2025-03-26 at 10.38.31.jpeg" alt="Footer Image" style="width: 150px;">
     </div>
+
+    <div class="timestamp">
+        Report generated on: {{ date }}
+    </div>
+
 </div>
+

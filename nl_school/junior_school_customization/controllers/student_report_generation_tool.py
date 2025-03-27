@@ -19,6 +19,9 @@ from education.education.report.course_wise_assessment_report.course_wise_assess
 	get_child_assessment_groups,
 	
 )
+from frappe.utils import now_datetime
+
+from frappe.utils import now
 
 class StudentReportGenerationTool(Document):
 	pass
@@ -69,7 +72,9 @@ def prepare_report_card_data(doc):
         "show_levels": True,
         "show_opener": exam_types_present["Opening Term Exam"],
         "show_midterm": exam_types_present["Mid Term Exam"], 
-        "show_endterm": exam_types_present["End Term Exam"]
+        "show_endterm": exam_types_present["End Term Exam"],
+        "date": now_datetime().strftime('%Y-%m-%d %H:%M:%S')
+
     }
 
 def generate_pdf_response(doc, template_data):
