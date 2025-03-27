@@ -1,11 +1,6 @@
 // Copyright (c) 2025, Navari and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Enhanced Student Attendance Tool", {
-// 	refresh(frm) {
-
-// 	},
-// });
 frappe.provide('education')
 
 frappe.ui.form.on("Enhanced Student Attendance Tool", {
@@ -168,7 +163,7 @@ education.StudentsEditor = class StudentsEditor {
             //ifyes
             if (!frappe.request.ajax_count) {
               frappe.call({
-                method: 'education.education.api.mark_attendance',
+                method: 'nl_school.apis.utils.mark_attendance',
                 freeze: true,
                 freeze_message: __('Marking attendance'),
                 args: {
@@ -177,6 +172,9 @@ education.StudentsEditor = class StudentsEditor {
                   student_group: frm.doc.student_group,
                   course_schedule: frm.doc.course_schedule,
                   date: frm.doc.date,
+                  shift: frm.doc.shift,
+                  start_time: frm.doc.start_time,
+                  end_time: frm.doc.end_time,
                 },
                 callback: function (r) {
                   $(me.wrapper.find('.btn-mark-att')).attr('disabled', false)

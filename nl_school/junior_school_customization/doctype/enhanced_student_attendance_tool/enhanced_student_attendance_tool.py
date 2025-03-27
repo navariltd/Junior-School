@@ -4,10 +4,8 @@
 import frappe
 from frappe.model.document import Document
 
-
 class EnhancedStudentAttendanceTool(Document):
 	pass
-
 
 @frappe.whitelist()
 def get_student_attendance_records(

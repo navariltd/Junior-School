@@ -95,7 +95,8 @@
    "fieldname": "shift",
    "fieldtype": "Link",
    "label": "Shift",
-   "options": "Shift Type"
+   "options": "Shift Type",
+   "reqd": 1
   },
   {
    "fetch_from": "shift.start_time",
@@ -111,9 +112,11 @@
   }
  ],
  "grid_page_length": 50,
+ "hide_toolbar": 1,
  "index_web_pages_for_search": 1,
+ "issingle": 1,
  "links": [],
- "modified": "2025-03-27 13:52:21.153650",
+ "modified": "2025-03-27 16:47:32.395636",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Student Attendance Tool",
@@ -123,10 +126,8 @@
    "create": 1,
    "delete": 1,
    "email": 1,
-   "export": 1,
    "print": 1,
    "read": 1,
-   "report": 1,
    "role": "System Manager",
    "share": 1,
    "write": 1
