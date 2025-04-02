@@ -67,7 +67,7 @@ def make_attendance_records(
 	)
 
 	if existing_attendance:
-		frappe.throw(_("Attendance record already exists for {0} on {1}.").format(student_name, date))
+		frappe.throw(_("Attendance record already exists for {0} on {1}, {2} shift").format(student_name, date, shift))
 		return False  # Prevent duplicate creation
 
 	# Create new attendance record
@@ -116,8 +116,11 @@ class ModifiedStudentAttendance(Document):
 		if attendance_record:
 			record = get_link_to_form("Student Attendance", attendance_record)
 			frappe.throw(
-				_("Student Attendance record {0} already exists against the Student {1}").format(
-					record, frappe.bold(self.student)
+				_("Student Attendance record {0} already exists against the Student {1} with shift {2}").format(
+					record, frappe.bold(self.student), frappe.bold(self.custom_shift)
 				),
 				title=_("Duplicate Entry"),
 			)
+
+def apply_student_attendance_override(doc, method):
+    doc.validate_duplication = ModifiedStudentAttendance.validate_duplication.__get__(doc, doc.__class__)
