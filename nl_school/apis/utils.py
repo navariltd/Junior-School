@@ -119,7 +119,7 @@ class ModifiedStudentAttendance(Document):
 				_("Student Attendance record {0} already exists against the Student {1} with shift {2}").format(
 					record, frappe.bold(self.student), frappe.bold(self.custom_shift)
 				),
-				title=_("Duplicate Entry"),
+				title=_("Duplicate Entry Test"),
 			)
 
 def apply_student_attendance_override(doc, method):
