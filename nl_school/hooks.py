@@ -149,9 +149,9 @@ doctype_js = {"Student Report Generation Tool" : "public/js/student_report_gener
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
-override_doctype_class = {
-    "Student Attendance": "nl_school.apis.utils.ModifiedStudentAttendance",
-}
+# override_doctype_class = {
+#     "Student Attendance": "nl_school.apis.utils.ModifiedStudentAttendance",
+# }
 
 # Document Events
 # ---------------
@@ -169,7 +169,7 @@ doc_events = {
         "on_submit": "nl_school.junior_school_customization.controllers.assessment_result.before_submit"
     },
     "Student Attendance": {
-        "before_save": "nl_school.apis.utils.apply_student_attendance_override"
+        "before_save": "nl_school.apis.utils.apply_student_attendance_override",
     }
 }
 # Scheduled Tasks
