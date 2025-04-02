@@ -149,6 +149,9 @@ doctype_js = {"Student Report Generation Tool" : "public/js/student_report_gener
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
 # }
+override_doctype_class = {
+    "Student Attendance": "nl_school.apis.utils.ModifiedStudentAttendance",
+}
 
 # Document Events
 # ---------------
@@ -198,6 +201,8 @@ doc_events = {
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "nl_school.event.get_events"
 # }
+
+
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
