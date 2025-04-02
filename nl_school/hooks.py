@@ -167,6 +167,9 @@ override_doctype_class = {
 doc_events = {
     "Assessment Result": {
         "on_submit": "nl_school.junior_school_customization.controllers.assessment_result.before_submit"
+    },
+    "Student Attendance": {
+        "before_save": "nl_school.apis.utils.apply_student_attendance_override"
     }
 }
 # Scheduled Tasks
