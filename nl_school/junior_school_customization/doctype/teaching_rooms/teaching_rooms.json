@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "subject",
+  "stream",
   "column_break_jqli",
   "room"
  ],
@@ -29,13 +30,21 @@
    "label": "Room",
    "options": "Room",
    "reqd": 1
+  },
+  {
+   "fieldname": "stream",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stream",
+   "options": "Student Group",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-01 10:56:28.015407",
+ "modified": "2025-04-03 11:53:11.017106",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Teaching Rooms",

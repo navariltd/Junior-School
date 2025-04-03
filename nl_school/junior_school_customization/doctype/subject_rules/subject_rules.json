@@ -10,7 +10,7 @@
   "max_time",
   "column_break_pdwq",
   "frequency_per_week",
-  "allow_double_session",
+  "allow_double",
   "double_lessons_per_week"
  ],
  "fields": [
@@ -42,24 +42,24 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fieldname": "allow_double_session",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "Allow Double Lesson?"
-  },
-  {
    "depends_on": "eval: doc.allow_double_lesson==1",
    "fieldname": "double_lessons_per_week",
    "fieldtype": "Int",
    "label": "Double Lesson Per Week"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_double",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Allow Double Lesson?"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-01 10:53:57.963763",
+ "modified": "2025-04-03 10:48:19.716238",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Subject Rules",
