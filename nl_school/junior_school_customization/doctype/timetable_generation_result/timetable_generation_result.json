@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:TGR-{YY}-{####}",
+ "creation": "2025-04-04 16:34:12.187386",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "status",
+  "academic_term",
+  "column_break_gbvw",
+  "posting_date",
+  "total_subjects",
+  "section_break_yvhm",
+  "scheduled_count",
+  "unscheduled_count",
+  "column_break_ijjv",
+  "saved_count",
+  "failed_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nComplete\nPartial\nFailed"
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "label": "Academic Term",
+   "options": "Academic Term"
+  },
+  {
+   "fieldname": "column_break_gbvw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "total_subjects",
+   "fieldtype": "Int",
+   "label": "Total Subjects"
+  },
+  {
+   "fieldname": "section_break_yvhm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "scheduled_count",
+   "fieldtype": "Int",
+   "label": "Scheduled Count"
+  },
+  {
+   "fieldname": "unscheduled_count",
+   "fieldtype": "Int",
+   "label": "Unscheduled Count"
+  },
+  {
+   "fieldname": "column_break_ijjv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "saved_count",
+   "fieldtype": "Int",
+   "label": "Saved Count"
+  },
+  {
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed Count"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-04 16:37:01.422414",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Timetable Generation Result",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
