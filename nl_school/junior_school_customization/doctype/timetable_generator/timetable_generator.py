@@ -148,7 +148,6 @@ def get_period_slots(timetable_doc):
     )
     if not time_slots:
         frappe.throw("No time slots defined in the Timetable Generator. Please add time slots.")
-    # frappe.throw("Time slots found: " + str(time_slots))
     for slot in time_slots:
         slots.append({
             "period": slot.period,
@@ -169,14 +168,12 @@ def load_configuration():
         if not term_start_date or not term_end_date or term_start_date >= term_end_date:
             frappe.throw("Invalid Academic Term dates")
         
-        # Fetching required data
         teacher_preferences = frappe.get_all("Teacher Preference", 
                                            fields=["teacher", "subject", "stream", "max_period_per_week", "max_period_per_day"])
         subject_rules = frappe.get_all("Subject Rules", 
                                      fields=["subject", "frequency_per_week", "allow_double", "max_time"])
         classrooms = frappe.get_all("Teaching Rooms", 
                                   fields=["subject", "room"])
-        # Get all available streams
         all_streams = frappe.get_all("Student Group", fields=["name"])
         
         # If no data is found, throw an error
@@ -193,7 +190,7 @@ def load_configuration():
             "classrooms": classrooms,
             "academic_term": timetable_doc.academic_term,
             "all_streams": all_streams,
-            "timetable_doc": timetable_doc  # Include the timetable doc for accessing time slots
+            "timetable_doc": timetable_doc
         }
     except Exception as e:
         frappe.log_error(f"Failed to load configuration: {str(e)}")
@@ -219,8 +216,7 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
             # If no specific teacher is assigned, find any teacher for this subject
             if not capable_teachers:
                 capable_teachers = [t for t in teacher_preferences if t["subject"] == subject_name]
-            
-            # Skip if no teacher available
+            # frappe.throw(str(capable_teachers))
             if not capable_teachers:
                 continue
                 
@@ -239,107 +235,17 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
     # Shuffle for better distribution but respect priority
     random.shuffle(scheduling_data)
     scheduling_data.sort(key=lambda x: -x["priority"])
-    
+    # frappe.throw(str(scheduling_data))
     return scheduling_data
 
-# def create_full_schedule(scheduling_data, teacher_prefs, classrooms, school_days, period_slots):
-#     """Create a complete schedule for all subjects across all streams."""
-#     temp_schedule = []
-#     scheduled_items = []
-#     unscheduled_items = []
-    
-#     # Track teacher workload
-#     teacher_workload = {t["teacher"]: {"total": 0, "daily": {}} for t in teacher_prefs}
-#     # Pre-compute available rooms by subject
-#     room_by_subject = {}
-#     for classroom in classrooms:
-#         if classroom["subject"] not in room_by_subject:
-#             room_by_subject[classroom["subject"]] = []
-#         room_by_subject[classroom["subject"]].append(classroom["room"])
-    
-#     # Default room if none specified
-#     default_room = "HTL-ROOM-2025-00016"
-#     # frappe.throw(f"All school days to process: {[day.strftime('%Y-%m-%d') for day in school_days]}")
-#     # For each day and period, try to schedule high-priority items first
-#     for day in school_days:
-#         day_str = day.strftime("%Y-%m-%d")
-#         # frappe.throw(str(day_str))
-#         # Initialize daily workload tracking
-#         for teacher in teacher_workload:
-#             teacher_workload[teacher]["daily"][day_str] = 0
-#         # frappe.throw(str(len(period_slots)))
-#         for period in period_slots:
-#             # Sort scheduling data by whether it's been tried today
-#             for item in scheduling_data:
-#                 if item["scheduled"]:
-#                     # frappe.throw(str(item))
-#                     continue
-                
-#                 subject = item["subject"]
-#                 stream = item["stream"]
-                
-#                 # Try each available teacher
-#                 for teacher_data in item["teachers"]:
-#                     teacher = teacher_data["teacher"]
-                    
-#                     # Check teacher workload limits
-#                     max_per_day = teacher_data.get("max_period_per_day") or 7
-#                     max_per_week = teacher_data.get("max_period_per_week") or 7
-#                     if teacher_workload[teacher]["daily"].get(day_str, 0) >= max_per_day:
-#                         frappe.throw(str(teacher_workload[teacher]["daily"]))
-#                         continue
-                        
-#                     if teacher_workload[teacher]["total"] >= max_per_week:
-#                         continue
-                    
-#                     # Select room
-#                     room = None
-#                     if subject in room_by_subject and room_by_subject[subject]:
-#                         room = random.choice(room_by_subject[subject])
-#                     else:
-#                         room = default_room
-                    
-#                     # Create potential schedule entry
-#                     schedule_entry = {
-#                         "doctype": "Course Schedule",
-#                         "instructor": teacher,
-#                         "student_group": stream,
-#                         "course": subject,
-#                         "from_time": period["from_time"],
-#                         "to_time": period["to_time"],
-#                         "schedule_date": day_str,
-#                         "room": room
-#                     }
-                   
-#                     from_time = convert_timedelta_to_time(period["from_time"])
-#                     to_time = convert_timedelta_to_time(period["to_time"])
-#                     if check_conflicts(day, from_time, to_time, teacher, room, stream):
-#                         # if check_temp_conflicts(schedule_entry, temp_schedule):
-#                             temp_schedule.append(schedule_entry)
-#                             item["scheduled"] = True
-#                             scheduled_items.append(item)
-#                             # Update teacher workload
-#                             teacher_workload[teacher]["total"] += 1
-#                             if day_str not in teacher_workload[teacher]["daily"]:
-#                                 teacher_workload[teacher]["daily"][day_str] = 0
-#                             teacher_workload[teacher]["daily"][day_str] += 1
-#                             break  # Move to next item
-#                 if item["scheduled"]:
-#                     continue  # Move to next item if this one was scheduled
-#     frappe.throw(str(len(scheduled_items)))
-#     unscheduled_items = [item for item in scheduling_data if not item["scheduled"]]
-#     # frappe.throw(str(scheduled_items))
-#     # Attempt to schedule any remaining items with more relaxed constraints
-#     return temp_schedule, scheduled_items, unscheduled_items
+  
 
 
 def create_full_schedule(scheduling_data, teacher_prefs, classrooms, school_days, period_slots):
-    # Initialize data structures
     temp_schedule = []
     scheduled_items = []
     unscheduled_items = []
     
-    # Track teacher workload
     teacher_workload = {t["teacher"]: {"total": 0, "daily": {}} for t in teacher_prefs}
     
     # Create a lookup for scheduled slots
@@ -353,9 +259,8 @@ def create_full_schedule(scheduling_data, teacher_prefs, classrooms, school_days
     
     default_room = "HTL-ROOM-2025-00016"
     
-    # Sort scheduling data by priority (subjects needing more sessions first)
     scheduling_data.sort(key=lambda x: -x.get("priority", 1))
-    
+    frappe.throw(str(scheduling_data))
     # First pass: Try to schedule all items without conflicts
     for day_index, day in enumerate(school_days):
         day_str = day.strftime("%Y-%m-%d")
@@ -378,9 +283,9 @@ def create_full_schedule(scheduling_data, teacher_prefs, classrooms, school_days
                     max_per_week = teacher_data.get("max_period_per_week", 35)
                     
                     # Check teacher availability
-                    # if (teacher_workload[teacher]["daily"][day_str] >= max_per_day or
-                    #     teacher_workload[teacher]["total"] >= max_per_week):
-                    #     continue
+                    if (teacher_workload[teacher]["daily"][day_str] >= max_per_day or
+                        teacher_workload[teacher]["total"] >= max_per_week):
+                        continue
                     
                     # Get available room
                     room = random.choice(room_by_subject.get(subject, [default_room]))
@@ -421,68 +326,71 @@ def create_full_schedule(scheduling_data, teacher_prefs, classrooms, school_days
                     teacher_workload[teacher]["total"] += 1
                     teacher_workload[teacher]["daily"][day_str] += 1
                     
-                    break  # Move to next item
-    
-    # Second pass: Try to schedule remaining items with relaxed constraints
-    for day_index, day in enumerate(school_days):
-        day_str = day.strftime("%Y-%m-%d")
-        
-        for period_index, period in enumerate(period_slots):
-            for item in scheduling_data:
-                if item.get("scheduled", False):
-                    continue
+                    break
                 
-                subject = item["subject"]
-                stream = item["stream"]
+    # frappe.throw(str(len(scheduled_items)))
+    # # Second pass: Try to schedule remaining items with relaxed constraints
+    # for day_index, day in enumerate(school_days):
+    #     day_str = day.strftime("%Y-%m-%d")
+
+    #     for period_index, period in enumerate(period_slots):
+    #         for item in scheduling_data:
+    #             if item.get("scheduled", False):
+    #                 # frappe.throw(str(item))
+    #                 continue
                 
-                for teacher_data in item["teachers"]:
-                    teacher = teacher_data["teacher"]
-                    max_per_week = teacher_data.get("max_period_per_week", 35)
+    #             subject = item["subject"]
+    #             stream = item["stream"]
+                
+    #             for teacher_data in item["teachers"]:
+    #                 teacher = teacher_data["teacher"]
+    #                 max_per_week = teacher_data.get("max_period_per_week", 35)
+    #                 # frappe.throw(str(teacher_data.get("max_period_per_week", 35)))
                     
-                    # Only check weekly limit in second pass
-                    # if teacher_workload[teacher]["total"] >= max_per_week:
-                    #     continue
-                    if teacher_workload[teacher]["total"] >= 35:
-                         continue
+    #                 # Only check weekly limit in second pass
+    #                 if teacher_workload[teacher]["total"] >= max_per_week:
+    #                     continue
+    #                 if teacher_workload[teacher]["total"] >= 35:
+    #                      continue
                     
-                    # Get available room
-                    room = random.choice(room_by_subject.get(subject, [default_room]))
+    #                 # Get available room
+    #                 room = random.choice(room_by_subject.get(subject, [default_room]))
                     
-                    # Create unique keys
-                    stream_key = f"stream:{stream}"
-                    teacher_key = f"teacher:{teacher}"
-                    room_key = f"room:{room}"
-                    
-                    # Only check teacher and room conflicts in second pass
-                    if ((day_str, period_index, teacher_key) in slot_lookup or
-                        (day_str, period_index, room_key) in slot_lookup):
-                        continue
+    #                 # Create unique keys
+    #                 stream_key = f"stream:{stream}"
+    #                 teacher_key = f"teacher:{teacher}"
+    #                 room_key = f"room:{room}"
+    #                 # frappe.throw(str(slot_lookup))
+    #                 # Only check teacher and room conflicts in second pass
+    #                 if ((day_str, period_index, teacher_key) in slot_lookup or
+    #                     (day_str, period_index, room_key) in slot_lookup):
+    #                     continue
                     
                    
-                    schedule_entry = {
-                        "doctype": "Course Schedule",
-                        "instructor": teacher,
-                        "student_group": stream,
-                        "course": subject,
-                        "from_time": period["from_time"],
-                        "to_time": period["to_time"],
-                        "schedule_date": day_str,
-                        "room": room
-                    }
+    #                 schedule_entry = {
+    #                     "doctype": "Course Schedule",
+    #                     "instructor": teacher,
+    #                     "student_group": stream,
+    #                     "course": subject,
+    #                     "from_time": period["from_time"],
+    #                     "to_time": period["to_time"],
+    #                     "schedule_date": day_str,
+    #                     "room": room
+    #                 }
+    #                 # frappe.throw(str(schedule_entry))
+    #                 temp_schedule.append(schedule_entry)
+    #                 item["scheduled"] = True
+    #                 scheduled_items.append(item)
                     
-                    temp_schedule.append(schedule_entry)
-                    item["scheduled"] = True
-                    scheduled_items.append(item)
+    #                 # Mark slots as used (except stream)
+    #                 slot_lookup[(day_str, period_index, teacher_key)] = True
+    #                 slot_lookup[(day_str, period_index, room_key)] = True
                     
-                    # Mark slots as used (except stream)
-                    slot_lookup[(day_str, period_index, teacher_key)] = True
-                    slot_lookup[(day_str, period_index, room_key)] = True
-                    
-                    # Update teacher workload
-                    teacher_workload[teacher]["total"] += 1
-                    teacher_workload[teacher]["daily"][day_str] += 1
-                    
-                    break  # Move to next item
+    #                 # Update teacher workload
+    #                 teacher_workload[teacher]["total"] += 1
+    #                 teacher_workload[teacher]["daily"][day_str] += 1
+    #                 # frappe.throw(str(teacher_workload[teacher]["daily"]))
+    #                 break  # Move to next item
     
     # frappe.throw(str(len(scheduled_items)))
     unscheduled_items = [item for item in scheduling_data if not item.get("scheduled", False)]
@@ -783,6 +691,8 @@ def generate_timetable():
     """Main function to generate a complete timetable for the week, now using background processing."""
     config = load_configuration()
     process_timetable_generation(config)
+    
+    #Uncomment when going to production
     # try:
     #     config = load_configuration()
         
