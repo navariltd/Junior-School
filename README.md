@@ -1,6 +1,6 @@
 ## Frappe Education Extension Customization
 
-## 📘 Education Module - `nl_school` Extension Documentation
+## 📘 Education Module - `Junior School` Extension Documentation
 
 This document outlines the enhancements and custom tools developed within the `Junior School Customization` module to better support scheduling, attendance tracking, and classroom management in schools.
 
@@ -8,7 +8,9 @@ This document outlines the enhancements and custom tools developed within the `J
 
 ### 1. 🗓️ School Timetable Page
 
-A new **School Timetable View** has been implemented using a calendar interface. The key features include:
+A new **School Timetable View** has been implemented using a calendar interface. Type `Timetable` in search bar and click on first suggestion `Open Timetable`.
+![Screenshot 2025-04-14 at 16 59 16](https://github.com/user-attachments/assets/f749a945-0457-4116-bb91-0cc266148b78)
+The key features include:
 
 -   **Calendar Display**: Weekly timetable view (Sun–Sat) showing subjects, teachers, and streams.
     
@@ -17,7 +19,7 @@ A new **School Timetable View** has been implemented using a calendar interface.
     -   **Levels**: e.g., Pre-primary, Primary
         
     -   **Teachers**: Filter to view specific teacher schedules
-        
+        ![Screenshot 2025-04-14 at 17 03 03](https://github.com/user-attachments/assets/1449cf44-3351-4e17-a3a5-43657a2cac28)
     -   **Streams**: Allows filtering based on class streams
         
 -   **Print Functionality**: Filter as required and print the timetable (e.g., per teacher or per stream).
@@ -29,27 +31,26 @@ A new **School Timetable View** has been implemented using a calendar interface.
 
 -   Users can click any scheduled session to view details in a modal pop-up.
     
--   The modal allows editing and submitting updates which reflect on the backend immediately.
+-   The modal allows editing and submitting updates, which reflect on the backend immediately.
     
+![Screenshot 2025-04-14 at 17 04 43](https://github.com/user-attachments/assets/b210900a-3151-4309-8245-abb1f41725a7)
 
 ----------
 
 ### 2. ⚙️ Auto-Generation of Timetable (Like aSc TimeTables)
 
 To streamline scheduling, an automated timetable generator has been introduced using a **Single Doctype**: `Timetable Generator`.
-
+![Screenshot 2025-04-14 at 17 05 50](https://github.com/user-attachments/assets/3f8c5b49-30dd-4ae9-a449-827b3003e6cc)
 #### Structure:
 
 -   **Main Fields**:
     
     -   `Academic Year`
-        
     -   `Academic Term`
     -  `Default Time Slots`
     -  `Lesson Starts`
     -  `Lesson Ends`
         
-
 #### Child Tables:
 
 **a) Subject Rules**  
@@ -70,7 +71,7 @@ Defines subject-level constraints:
 
 -   **Time Slots Table**: Define periods (e.g., period 1, 2...) with start/end times and durations.
     
--   **Breaks Table**: Define breaks like breakfast, lunch, etc.,. The user must have created this in the `Breaks` doctypes, because it auto-populates the start and end time from teh choosen break.
+-   **Breaks Table**: Define breaks like breakfast, lunch, etc.. The user must have created this in the `Breaks` doctypes, because it auto-populates the start and end time from the chosen break.
     
 
 **c) Teachers Tab**  
@@ -100,7 +101,7 @@ In the `Teaching Rooms` child table:
     
 3.  The process is queued for backend scheduling due to time complexity.
     
-4.  System manages duplicate and failed schedules with internal retry/rescheduling mechanisms.
+4.  The system manages duplicate and failed schedules with internal retry/rescheduling mechanisms.
     
 
 **🛠️ Status**:
@@ -120,7 +121,7 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
 
 -   New Doctype: `Enhanced Student Attendance Tool`
     
-    -   Based on `Student Attendance` with additional fields:
+    -   Based on `Student Attendance Tool` with additional fields:
         
         -   `Shift` (Linked to HR shift types)
             
@@ -142,7 +143,7 @@ Override logic functions well locally but doesn’t apply correctly in productio
 
 ----------
 
-### 4. 🗂️ Subject Scheduling Tool (Improved Course Scheduling)
+### 4. 🗂️ Subject Scheduling Tool (Improved Course Scheduling Tool)
 
 Creating course schedules with consistent time across days was limiting. To address this:
 
@@ -160,10 +161,11 @@ Creating course schedules with consistent time across days was limiting. To addr
                 
             -   Wednesday: 10:00–11:00 AM
                 
-        -   Checkbox `Reschedule` for easier updates.
+        -   Checkbox `Reschedule` for when you are rescheduling an already scheduled subject.
             
 
 This tool improves flexibility and real-world scheduling accuracy.
+![Screenshot 2025-04-14 at 17 24 10](https://github.com/user-attachments/assets/662e0fa8-b0a8-43f7-889a-1fe115fd01ad)
 
 ----------
 ## ✅ Summary
