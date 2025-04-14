@@ -53,37 +53,50 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="edit-schedule-form">
-                            <input type="hidden" id="edit-schedule-id">
-                            <div class="form-group">
+                      <form id="edit-schedule-form">
+                        <input type="hidden" id="edit-schedule-id">
+                        
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="edit-course">Course</label>
                                 <input type="text" class="form-control" id="edit-course">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-6">
                                 <label for="edit-instructor">Instructor</label>
                                 <select class="form-control" id="edit-instructor"></select>
                             </div>
-                            <div class="form-group">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="edit-student-group">Student Group</label>
                                 <select class="form-control" id="edit-student-group"></select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-6">
                                 <label for="edit-room">Room</label>
                                 <select class="form-control" id="edit-room"></select>
                             </div>
-                            <div class="form-group">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="edit-date">Date</label>
                                 <input type="date" class="form-control" id="edit-date">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-md-6">
                                 <label for="edit-from-time">From Time</label>
                                 <input type="time" class="form-control" id="edit-from-time">
                             </div>
-                            <div class="form-group">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label for="edit-to-time">To Time</label>
                                 <input type="time" class="form-control" id="edit-to-time">
                             </div>
-                        </form>
+                        </div>
+                    </form>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
