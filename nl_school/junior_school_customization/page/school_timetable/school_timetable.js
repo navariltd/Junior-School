@@ -429,7 +429,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                             </div>
                             <div class="form-group">
                                 <label for="edit-room">Room</label>
-                                <input type="text" class="form-control" id="edit-room">
+                                <select class="form-control" id="edit-room"></select>
                             </div>
                             <div class="form-group">
                                 <label for="edit-date">Date</label>
@@ -510,6 +510,18 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
             });
         }
     });
+
+    frappe.call({
+        method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_rooms",
+        callback: function(response){
+            allRooms = response.message;
+            console.log("Rooms: " + allRooms);
+            let allRoomsDropdown = $("#edit-room");
+            response.message.forEach(room => {
+                allRoomsDropdown.append(`<option value="${room.value}">${room.label}</option>`);
+            });
+        }
+    })
 
     function render_calendar(filter_by = null, filter_value = "") {
         let calendarEl = document.getElementById('calendar');

@@ -99,3 +99,9 @@ def get_streams():
     """Fetch all streams."""
     streams = frappe.get_all("Student Group", fields=["name", "program"])
     return [{"value": s.name, "label": s.program} for s in streams]
+
+@frappe.whitelist()
+def get_rooms():
+    """Fetch all rooms."""
+    rooms = frappe.get_all("Room", fields=["name", "room_name"])
+    return [{"value": r.name, "label": r.room_name} for r in rooms]
