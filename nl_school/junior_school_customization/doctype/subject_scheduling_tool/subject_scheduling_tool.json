@@ -18,8 +18,6 @@
   "column_break_9",
   "room",
   "class_schedule_color",
-  "section_break_7",
-  "days_html",
   "section_break_14",
   "course_start_date",
   "column_break_15",
@@ -108,15 +106,6 @@
    "options": "blue\ngreen\nred\norange\nyellow\nteal\nviolet\ncyan\namber\npink\npurple"
   },
   {
-   "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "days_html",
-   "fieldtype": "HTML",
-   "label": "Days HTML"
-  },
-  {
    "fieldname": "section_break_14",
    "fieldtype": "Section Break"
   },
@@ -153,10 +142,11 @@
    "options": "Subject Time"
   }
  ],
+ "grid_page_length": 50,
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-07 07:46:51.270268",
+ "modified": "2025-04-14 17:12:40.283346",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Subject Scheduling Tool",
