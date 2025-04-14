@@ -188,6 +188,115 @@ document.head.appendChild(customStyles);
         generatePrintableTimetable(selectedFilter, selectedValue);
     });
 
+    // function generatePrintableTimetable(filter_type, filter_value) {
+    //     frappe.call({
+    //         method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
+    //         args: { [filter_type]: filter_value },
+    //         callback: function(response) {
+    //             let schedules = response.message;
+        
+    //             let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+    //             // Pre-Primary time slots
+    //             let prePrimaryTimeSlots = [
+    //                 { start: "7:40 AM", end: "8:15 AM", label: "Breakfast" }, 
+    //                 { start: "8:15 AM", end: "9:00 AM" }, 
+    //                 { start: "9:00 AM", end: "9:45 AM" }, 
+    //                 { start: "9:45 AM", end: "10:30 AM", label: "First Break" },
+    //                 { start: "10:30 AM", end: "11:15 AM" }, 
+    //                 { start: "11:15 AM", end: "11:30 AM" }, 
+    //                 { start: "11:30 AM", end: "11:45 AM", label: "Second Break" },
+    //                 { start: "11:45 AM", end: "12:30 PM" },
+    //                 { start: "12:30 PM", end: "1:20 PM", label: "Lunch" },
+    //                 { start: "1:20 PM", end: "2:15 PM" }, 
+    //                 { start: "2:15 PM", end: "3:00 PM" }
+    //             ];
+
+    //             // Primary time slots
+    //             let primaryTimeSlots = [
+    //                 { start: "6:45 AM", end: "7:40 AM" },
+    //                 { start: "7:40 AM", end: "8:10 AM", label: "Breakfast" },
+    //                 { start: "8:10 AM", end: "8:55 AM" },
+    //                 { start: "8:55 AM", end: "9:40 AM" },
+    //                 { start: "9:40 AM", end: "9:50 AM", label: "First Break" },
+    //                 { start: "9:50 AM", end: "10:35 AM" },
+    //                 { start: "10:35 AM", end: "11:20 AM" },
+    //                 { start: "11:20 AM", end: "11:30 AM", label: "Second Break" },
+    //                 { start: "11:30 AM", end: "12:15 PM" },
+    //                 { start: "12:15 PM", end: "1:00 PM" },
+    //                 { start: "1:00 PM", end: "1:45 PM", label: "Lunch" },
+    //                 { start: "1:45 PM", end: "1:55 PM" },
+    //                 { start: "1:55 PM", end: "2:40 PM" },
+    //                 { start: "2:40 PM", end: "3:25 PM" },
+    //                 { start: "3:25 PM", end: "4:10 PM" }
+    //             ];
+                
+    //             // Select the appropriate time slots based on the selected level
+    //             let timeSlots = selectedLevel === "pre-primary" ? prePrimaryTimeSlots : primaryTimeSlots;
+    
+    //             let showInstructor = filter_type === "stream";
+                
+    //             let title = filter_value ? `${filter_value} Timetable` : "School Timetable";
+    //             if (selectedLevel) {
+    //                 title = `${selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1)} School ${title}`;
+    //             }
+    
+    //             let tableHTML = `
+    //             <h3 class="text-center">${title}</h3>
+    //             <div style="display: flex; justify-content: center; overflow-x: auto;">
+    //                 <table class="table table-bordered" style="table-layout: fixed; width: auto; margin: auto;">
+    //                     <thead>
+    //                         <tr>
+    //                             <th style="width: 100px; text-align: center;">Day</th>
+    //                             ${timeSlots.map(slot => `
+    //                                 <th style="width: 150px; min-height: 80px; text-align: center; vertical-align: middle; font-size: 12px; font-weight: normal;">
+    //                                     ${slot.label ? `${removeAMPM(slot.start)} - ${removeAMPM(slot.end)}<br>(${slot.label})` : `${slot.start} - ${slot.end}`}
+    //                                 </th>`).join('')}
+    //                         </tr>
+    //                     </thead>
+    //                     <tbody>
+    //             `;
+            
+    //             weekdays.forEach(day => {
+    //                 tableHTML += `<tr><td>${day}</td>`;
+    
+    //                 timeSlots.forEach(slot => {
+    //                     // Check if this slot is a predefined break or meal time
+    //                     if (slot.label) {
+    //                         tableHTML += `<td class="text-center" style="background-color: #f8d7da; font-size: 12px;">${slot.label}</td>`;
+    //                         return;
+    //                     }
+
+    //                     let matchedSchedule = schedules.find(schedule => {
+    //                         let scheduleDay = new Date(schedule.schedule_date).toLocaleDateString('en-US', { weekday: 'long' }).trim();
+    //                         let scheduleTime = convertTo12HourFormat(schedule.from_time);
+    
+    //                         return scheduleDay === day && scheduleTime === slot.start;
+    //                     });
+    
+    //                     if (matchedSchedule) {
+    //                         let displayText = showInstructor 
+    //                             ? `${matchedSchedule.course} - <span style="color: blue;">${matchedSchedule.instructor}</span>`
+    //                             : matchedSchedule.course;
+                        
+    //                         tableHTML += `<td>${displayText}</td>`;
+    //                     } else {
+    //                         tableHTML += `<td></td>`;
+    //                     }
+    //                 });
+    
+    //                 tableHTML += `</tr>`;
+    //             });
+    
+    //             tableHTML += `</tbody></table></div>`;
+    
+    //             let printableDiv = document.getElementById('printable-timetable');
+    //             printableDiv.innerHTML = tableHTML;
+    //             printableDiv.classList.remove('d-none');
+    //             printTimetable();
+    //         }
+    //     });
+    // }
     function generatePrintableTimetable(filter_type, filter_value) {
         frappe.call({
             method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
@@ -196,7 +305,7 @@ document.head.appendChild(customStyles);
                 let schedules = response.message;
         
                 let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
+    
                 // Pre-Primary time slots
                 let prePrimaryTimeSlots = [
                     { start: "7:40 AM", end: "8:15 AM", label: "Breakfast" }, 
@@ -211,7 +320,7 @@ document.head.appendChild(customStyles);
                     { start: "1:20 PM", end: "2:15 PM" }, 
                     { start: "2:15 PM", end: "3:00 PM" }
                 ];
-
+    
                 // Primary time slots
                 let primaryTimeSlots = [
                     { start: "6:45 AM", end: "7:40 AM" },
@@ -234,7 +343,9 @@ document.head.appendChild(customStyles);
                 // Select the appropriate time slots based on the selected level
                 let timeSlots = selectedLevel === "pre-primary" ? prePrimaryTimeSlots : primaryTimeSlots;
     
+                // Determine display based on filter type
                 let showInstructor = filter_type === "stream";
+                let showStudentGroup = filter_type === "instructor";
                 
                 let title = filter_value ? `${filter_value} Timetable` : "School Timetable";
                 if (selectedLevel) {
@@ -266,7 +377,7 @@ document.head.appendChild(customStyles);
                             tableHTML += `<td class="text-center" style="background-color: #f8d7da; font-size: 12px;">${slot.label}</td>`;
                             return;
                         }
-
+    
                         let matchedSchedule = schedules.find(schedule => {
                             let scheduleDay = new Date(schedule.schedule_date).toLocaleDateString('en-US', { weekday: 'long' }).trim();
                             let scheduleTime = convertTo12HourFormat(schedule.from_time);
@@ -275,9 +386,15 @@ document.head.appendChild(customStyles);
                         });
     
                         if (matchedSchedule) {
-                            let displayText = showInstructor 
-                                ? `${matchedSchedule.course} - <span style="color: blue;">${matchedSchedule.instructor}</span>`
-                                : matchedSchedule.course;
+                            let displayText = "";
+                            
+                            if (showInstructor) {
+                                displayText = `${matchedSchedule.course} - <span style="color: blue;">${matchedSchedule.instructor}</span>`;
+                            } else if (showStudentGroup) {
+                                displayText = `${matchedSchedule.course} - <span style="color: green;">${matchedSchedule.student_group}</span>`;
+                            } else {
+                                displayText = matchedSchedule.course;
+                            }
                         
                             tableHTML += `<td>${displayText}</td>`;
                         } else {
