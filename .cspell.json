@@ -529,6 +529,7 @@
 		"resizer",
 		"Metas",
 		"Featureful",
-		"unpromisify"
+		"unpromisify",
+		"misbehaviors"
 	]
 }
