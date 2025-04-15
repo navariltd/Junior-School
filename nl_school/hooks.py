@@ -20,19 +20,20 @@ app_license = "agpl-3.0"
 # 		"has_permission": "nl_school.api.permission.has_app_permission"
 # 	}
 # ]
-fixtures= [
+fixtures = [
     {
-        "doctype":"Custom Field",
+        "doctype": "Custom Field",
         "filters": [
             [
                 "name",
-                "in",   
-                ("Student Attendance-custom_end_time",
-                 "Student Attendance-custom_start_time",
-                 "Student Attendance-custom_shift",
-                 )
+                "in",
+                (
+                    "Student Attendance-custom_end_time",
+                    "Student Attendance-custom_start_time",
+                    "Student Attendance-custom_shift",
+                ),
             ]
-        ]
+        ],
     }
 ]
 # Includes in <head>
@@ -60,7 +61,9 @@ fixtures= [
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Student Report Generation Tool" : "public/js/student_report_generation_tool.js"}
+doctype_js = {
+    "Student Report Generation Tool": "public/js/student_report_generation_tool.js"
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -272,4 +275,3 @@ doc_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
