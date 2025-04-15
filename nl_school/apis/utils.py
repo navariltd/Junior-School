@@ -160,9 +160,3 @@ class ModifiedStudentAttendance(Document):
                 ),
                 title=_("Duplicate Entry Test"),
             )
-
-
-def apply_student_attendance_override(doc, method):
-    doc.validate_duplication = ModifiedStudentAttendance.validate_duplication.__get__(
-        doc, doc.__class__
-    )
