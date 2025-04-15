@@ -18,7 +18,7 @@ frappe.ui.form.on("Student Report Generation Tool", {
   },
 
   refresh: function (frm) {
-    frm.add_custom_button(__("Print Report Card"), () => {
+    frm.add_custom_button(__("Custom Print Report Card"), () => {
       let doc = frm.doc;
 
       if (

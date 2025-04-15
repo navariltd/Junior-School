@@ -167,6 +167,25 @@ Creating course schedules with consistent time across days was limiting. To addr
 This tool improves flexibility and real-world scheduling accuracy.
 ![Screenshot 2025-04-14 at 17 24 10](https://github.com/user-attachments/assets/662e0fa8-b0a8-43f7-889a-1fe115fd01ad)
 
+### 5. 🧾 Student Report Generation Tool – **Custom Print Report Card**
+
+A new feature has been added to the `Student Report Generation Tool` to support customizable report card printing.
+
+-   **Field Added**: `Custom Print Report Card` (Checkbox)
+    
+    -   When checked, the system prints a report card using a **custom template**, designed to align with the institution's branding and reporting preferences.
+        
+    -   This template reflects the **layout and styling** shown in the sample below:
+        
+       
+        
+-   **Group Filter Removed**:  
+    To enhance flexibility during events like half-term breaks, the **group filter** was removed. This enables users to:
+    
+    -   Generate report cards for **any assessment group**.
+        
+    -   Allow students to take their report cards home during half-term or early departures without restriction.
+
 ----------
 ## ✅ Summary
 
