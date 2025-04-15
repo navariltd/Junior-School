@@ -105,3 +105,36 @@ def get_rooms():
     """Fetch all rooms."""
     rooms = frappe.get_all("Room", fields=["name", "room_name"])
     return [{"value": r.name, "label": r.room_name} for r in rooms]
+
+
+@frappe.whitelist()
+def create_course_schedule(course, instructor, student_group, room=None, schedule_date=None, from_time=None, to_time=None):
+    """Create a new course schedule."""
+    try:
+        # Validate required fields
+        if not course or not instructor or not student_group or not schedule_date or not from_time or not to_time:
+            return "error"
+        
+        # Create a new document
+        doc = frappe.new_doc("Course Schedule")
+        doc.course = course
+        doc.instructor = instructor
+        doc.student_group = student_group
+        doc.schedule_date = schedule_date
+        doc.from_time = from_time
+        doc.to_time = to_time
+        
+        if room:
+            doc.room = room
+            
+        # For example, you could get program from student_group
+        student_group_doc = frappe.get_doc("Student Group", student_group)
+        if student_group_doc and student_group_doc.program:
+            doc.program = student_group_doc.program
+            
+        doc.insert()
+        frappe.db.commit()
+        return doc.name
+    except Exception as e:
+        frappe.log_error(f"Failed to create course schedule: {str(e)}")
+        return "error"

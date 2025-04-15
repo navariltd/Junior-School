@@ -1,4 +1,3 @@
-
 frappe.pages['school-timetable'].on_page_load = function(wrapper) {
     var page = frappe.ui.make_app_page({
         parent: wrapper,
@@ -42,19 +41,19 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         <div id="calendar"></div>
         <div id="printable-timetable" class="d-none"></div>
         
-        <!-- Edit Schedule Modal -->
-        <div class="modal fade" id="editScheduleModal" tabindex="-1" role="dialog" aria-labelledby="editScheduleModalLabel" aria-hidden="true">
+        <!-- Edit/Create Schedule Modal -->
+        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="scheduleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editScheduleModalLabel">Edit Schedule</h5>
+                        <h5 class="modal-title" id="scheduleModalLabel">Schedule</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                      <form id="edit-schedule-form">
-                        <input type="hidden" id="edit-schedule-id">
+                      <form id="schedule-form">
+                        <input type="hidden" id="schedule-id">
                         
                         <div class="form-row">
                             <div class="form-group col-md-6">
@@ -100,7 +99,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="save-schedule-changes">Save changes</button>
+                        <button type="button" class="btn btn-primary" id="save-schedule">Save</button>
                     </div>
                 </div>
             </div>
@@ -124,6 +123,8 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
     let selectedLevel = "";
     let allTeachers = [];
     let allStreams = [];
+    let allRooms = [];
+    let isNewSchedule = false;
 
     let customStyles = document.createElement('style');
     customStyles.innerHTML = `
@@ -168,13 +169,12 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_rooms",
         callback: function(response){
             allRooms = response.message;
-            console.log("Rooms: " + allRooms);
             let allRoomsDropdown = $("#edit-room");
             response.message.forEach(room => {
                 allRoomsDropdown.append(`<option value="${room.value}">${room.label}</option>`);
             });
         }
-    })
+    });
 
     function render_calendar(filter_by = null, filter_value = "") {
         let calendarEl = document.getElementById('calendar');
@@ -195,17 +195,17 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
             slotMaxTime: "18:00:00",
             allDaySlot: false,
             nowIndicator: true,
-            editable: true, // Make events editable
+            editable: true,
             eventClick: function(info) {
-                // Open modal for editing
                 openEditModal(info.event.id);
             },
+            dateClick: function(info) {
+                openCreateModal(info.date);
+            },
             eventDrop: function(info) {
-                // Handle event drag and drop
                 updateEventTime(info.event);
             },
             eventResize: function(info) {
-                // Handle event resizing
                 updateEventTime(info.event);
             },
             events: function(fetchInfo, successCallback, failureCallback) {
@@ -245,19 +245,20 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         calendar.render();
     }
 
-    // Open edit modal and populate with event data
     function openEditModal(scheduleId) {
+        isNewSchedule = false;
+        
+        $("#scheduleModalLabel").text("Edit Schedule");
+        
         frappe.call({
             method: "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule_details",
             args: { schedule_name: scheduleId },
             callback: function(response) {
                 const schedule = response.message;
                 if (schedule) {
-                    // Format date for date input (YYYY-MM-DD)
                     const formattedDate = schedule.schedule_date;
                     
-                    // Populate form fields
-                    $("#edit-schedule-id").val(schedule.name);
+                    $("#schedule-id").val(schedule.name);
                     $("#edit-course").val(schedule.course);
                     $("#edit-instructor").val(schedule.instructor);
                     $("#edit-student-group").val(schedule.student_group);
@@ -266,13 +267,41 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     $("#edit-from-time").val(schedule.from_time);
                     $("#edit-to-time").val(schedule.to_time);
                     
-                    // Show the modal
-                    $("#editScheduleModal").modal("show");
+                    $("#scheduleModal").modal("show");
                 } else {
                     frappe.throw(__("Failed to retrieve schedule details"));
                 }
             }
         });
+    }
+    
+    function openCreateModal(date) {
+        isNewSchedule = true;
+        
+        $("#scheduleModalLabel").text("Create New Schedule");
+        
+        const formattedDate = date.toISOString().split('T')[0];
+        
+        let hours = date.getHours().toString().padStart(2, '0');
+        let minutes = date.getMinutes().toString().padStart(2, '0');
+        const clickTime = `${hours}:${minutes}`;
+        
+        const endDate = new Date(date);
+        endDate.setMinutes(endDate.getMinutes() + 45);
+        let endHours = endDate.getHours().toString().padStart(2, '0');
+        let endMinutes = endDate.getMinutes().toString().padStart(2, '0');
+        const endTime = `${endHours}:${endMinutes}`;
+        
+        $("#schedule-id").val('');  
+        $("#edit-course").val('');
+        $("#edit-instructor").val('');
+        $("#edit-student-group").val('');
+        $("#edit-room").val('');
+        $("#edit-date").val(formattedDate);
+        $("#edit-from-time").val(`${clickTime}:00`);
+        $("#edit-to-time").val(`${endTime}:00`);
+        
+        $("#scheduleModal").modal("show");
     }
 
     // Update event time after drag/resize
@@ -300,16 +329,15 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                         message: __("Failed to update schedule"),
                         indicator: 'red'
                     }, 3);
-                    // Revert the change in the calendar
                     calendar.refetchEvents();
                 }
             }
         });
     }
 
-    // Save schedule changes
-    $("#save-schedule-changes").on("click", function() {
-        const scheduleId = $("#edit-schedule-id").val();
+    // Save schedule changes or create new
+    $("#save-schedule").on("click", function() {
+        const scheduleId = $("#schedule-id").val();
         const course = $("#edit-course").val();
         const instructor = $("#edit-instructor").val();
         const studentGroup = $("#edit-student-group").val();
@@ -318,38 +346,76 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         const fromTime = $("#edit-from-time").val();
         const toTime = $("#edit-to-time").val();
         
-        frappe.call({
-            method: "nl_school.junior_school_customization.page.school_timetable.timetable.update_course_schedule_details",
-            args: {
-                schedule_name: scheduleId,
-                course: course,
-                instructor: instructor,
-                student_group: studentGroup,
-                room: room,
-                schedule_date: scheduleDate,
-                from_time: fromTime,
-                to_time: toTime
-            },
-            callback: function(response) {
-                if (response.message === "success") {
-                    $("#editScheduleModal").modal("hide");
-                    frappe.show_alert({
-                        message: __("Schedule updated successfully"),
-                        indicator: 'green'
-                    }, 3);
-                    // Refresh calendar events
-                    calendar.refetchEvents();
-                } else {
-                    frappe.show_alert({
-                        message: __("Failed to update schedule"),
-                        indicator: 'red'
-                    }, 3);
+        // Validate form
+        if (!course || !instructor || !studentGroup || !scheduleDate || !fromTime || !toTime) {
+            frappe.msgprint(__("Please fill in all required fields"));
+            return;
+        }
+        
+        if (isNewSchedule) {
+            // Create new schedule
+            frappe.call({
+                method: "nl_school.junior_school_customization.page.school_timetable.timetable.create_course_schedule",
+                args: {
+                    course: course,
+                    instructor: instructor,
+                    student_group: studentGroup,
+                    room: room,
+                    schedule_date: scheduleDate,
+                    from_time: fromTime,
+                    to_time: toTime
+                },
+                callback: function(response) {
+                    if (response.message && response.message !== "error") {
+                        $("#scheduleModal").modal("hide");
+                        frappe.show_alert({
+                            message: __("Schedule created successfully"),
+                            indicator: 'green'
+                        }, 3);
+                        // Refresh calendar events
+                        calendar.refetchEvents();
+                    } else {
+                        frappe.show_alert({
+                            message: __("Failed to create schedule"),
+                            indicator: 'red'
+                        }, 3);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // Update existing schedule
+            frappe.call({
+                method: "nl_school.junior_school_customization.page.school_timetable.timetable.update_course_schedule_details",
+                args: {
+                    schedule_name: scheduleId,
+                    course: course,
+                    instructor: instructor,
+                    student_group: studentGroup,
+                    room: room,
+                    schedule_date: scheduleDate,
+                    from_time: fromTime,
+                    to_time: toTime
+                },
+                callback: function(response) {
+                    if (response.message === "success") {
+                        $("#scheduleModal").modal("hide");
+                        frappe.show_alert({
+                            message: __("Schedule updated successfully"),
+                            indicator: 'green'
+                        }, 3);
+                        // Refresh calendar events
+                        calendar.refetchEvents();
+                    } else {
+                        frappe.show_alert({
+                            message: __("Failed to update schedule"),
+                            indicator: 'red'
+                        }, 3);
+                    }
+                }
+            });
+        }
     });
 
-    // Reset button
     $("#btn-reset").on("click", function() {
         $("#level-dropdown").val("");
         $("#teacher-dropdown").val("");
@@ -360,18 +426,15 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         render_calendar();
     });
 
-    // Event listener for level dropdown
     $("#level-dropdown").on("change", function() {
         selectedLevel = $(this).val();
     });
 
-    // Event listener for teacher dropdown
     $("#teacher-dropdown").on("change", function() {
         let selectedTeacher = $(this).val();
         if (selectedTeacher) {
             selectedFilter = "instructor";
             selectedValue = selectedTeacher;
-            // Reset stream dropdown to avoid conflicting filters
             $("#stream-dropdown").val("");
         } else {
             selectedFilter = null;
@@ -380,13 +443,11 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         render_calendar(selectedFilter, selectedValue);
     });
 
-    // Event listener for stream dropdown
     $("#stream-dropdown").on("change", function() {
         let selectedStream = $(this).val();
         if (selectedStream) {
             selectedFilter = "stream";
             selectedValue = selectedStream;
-            // Reset teacher dropdown to avoid conflicting filters
             $("#teacher-dropdown").val("");
         } else {
             selectedFilter = null;
@@ -423,7 +484,6 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     { start: "2:15 PM", end: "3:00 PM" }
                 ];
     
-                // Primary time slots
                 let primaryTimeSlots = [
                     { start: "6:45 AM", end: "7:40 AM" },
                     { start: "7:40 AM", end: "8:10 AM", label: "Breakfast" },
@@ -442,10 +502,8 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
                     { start: "3:25 PM", end: "4:10 PM" }
                 ];
                 
-                // Select the appropriate time slots based on the selected level
                 let timeSlots = selectedLevel === "pre-primary" ? prePrimaryTimeSlots : primaryTimeSlots;
     
-                // Determine display based on filter type
                 let showInstructor = filter_type === "stream";
                 let showStudentGroup = filter_type === "instructor";
                 
@@ -519,7 +577,7 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
 
     // Function to remove AM/PM from time labels
     function removeAMPM(timeString) {
-        return timeString.replace(/\s?(AM|PM)/g, ""); // Removes AM or PM
+        return timeString.replace(/\s?(AM|PM)/g, ""); 
     }
 
     // Function to convert time to 12-hour format
@@ -568,4 +626,3 @@ frappe.pages['school-timetable'].on_page_load = function(wrapper) {
         newWindow.print();
     }
 }
-
