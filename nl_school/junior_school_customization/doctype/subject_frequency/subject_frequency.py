@@ -6,4 +6,4 @@ from frappe.model.document import Document
 
 
 class SubjectFrequency(Document):
-	pass
+    pass
