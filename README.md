@@ -139,7 +139,7 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
             
 
 **🚧 Issue**:  
-Override logic functions well locally but doesn’t apply correctly in production. Still under investigation.
+Still under test in production to ensure consistency of teh override.
 
 ----------
 
@@ -174,6 +174,6 @@ This tool improves flexibility and real-world scheduling accuracy.
 |---------------------------|------------------|------------------------------------------------------------|
 | Timetable Calendar Page   | ✅ Completed     | Interactive and printable with filters                     |
 | Auto Timetable Generator  | 🛠️ In Progress   | Handles rules, breaks, and teacher limits                  |
-| Enhanced Attendance       | 🛠️ In Progress   | Shift-based validation works locally; prod override issue  |
+| Enhanced Attendance       | ✅ Completed  | Shift-based validation works locally; prod inconsistency(still testing)  |
 | Subject Scheduling Tool   | ✅ Completed     | Supports flexible per-day time allocations                 |
 
