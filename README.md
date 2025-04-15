@@ -33,8 +33,9 @@ The key features include:
     
 -   The modal allows editing and submitting updates, which reflect on the backend immediately.
     
-![Screenshot 2025-04-14 at 17 04 43](https://github.com/user-attachments/assets/b210900a-3151-4309-8245-abb1f41725a7)
+![Screenshot 2025-04-15 at 17 28 08](https://github.com/user-attachments/assets/a3135465-3e6c-4d56-ab64-a8bd81847b9f)
 
+- The user can also click in a space and schedule a class.
 ----------
 
 ### 2. ⚙️ Auto-Generation of Timetable (Like aSc TimeTables)
@@ -177,7 +178,8 @@ A new feature has been added to the `Student Report Generation Tool` to support 
         
     -   This template reflects the **layout and styling** shown in the sample below:
         
-       
+    ![Screenshot 2025-04-15 at 17 24 06](https://github.com/user-attachments/assets/4ba16785-accd-453b-8369-0f4f5a007a52)
+   
         
 -   **Group Filter Removed**:  
     To enhance flexibility during events like half-term breaks, the **group filter** was removed. This enables users to:
