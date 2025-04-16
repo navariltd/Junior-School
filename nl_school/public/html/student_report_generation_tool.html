@@ -7,6 +7,7 @@
         margin: 0 auto;
         padding: 20px;
         border: 1px solid #ccc;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='100px' width='100px'><text transform='translate(20, 100) rotate(-45)' fill='rgba(0, 123, 167,0.2)' font-size='20' opacity='0.7'>Shofco</text></svg>");
     }
     .header-table {
         width: 100%;
@@ -58,17 +59,15 @@
         margin-top: 20px;
     }
     .timestamp {
-        color: #555; /* Dark grey color */
-        font-size: 11px; /* Thin font size */
+        color: #555;
+        font-size: 11px;
         font-weight: normal;
         text-align: right;
-        margin-left: auto; /* Push to right */
+        margin-left: auto;
     }
 </style>
 
 <div class="report-card">
-
-
     <!-- Header and Image in a Table -->
     <table class="header-table">
         <tr>
@@ -195,8 +194,11 @@
 
     </div>
     <div class="footer-image">
-        <img src="/files/WhatsApp Image 2025-03-26 at 10.38.31.jpeg" alt="Footer Image" style="width: 150px;">
-    </div>
+
+<div class="letterhead-footer">
+    {% set letterhead = frappe.get_doc("Letter Head", "Default") %}
+    {{ letterhead.footer or letterhead.content }}
+</div>    </div>
 
     <div class="timestamp">
         Report generated on: {{ date }}
