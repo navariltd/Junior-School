@@ -134,6 +134,13 @@ def get_rooms():
 
 
 @frappe.whitelist()
+def get_courses():
+    """Fetch all courses."""
+    courses = frappe.get_all("Course", fields=["name", "course_name"])
+    return [{"value": c.name, "label": c.course_name} for c in courses]
+
+
+@frappe.whitelist()
 def create_course_schedule(
     course,
     instructor,

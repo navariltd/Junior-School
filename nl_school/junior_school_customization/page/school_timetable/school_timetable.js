@@ -58,7 +58,7 @@ frappe.pages["school-timetable"].on_page_load = function (wrapper) {
                         <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="edit-course">Course</label>
-                                <input type="text" class="form-control" id="edit-course">
+                                <select class="form-control" id="edit-course"></select>
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="edit-instructor">Instructor</label>
@@ -79,19 +79,20 @@ frappe.pages["school-timetable"].on_page_load = function (wrapper) {
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="edit-date">Date</label>
-                                <input type="date" class="form-control" id="edit-date">
-                            </div>
-                            <div class="form-group col-md-6">
                                 <label for="edit-from-time">From Time</label>
                                 <input type="time" class="form-control" id="edit-from-time">
+                            </div>
+
+                             <div class="form-group col-md-6">
+                                <label for="edit-to-time">To Time</label>
+                                <input type="time" class="form-control" id="edit-to-time">
                             </div>
                         </div>
 
                         <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="edit-to-time">To Time</label>
-                                <input type="time" class="form-control" id="edit-to-time">
+                        <div class="form-group col-md-6">
+                                <label for="edit-date">Date</label>
+                                <input type="date" class="form-control" id="edit-date">
                             </div>
                         </div>
                     </form>
@@ -184,6 +185,22 @@ frappe.pages["school-timetable"].on_page_load = function (wrapper) {
       response.message.forEach((room) => {
         allRoomsDropdown.append(
           `<option value="${room.value}">${room.label}</option>`,
+        );
+      });
+    },
+  });
+
+  //fetch courses
+  frappe.call({
+    method:
+      "nl_school.junior_school_customization.page.school_timetable.timetable.get_courses",
+    callback: function (response) {
+      console.log("Here", response);
+
+      let allCoursesDropdown = $("#edit-course");
+      response.message.forEach((course) => {
+        allCoursesDropdown.append(
+          `<option value="${course.value}">${course.label}</option>`,
         );
       });
     },
