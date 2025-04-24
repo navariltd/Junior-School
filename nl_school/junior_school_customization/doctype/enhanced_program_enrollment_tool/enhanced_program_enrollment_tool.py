@@ -123,5 +123,35 @@ class EnhancedProgramEnrollmentTool(Document):
                     else self.new_student_batch
                 )
                 prog_enrollment.save()
-        # move_student_to_different_stream(self.stream, self.new_stream)
+        move_student_to_different_stream(self.stream, self.new_stream)
         frappe.msgprint(_("{0} Students have been enrolled").format(total))
+
+
+def move_student_to_different_stream(current_stream, new_stream):
+    """
+    Move all students from one stream to another, preserving their details
+    and clearing them from the current stream.
+    """
+    current_stream_doc = frappe.get_doc("Student Group", current_stream)
+    new_stream_doc = frappe.get_doc("Student Group", new_stream)
+
+    if not current_stream_doc or not new_stream_doc:
+        frappe.throw("Both streams must exist.")
+    new_stream_student_ids = {s.student for s in new_stream_doc.students}
+
+    for student in current_stream_doc.students:
+        if student.student not in new_stream_student_ids:
+            new_stream_doc.append(
+                "students",
+                {
+                    "student": student.student,
+                    "student_name": student.student_name,
+                    "group_roll_number": student.group_roll_number,
+                    "active": student.active,
+                },
+            )
+
+    current_stream_doc.set("students", [])
+
+    current_stream_doc.save(ignore_permissions=True)
+    new_stream_doc.save(ignore_permissions=True)
