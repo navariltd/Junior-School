@@ -89,6 +89,8 @@ class EnhancedProgramEnrollmentTool(Document):
 
     @frappe.whitelist()
     def enroll_students(self):
+        # enrolment_doc = frappe.get_single("Enhanced Program Enrollment Tool")
+        process_promotions(self)
         total = len(self.students)
         for i, stud in enumerate(self.students):
             frappe.publish_realtime(
@@ -122,35 +124,123 @@ class EnhancedProgramEnrollmentTool(Document):
                     else self.new_student_batch
                 )
                 prog_enrollment.save()
-        move_student_to_different_stream(self.stream, self.new_stream)
+        # move_student_to_different_stream(self.stream, self.new_stream)
         frappe.msgprint(_("{0} Students have been enrolled").format(total))
 
 
-def move_student_to_different_stream(current_stream, new_stream):
-    """
-    Move all students from one stream to another, preserving their details
-    and clearing them from the current stream.
-    """
-    current_stream_doc = frappe.get_doc("Student Group", current_stream)
-    new_stream_doc = frappe.get_doc("Student Group", new_stream)
+# def move_student_to_different_stream(current_stream, new_stream):
+#     """
+#     Move all students from one stream to another, preserving their details
+#     and clearing them from the current stream.
+#     """
+#     current_stream_doc = frappe.get_doc("Student Group", current_stream)
+#     new_stream_doc = frappe.get_doc("Student Group", new_stream)
 
-    if not current_stream_doc or not new_stream_doc:
-        frappe.throw("Both streams must exist.")
-    new_stream_student_ids = {s.student for s in new_stream_doc.students}
+#     if not current_stream_doc or not new_stream_doc:
+#         frappe.throw("Both streams must exist.")
+#     new_stream_student_ids = {s.student for s in new_stream_doc.students}
 
-    for student in current_stream_doc.students:
-        if student.student not in new_stream_student_ids:
-            new_stream_doc.append(
-                "students",
-                {
-                    "student": student.student,
-                    "student_name": student.student_name,
-                    "group_roll_number": student.group_roll_number,
-                    "active": student.active,
-                },
+#     for student in current_stream_doc.students:
+#         if student.student not in new_stream_student_ids:
+#             new_stream_doc.append(
+#                 "students",
+#                 {
+#                     "student": student.student,
+#                     "student_name": student.student_name,
+#                     "group_roll_number": student.group_roll_number,
+#                     "active": student.active,
+#                 },
+#             )
+
+#     current_stream_doc.set("students", [])
+
+
+#     current_stream_doc.save(ignore_permissions=True)
+#     new_stream_doc.save(ignore_permissions=True)
+def promote_students_based_on_rules(promotion_rules):
+    """
+    Promote students based on defined promotion rules.
+    Handles duplicate roll numbers by auto-incrementing them.
+    """
+    if not promotion_rules:
+        frappe.throw(_("No promotion rules defined"))
+
+    # Sort rules properly
+    sorted_rules = sorted(
+        promotion_rules, key=lambda x: (x["current_class"], x["current_stream"])
+    )
+
+    moved_students = set()
+
+    for rule in sorted_rules:
+        try:
+            current_stream = frappe.get_doc("Student Group", rule["current_stream"])
+            new_stream = frappe.get_doc("Student Group", rule["new_stream"])
+
+            if not current_stream or not new_stream:
+                frappe.log_error(
+                    "Student Group Not Found",
+                    f"Groups not found: {rule['current_stream']} or {rule['new_stream']}",
+                )
+                continue
+
+            students_to_move = [
+                s for s in current_stream.students if s.student not in moved_students
+            ]
+
+            for student in students_to_move:
+                if student.student not in {s.student for s in new_stream.students}:
+                    new_stream.append(
+                        "students",
+                        {
+                            "student": student.student,
+                            "student_name": student.student_name,
+                            "active": student.active,
+                        },
+                    )
+                    moved_students.add(student.student)
+
+            # Remove moved students from current stream
+            current_stream.students = [
+                s for s in current_stream.students if s.student not in moved_students
+            ]
+            try:
+                new_stream.save(ignore_permissions=True)
+
+                current_stream.save(ignore_permissions=True)
+                frappe.db.commit()
+            except Exception as e:
+                frappe.db.rollback()
+                frappe.log_error(
+                    "Promotion Save Error",
+                    f"Error saving groups {rule['current_stream']} to {rule['new_stream']}: {str(e)}",
+                )
+                continue
+
+        except Exception as e:
+            frappe.log_error(
+                "Promotion Process Error", f"Error processing rule {rule}: {str(e)}"
             )
+            continue
 
-    current_stream_doc.set("students", [])
+    return len(moved_students)
 
-    current_stream_doc.save(ignore_permissions=True)
-    new_stream_doc.save(ignore_permissions=True)
+
+@frappe.whitelist()
+def process_promotions(doc):
+    if not doc.promotion_rules_engine:
+        frappe.throw(_("Please define promotion rules first"))
+
+    promotion_rules = []
+    for rule in doc.promotion_rules_engine:
+        promotion_rules.append(
+            {
+                "current_class": rule.get("current_class"),
+                "current_stream": rule.get("current_stream"),
+                "new_class": rule.get("new_class"),
+                "new_stream": rule.get("new_stream"),
+            }
+        )
+    promote_students_based_on_rules(promotion_rules)
+
+    frappe.msgprint(_("Student promotion started in background"))
