@@ -16,6 +16,8 @@
   "section_break_5",
   "get_students",
   "students",
+  "section_break_qhrd",
+  "promotion_rules_engine",
   "section_break_7",
   "new_program",
   "new_stream",
@@ -149,13 +151,23 @@
    "label": "New Stream",
    "options": "Student Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_qhrd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "promotion_rules_engine",
+   "fieldtype": "Table",
+   "label": "Promotion Rules Engine",
+   "options": "Promotion Rules Engine"
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-24 17:09:19.939084",
+ "modified": "2025-04-25 16:28:36.128953",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",
@@ -171,5 +183,6 @@
  "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "track_changes": 1
 }

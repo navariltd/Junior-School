@@ -177,6 +177,16 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
+scheduler_events = {
+    "cron": {
+        "0 1 1 1 *": [
+            "nl_school.junior_school_customization.utils.create_academic_year"
+        ],
+        "0 1 1 2 *": [
+            "nl_school.junior_school_customization.utils.update_enrolment_tool"
+        ],
+    }
+}
 # scheduler_events = {
 # 	"all": [
 # 		"nl_school.tasks.all"

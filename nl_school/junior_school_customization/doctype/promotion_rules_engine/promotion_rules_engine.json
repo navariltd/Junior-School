@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-04-25 16:20:17.911667",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "current_class",
+  "current_stream",
+  "column_break_zjzr",
+  "new_class",
+  "new_stream"
+ ],
+ "fields": [
+  {
+   "fieldname": "current_class",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Current Class",
+   "options": "Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "current_stream",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Current Stream",
+   "options": "Student Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_zjzr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "new_class",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "New Class",
+   "options": "Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_stream",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "New Stream",
+   "options": "Student Group",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-04-25 16:21:54.063075",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Promotion Rules Engine",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

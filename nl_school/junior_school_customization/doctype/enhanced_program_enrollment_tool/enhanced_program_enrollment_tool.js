@@ -19,7 +19,7 @@ frappe.ui.form.on("Enhanced Program Enrollment Tool", {
   },
 
   refresh: function (frm) {
-    frm.disable_save();
+    // frm.disable_save();
     frm.fields_dict.enroll_students.$input.addClass(" btn btn-primary");
     frappe.realtime.on("program_enrollment_tool", function (data) {
       frappe.hide_msgprint(true);
