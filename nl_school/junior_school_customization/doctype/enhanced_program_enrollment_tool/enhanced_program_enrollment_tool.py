@@ -6,8 +6,6 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint
 
-from education.education.api import enroll_student
-
 
 class EnhancedProgramEnrollmentTool(Document):
     def onload(self):
@@ -29,22 +27,22 @@ class EnhancedProgramEnrollmentTool(Document):
             if self.get_students_from == "Student Applicant":
                 student_applicant = frappe.qb.DocType("Student Applicant")
 
-                students = (
-                    frappe.qb.from_(student_applicant)
-                    .select(
-                        (student_applicant.name).as_("student_applicant"),
-                        (student_applicant.title).as_("student_name"),
-                    )
-                    .where(student_applicant.application_status == "Approved")
-                    .where(student_applicant.program == self.program)
-                    .where(student_applicant.academic_year == self.academic_year)
-                )
+                # students = (
+                #     frappe.qb.from_(student_applicant)
+                #     .select(
+                #         (student_applicant.name).as_("student_applicant"),
+                #         (student_applicant.title).as_("student_name"),
+                #     )
+                #     .where(student_applicant.application_status == "Approved")
+                #     .where(student_applicant.program == self.program)
+                #     .where(student_applicant.academic_year == self.academic_year)
+                # )
                 if self.academic_term:
                     students = students.where(
                         student_applicant.academic_term == self.academic_term
                     )
                 students = students.run(as_dict=1)
-
+                frappe.throw(str(students))
             elif self.get_students_from == "Program Enrollment":
                 program_enrollment = frappe.qb.DocType("Program Enrollment")
                 students = (
@@ -55,19 +53,19 @@ class EnhancedProgramEnrollmentTool(Document):
                         program_enrollment.student_batch_name,
                         program_enrollment.student_category,
                     )
-                    .where(program_enrollment.program == self.program)
+                    # .where(program_enrollment.program == self.program)
                     .where(program_enrollment.academic_year == self.academic_year)
                 )
                 if self.academic_term:
                     students = students.where(
                         program_enrollment.academic_term == self.academic_term
                     )
-                if self.student_batch:
-                    students = students.where(
-                        program_enrollment.student_batch_name == self.student_batch
-                    )
+                # if self.student_batch:
+                # 	students = students.where(
+                # 		program_enrollment.student_batch_name == self.student_batch
+                # 	)
                 students = students.run(as_dict=1)
-
+                # frappe.throw(str(students))
                 student_list = [d.student for d in students]
                 if student_list:
                     inactive_students = frappe.db.sql(
@@ -89,77 +87,21 @@ class EnhancedProgramEnrollmentTool(Document):
 
     @frappe.whitelist()
     def enroll_students(self):
-        # enrolment_doc = frappe.get_single("Enhanced Program Enrollment Tool")
-        process_promotions(self)
         total = len(self.students)
-        for i, stud in enumerate(self.students):
-            frappe.publish_realtime(
-                "program_enrollment_tool",
-                dict(progress=[i + 1, total]),
-                user=frappe.session.user,
-            )
-            if stud.student:
-                prog_enrollment = frappe.new_doc("Program Enrollment")
-                prog_enrollment.student = stud.student
-                prog_enrollment.student_name = stud.student_name
-                prog_enrollment.student_category = stud.student_category
-                prog_enrollment.program = self.new_program
-                prog_enrollment.academic_year = self.new_academic_year
-                prog_enrollment.academic_term = self.new_academic_term
-                prog_enrollment.student_batch_name = (
-                    stud.student_batch_name
-                    if stud.student_batch_name
-                    else self.new_student_batch
-                )
-                prog_enrollment.enrollment_date = self.enrollment_date
-                prog_enrollment.save()
 
-            elif stud.student_applicant:
-                prog_enrollment = enroll_student(stud.student_applicant)
-                prog_enrollment.academic_year = self.academic_year
-                prog_enrollment.academic_term = self.academic_term
-                prog_enrollment.student_batch_name = (
-                    stud.student_batch_name
-                    if stud.student_batch_name
-                    else self.new_student_batch
-                )
-                prog_enrollment.save()
-        # move_student_to_different_stream(self.stream, self.new_stream)
+        enroll_students_based_on_promotion(
+            self.promotion_rules_engine,
+            old_academic_year=self.academic_year,
+            academic_year=self.new_academic_year,
+            academic_term=self.new_academic_term,
+        )
+        process_promotions(self)
         frappe.msgprint(_("{0} Students have been enrolled").format(total))
 
 
-# def move_student_to_different_stream(current_stream, new_stream):
-#     """
-#     Move all students from one stream to another, preserving their details
-#     and clearing them from the current stream.
-#     """
-#     current_stream_doc = frappe.get_doc("Student Group", current_stream)
-#     new_stream_doc = frappe.get_doc("Student Group", new_stream)
-
-#     if not current_stream_doc or not new_stream_doc:
-#         frappe.throw("Both streams must exist.")
-#     new_stream_student_ids = {s.student for s in new_stream_doc.students}
-
-#     for student in current_stream_doc.students:
-#         if student.student not in new_stream_student_ids:
-#             new_stream_doc.append(
-#                 "students",
-#                 {
-#                     "student": student.student,
-#                     "student_name": student.student_name,
-#                     "group_roll_number": student.group_roll_number,
-#                     "active": student.active,
-#                 },
-#             )
-
-#     current_stream_doc.set("students", [])
-
-
-#     current_stream_doc.save(ignore_permissions=True)
-#     new_stream_doc.save(ignore_permissions=True)
-def promote_students_based_on_rules(promotion_rules):
+def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
     """
-    Promote students based on defined promotion rules.
+    Promote students based on defined promotion rules and update streams with the new academic year before adding students.
     Handles duplicate roll numbers by auto-incrementing them.
     """
     if not promotion_rules:
@@ -171,16 +113,16 @@ def promote_students_based_on_rules(promotion_rules):
     )
 
     moved_students = set()
+    total_moved = 0
 
     for rule in sorted_rules:
         try:
             current_stream = frappe.get_doc("Student Group", rule["current_stream"])
-            new_stream = frappe.get_doc("Student Group", rule["new_stream"])
 
-            if not current_stream or not new_stream:
+            if not current_stream:
                 frappe.log_error(
                     "Student Group Not Found",
-                    f"Groups not found: {rule['current_stream']} or {rule['new_stream']}",
+                    f"Group not found: {rule['current_stream']}",
                 )
                 continue
 
@@ -188,8 +130,38 @@ def promote_students_based_on_rules(promotion_rules):
                 s for s in current_stream.students if s.student not in moved_students
             ]
 
+            if not students_to_move:
+                continue
+
+            # First, update the current stream by removing students
+            current_students_to_keep = [
+                s
+                for s in current_stream.students
+                if s.student not in [sm.student for sm in students_to_move]
+            ]
+            current_stream.students = current_students_to_keep
+            current_stream.save(ignore_permissions=True)
+            frappe.db.commit()
+
+            # Now load a fresh copy of the new stream
+            new_stream = frappe.get_doc("Student Group", rule["new_stream"])
+            if not new_stream:
+                frappe.log_error(
+                    "Student Group Not Found",
+                    f"Group not found: {rule['new_stream']}",
+                )
+                continue
+
+            # If needed, update academic year
+            if new_academic_year and new_stream.academic_year != new_academic_year:
+                new_stream.academic_year = new_academic_year
+
+            # Add students to new stream
+            existing_students = {s.student for s in new_stream.students}
+            students_added = False
+
             for student in students_to_move:
-                if student.student not in {s.student for s in new_stream.students}:
+                if student.student not in existing_students:
                     new_stream.append(
                         "students",
                         {
@@ -199,31 +171,21 @@ def promote_students_based_on_rules(promotion_rules):
                         },
                     )
                     moved_students.add(student.student)
+                    total_moved += 1
+                    students_added = True
 
-            # Remove moved students from current stream
-            current_stream.students = [
-                s for s in current_stream.students if s.student not in moved_students
-            ]
-            try:
+            if students_added:
                 new_stream.save(ignore_permissions=True)
-
-                current_stream.save(ignore_permissions=True)
                 frappe.db.commit()
-            except Exception as e:
-                frappe.db.rollback()
-                frappe.log_error(
-                    "Promotion Save Error",
-                    f"Error saving groups {rule['current_stream']} to {rule['new_stream']}: {str(e)}",
-                )
-                continue
 
         except Exception as e:
+            frappe.db.rollback()
             frappe.log_error(
                 "Promotion Process Error", f"Error processing rule {rule}: {str(e)}"
             )
             continue
 
-    return len(moved_students)
+    return total_moved
 
 
 @frappe.whitelist()
@@ -232,6 +194,7 @@ def process_promotions(doc):
         frappe.throw(_("Please define promotion rules first"))
 
     promotion_rules = []
+    academic_year = doc.new_academic_year if doc.new_academic_year else None
     for rule in doc.promotion_rules_engine:
         promotion_rules.append(
             {
@@ -241,6 +204,65 @@ def process_promotions(doc):
                 "new_stream": rule.get("new_stream"),
             }
         )
-    promote_students_based_on_rules(promotion_rules)
+    promote_students_based_on_rules(promotion_rules, academic_year)
 
     frappe.msgprint(_("Student promotion started in background"))
+
+
+def enroll_students_based_on_promotion(
+    promotion_rules, old_academic_year, academic_year=None, academic_term=None
+):
+    """
+    Enroll students based on promotion rules into a new program.
+    """
+    if not promotion_rules:
+        frappe.throw(_("No promotion rules defined for enrollment."))
+
+    created_enrollments = 0
+
+    # Build a map for faster lookup
+    promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
+
+    try:
+        # Fetch all students enrolled in old academic year
+        students = frappe.get_all(
+            "Program Enrollment",
+            filters={"academic_year": old_academic_year},
+            fields=[
+                "student",
+                "student_name",
+                "student_category",
+                "student_batch_name",
+                "program",
+            ],
+        )
+
+        for student in students:
+            current_program = student.program
+
+            # Find if there is a promotion rule for the student's current program
+            new_program = promotion_map.get(current_program)
+            if not new_program:
+                continue
+
+            # Create new Program Enrollment
+            new_enrollment = frappe.new_doc("Program Enrollment")
+            new_enrollment.student = student.student
+            new_enrollment.student_name = student.student_name
+            new_enrollment.student_category = student.student_category
+            new_enrollment.program = new_program
+            new_enrollment.academic_year = academic_year
+            new_enrollment.academic_term = academic_term
+            new_enrollment.student_batch_name = student.student_batch_name
+            new_enrollment.enrollment_date = frappe.utils.nowdate()
+            new_enrollment.save()
+            new_enrollment.submit()
+            created_enrollments += 1
+
+    except Exception as e:
+        frappe.log_error(
+            title="Error in enroll_students_based_on_promotion",
+            message=f"Error: {str(e)}",
+        )
+
+    return created_enrollments
