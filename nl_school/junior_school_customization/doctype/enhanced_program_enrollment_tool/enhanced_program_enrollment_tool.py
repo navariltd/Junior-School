@@ -133,7 +133,6 @@ def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
             if not students_to_move:
                 continue
 
-            # First, update the current stream by removing students
             current_students_to_keep = [
                 s
                 for s in current_stream.students
@@ -143,7 +142,6 @@ def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
             current_stream.save(ignore_permissions=True)
             frappe.db.commit()
 
-            # Now load a fresh copy of the new stream
             new_stream = frappe.get_doc("Student Group", rule["new_stream"])
             if not new_stream:
                 frappe.log_error(
@@ -156,7 +154,6 @@ def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
             if new_academic_year and new_stream.academic_year != new_academic_year:
                 new_stream.academic_year = new_academic_year
 
-            # Add students to new stream
             existing_students = {s.student for s in new_stream.students}
             students_added = False
 
@@ -220,11 +217,9 @@ def enroll_students_based_on_promotion(
 
     created_enrollments = 0
 
-    # Build a map for faster lookup
     promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
 
     try:
-        # Fetch all students enrolled in old academic year
         students = frappe.get_all(
             "Program Enrollment",
             filters={"academic_year": old_academic_year},
@@ -240,7 +235,6 @@ def enroll_students_based_on_promotion(
         for student in students:
             current_program = student.program
 
-            # Find if there is a promotion rule for the student's current program
             new_program = promotion_map.get(current_program)
             if not new_program:
                 continue
