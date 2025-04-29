@@ -92,3 +92,15 @@ def cancel_class_enrollment(student):
         frappe.msgprint(_("Cancelled Student Enrollment for {0}").format(student.name))
     else:
         frappe.msgprint(_("No Student Enrollment found for {0}").format(student.name))
+
+
+@frappe.whitelist()
+def get_students_for_stream():
+    stream = frappe.form_dict.get("stream")
+    doc = frappe.get_doc("Student Group", stream)
+    students = []
+
+    for row in doc.students:
+        students.append({"student": row.student, "student_name": row.student_name})
+
+    return students
