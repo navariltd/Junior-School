@@ -27,22 +27,22 @@ class EnhancedProgramEnrollmentTool(Document):
             if self.get_students_from == "Student Applicant":
                 student_applicant = frappe.qb.DocType("Student Applicant")
 
-                # students = (
-                #     frappe.qb.from_(student_applicant)
-                #     .select(
-                #         (student_applicant.name).as_("student_applicant"),
-                #         (student_applicant.title).as_("student_name"),
-                #     )
-                #     .where(student_applicant.application_status == "Approved")
-                #     .where(student_applicant.program == self.program)
-                #     .where(student_applicant.academic_year == self.academic_year)
-                # )
+                students = (
+                    frappe.qb.from_(student_applicant)
+                    .select(
+                        (student_applicant.name).as_("student_applicant"),
+                        (student_applicant.title).as_("student_name"),
+                    )
+                    .where(student_applicant.application_status == "Approved")
+                    .where(student_applicant.program == self.program)
+                    .where(student_applicant.academic_year == self.academic_year)
+                )
+
                 if self.academic_term:
                     students = students.where(
                         student_applicant.academic_term == self.academic_term
                     )
                 students = students.run(as_dict=1)
-                frappe.throw(str(students))
             elif self.get_students_from == "Program Enrollment":
                 program_enrollment = frappe.qb.DocType("Program Enrollment")
                 students = (
@@ -52,20 +52,16 @@ class EnhancedProgramEnrollmentTool(Document):
                         program_enrollment.student_name,
                         program_enrollment.student_batch_name,
                         program_enrollment.student_category,
+                        program_enrollment.program,
                     )
-                    # .where(program_enrollment.program == self.program)
                     .where(program_enrollment.academic_year == self.academic_year)
                 )
                 if self.academic_term:
                     students = students.where(
                         program_enrollment.academic_term == self.academic_term
                     )
-                # if self.student_batch:
-                # 	students = students.where(
-                # 		program_enrollment.student_batch_name == self.student_batch
-                # 	)
+
                 students = students.run(as_dict=1)
-                # frappe.throw(str(students))
                 student_list = [d.student for d in students]
                 if student_list:
                     inactive_students = frappe.db.sql(
@@ -88,10 +84,10 @@ class EnhancedProgramEnrollmentTool(Document):
     @frappe.whitelist()
     def enroll_students(self):
         total = len(self.students)
-
+        students = self.get_students()
         enroll_students_based_on_promotion(
+            students,
             self.promotion_rules_engine,
-            old_academic_year=self.academic_year,
             academic_year=self.new_academic_year,
             academic_term=self.new_academic_term,
         )
@@ -99,6 +95,7 @@ class EnhancedProgramEnrollmentTool(Document):
         frappe.msgprint(_("{0} Students have been enrolled").format(total))
 
 
+# TODO: Refactor this into smaller functions
 def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
     """
     Promote students based on defined promotion rules and update streams with the new academic year before adding students.
@@ -107,7 +104,6 @@ def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
     if not promotion_rules:
         frappe.throw(_("No promotion rules defined"))
 
-    # Sort rules properly
     sorted_rules = sorted(
         promotion_rules, key=lambda x: (x["current_class"], x["current_stream"])
     )
@@ -150,7 +146,6 @@ def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
                 )
                 continue
 
-            # If needed, update academic year
             if new_academic_year and new_stream.academic_year != new_academic_year:
                 new_stream.academic_year = new_academic_year
 
@@ -207,7 +202,7 @@ def process_promotions(doc):
 
 
 def enroll_students_based_on_promotion(
-    promotion_rules, old_academic_year, academic_year=None, academic_term=None
+    students, promotion_rules, academic_year=None, academic_term=None
 ):
     """
     Enroll students based on promotion rules into a new program.
@@ -220,18 +215,6 @@ def enroll_students_based_on_promotion(
     promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
 
     try:
-        students = frappe.get_all(
-            "Program Enrollment",
-            filters={"academic_year": old_academic_year},
-            fields=[
-                "student",
-                "student_name",
-                "student_category",
-                "student_batch_name",
-                "program",
-            ],
-        )
-
         for student in students:
             current_program = student.program
 
