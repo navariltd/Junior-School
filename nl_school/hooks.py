@@ -20,6 +20,7 @@ app_license = "agpl-3.0"
 # 		"has_permission": "nl_school.api.permission.has_app_permission"
 # 	}
 # ]
+
 fixtures = [
     {
         "doctype": "Custom Field",
@@ -31,6 +32,8 @@ fixtures = [
                     "Student Attendance-custom_end_time",
                     "Student Attendance-custom_start_time",
                     "Student Attendance-custom_shift",
+                    "Student-custom_reason_for_exiting",
+                    "Student-custom_status",
                 ),
             ]
         ],
