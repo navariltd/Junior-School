@@ -108,9 +108,10 @@
    "options": "Mentored Students"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-18 12:32:45.144952",
+ "modified": "2025-04-29 16:00:01.294537",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity",
@@ -129,6 +130,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
