@@ -54,9 +54,10 @@
    "label": "Area of Specialisation"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-18 12:23:54.104305",
+ "modified": "2025-04-29 16:03:42.429951",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentor",
@@ -75,6 +76,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

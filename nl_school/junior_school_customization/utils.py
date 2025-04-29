@@ -57,3 +57,50 @@ def update_enrolment_tool():
         enrolment_doc.enroll_students()
     else:
         frappe.msgprint(_("No students found to enroll."))
+
+
+def change_student_status(doc):
+    if doc.date_of_leaving:
+        doc.custom_status = "Left"
+        doc.enabled = 0
+        remove_student_stream(doc)
+        cancel_class_enrollment(doc)
+
+
+def before_save(doc, method=None):
+    change_student_status(doc)
+
+
+def remove_student_stream(student):
+    student_stream = frappe.get_doc("Student Group Student", {"student": student.name})
+    student_stream.delete()
+
+
+def cancel_class_enrollment(student):
+    latest_student_enrollment = frappe.get_all(
+        "Program Enrollment",
+        filters={"student": student.name},
+        fields=["name"],
+        order_by="creation desc",
+        limit=1,
+    )
+    if latest_student_enrollment:
+        student_enrollment = frappe.get_doc(
+            "Program Enrollment", latest_student_enrollment[0].name
+        )
+        student_enrollment.cancel()
+        frappe.msgprint(_("Cancelled Student Enrollment for {0}").format(student.name))
+    else:
+        frappe.msgprint(_("No Student Enrollment found for {0}").format(student.name))
+
+
+@frappe.whitelist()
+def get_students_for_stream():
+    stream = frappe.form_dict.get("stream")
+    doc = frappe.get_doc("Student Group", stream)
+    students = []
+
+    for row in doc.students:
+        students.append({"student": row.student, "student_name": row.student_name})
+
+    return students

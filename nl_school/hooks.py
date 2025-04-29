@@ -20,6 +20,7 @@ app_license = "agpl-3.0"
 # 		"has_permission": "nl_school.api.permission.has_app_permission"
 # 	}
 # ]
+
 fixtures = [
     {
         "doctype": "Custom Field",
@@ -31,6 +32,8 @@ fixtures = [
                     "Student Attendance-custom_end_time",
                     "Student Attendance-custom_start_time",
                     "Student Attendance-custom_shift",
+                    "Student-custom_reason_for_exiting",
+                    "Student-custom_status",
                 ),
             ]
         ],
@@ -45,6 +48,7 @@ fixtures = [
 # app_include_js = [
 #     "https://unpkg.com/frappe-charts@1.6.2/dist/frappe-charts.min.iife.js"
 # ]
+
 
 # include js, css files in header of web template
 # web_include_css = "/assets/nl_school/css/nl_school.css"
@@ -172,6 +176,9 @@ override_doctype_class = {
 doc_events = {
     "Assessment Result": {
         "on_submit": "nl_school.junior_school_customization.controllers.assessment_result.before_submit"
+    },
+    "Student": {
+        "before_save": "nl_school.junior_school_customization.utils.before_save",
     },
 }
 # Scheduled Tasks
