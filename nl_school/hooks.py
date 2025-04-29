@@ -187,16 +187,6 @@ scheduler_events = {
         ],
     }
 }
-# scheduler_events = {
-#     "cron": {
-#         "1 13 * * *": [
-#             "nl_school.junior_school_customization.utils.create_academic_year"
-#         ],
-#         "1 13 * * *": [
-#             "nl_school.junior_school_customization.utils.update_enrolment_tool"
-#         ],
-#     }
-# }
 
 # scheduler_events = {
 # 	"all": [

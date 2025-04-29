@@ -37,6 +37,7 @@
    "reqd": 1
   },
   {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "program",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -80,11 +81,13 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "get_students",
    "fieldtype": "Button",
    "label": "Get Students"
   },
   {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "students",
    "fieldtype": "Table",
    "label": "Students",
@@ -134,11 +137,10 @@
    "fieldname": "new_academic_term",
    "fieldtype": "Link",
    "label": "New Academic Term",
-   "mandatory_depends_on": "eval:doc.academic_term",
-   "options": "Academic Term",
-   "reqd": 1
+   "options": "Academic Term"
   },
   {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "stream",
    "fieldtype": "Link",
    "label": "Stream",
@@ -167,7 +169,7 @@
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-25 16:28:36.128953",
+ "modified": "2025-04-29 10:42:04.635684",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",
