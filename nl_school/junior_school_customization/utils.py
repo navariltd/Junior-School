@@ -57,3 +57,13 @@ def update_enrolment_tool():
         enrolment_doc.enroll_students()
     else:
         frappe.msgprint(_("No students found to enroll."))
+
+
+def change_student_status(doc):
+    if doc.date_of_leaving:
+        doc.custom_status = "Left"
+        doc.enabled = 0
+
+
+def before_save(doc, method=None):
+    change_student_status(doc)

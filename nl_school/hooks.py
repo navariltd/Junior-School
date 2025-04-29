@@ -49,6 +49,7 @@ fixtures = [
 #     "https://unpkg.com/frappe-charts@1.6.2/dist/frappe-charts.min.iife.js"
 # ]
 
+
 # include js, css files in header of web template
 # web_include_css = "/assets/nl_school/css/nl_school.css"
 # web_include_js = "/assets/nl_school/js/nl_school.js"
@@ -175,6 +176,9 @@ override_doctype_class = {
 doc_events = {
     "Assessment Result": {
         "on_submit": "nl_school.junior_school_customization.controllers.assessment_result.before_submit"
+    },
+    "Student": {
+        "before_save": "nl_school.junior_school_customization.utils.before_save",
     },
 }
 # Scheduled Tasks
