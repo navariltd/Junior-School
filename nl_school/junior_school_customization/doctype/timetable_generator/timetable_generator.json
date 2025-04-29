@@ -14,8 +14,6 @@
   "default_time_slot",
   "column_break_msil",
   "lesson_ends",
-  "subject_frequency_tab",
-  "subject_frequency",
   "subject_rules_tab",
   "subject_rules",
   "slot_and_breaks_tab",
@@ -48,17 +46,6 @@
    "fieldtype": "Link",
    "label": "Academic Term",
    "options": "Academic Term"
-  },
-  {
-   "fieldname": "subject_frequency_tab",
-   "fieldtype": "Tab Break",
-   "label": "Subject Frequency"
-  },
-  {
-   "fieldname": "subject_frequency",
-   "fieldtype": "Table",
-   "label": "Subject Frequency",
-   "options": "Subject Frequency"
   },
   {
    "fieldname": "subject_rules_tab",
@@ -147,7 +134,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-01 10:57:30.351857",
+ "modified": "2025-04-29 11:06:44.409145",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Timetable Generator",
@@ -164,6 +151,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

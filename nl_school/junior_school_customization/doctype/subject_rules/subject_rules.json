@@ -27,7 +27,7 @@
    "fieldname": "max_time",
    "fieldtype": "Time",
    "in_list_view": 1,
-   "label": "Max Time"
+   "label": "Latest Allowed Time"
   },
   {
    "fieldname": "column_break_pdwq",
@@ -59,12 +59,13 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-03 10:48:19.716238",
+ "modified": "2025-04-29 11:08:33.832539",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Subject Rules",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
