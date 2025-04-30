@@ -4,6 +4,8 @@ from frappe.utils import get_link_to_form
 import json
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils.password import update_password
+import re
 
 
 @frappe.whitelist()
@@ -165,6 +167,9 @@ class ModifiedStudentAttendance(Document):
 class ModifiedStudent(Document):
     def validate(self):
         """Create a website user for student creation if not already exists"""
+
+        safe_username = re.sub(r"\W+", "", self.custom_student_id)
+
         if not frappe.db.get_single_value(
             "Education Settings", "user_creation_skip"
         ) and not frappe.db.exists("User", self.student_email_id):
@@ -172,16 +177,17 @@ class ModifiedStudent(Document):
                 {
                     "doctype": "User",
                     "first_name": self.first_name,
-                    "last_name": self.last_name,
+                    "last_name": "Mokeira",
                     "email": self.student_email_id,
                     "gender": self.gender,
-                    "username": self.custom_student_id,
-                    "send_welcome_email": 1,
+                    "username": safe_username,
+                    "send_welcome_email": 0,
                     "user_type": "Website User",
                 }
             )
 
             student_user.add_roles("Student")
             student_user.save(ignore_permissions=True)
+            update_password(student_user.name, self.custom_student_id)
 
             self.user = student_user.name
