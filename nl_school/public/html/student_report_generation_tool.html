@@ -65,7 +65,14 @@
         text-align: right;
         margin-left: auto;
     }
+    .handwritten {
+        color: #0b5394; /* ink-like blue */
+        font-family: 'Kalam', cursive;
+        font-size: 16px;
+        line-height: 1.6;
+    }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Kalam&display=swap" rel="stylesheet">
 
 <div class="report-card">
     <!-- Header and Image in a Table -->
@@ -188,10 +195,9 @@
     </div>
 
     <div class="teacher-comment">
-        <h3>Class Teacher's Comment:........................................................................................................
-            ................................................................................................................</h3>
-        <p>{{ doc.teacher_comment or '' }}</p>
-
+        <h3>Class Teacher's Comment:</h3>
+        <p class="handwritten">{{ doc.custom_teachers_comment if doc.custom_teachers_comment else doc.assessment_terms or '' }}</p>
+        <hr style="border-top: dashed 1px #ccc; margin: 10px 0;">
     </div>
     <div class="footer-image">
 

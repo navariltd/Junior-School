@@ -34,6 +34,7 @@ fixtures = [
                     "Student Attendance-custom_shift",
                     "Student-custom_reason_for_exiting",
                     "Student-custom_status",
+                    "Student Report Generation Tool-custom_teachers_comment",
                 ),
             ]
         ],
@@ -158,6 +159,7 @@ doctype_js = {
 # }
 override_doctype_class = {
     "Student Attendance": "nl_school.apis.utils.ModifiedStudentAttendance",
+    "Student": "nl_school.apis.utils.ModifiedStudent",
 }
 
 # Document Events
