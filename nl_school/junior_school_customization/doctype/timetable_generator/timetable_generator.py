@@ -268,7 +268,6 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
             if not capable_teachers:
                 continue
 
-            # Create scheduling entries for this subject-stream combination
             for i in range(frequency):
                 scheduling_data.append(
                     {
@@ -282,7 +281,6 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
                     }
                 )
 
-    # Shuffle for better distribution but respect priority
     random.shuffle(scheduling_data)
     scheduling_data.sort(key=lambda x: -x["priority"])
     return scheduling_data
@@ -315,11 +313,20 @@ def create_full_schedule(
 
     slot_lookup = {}
 
+    # Track subject occurrences per stream per day
+    subject_stream_daily = {}  # Format: {(day_str, subject, stream): count}
+
     remaining_items.sort(key=lambda x: -x.get("priority", 1))
 
     # First pass: Schedule with all constraints
     for day_index, day in enumerate(school_days):
         day_str = day.strftime("%Y-%m-%d")
+
+        # Initialize daily tracking for this day
+        for item in remaining_items:
+            subject = item["subject"]
+            stream = item["stream"]
+            subject_stream_daily.setdefault((day_str, subject, stream), 0)
 
         for period_index, period in enumerate(period_slots):
             current_items = remaining_items.copy()
@@ -327,8 +334,14 @@ def create_full_schedule(
             for item in current_items:
                 subject = item["subject"]
                 stream = item["stream"]
+
                 # Check if stream is already scheduled in this period
                 if (day_str, period_index, "stream", stream) in slot_lookup:
+                    continue
+
+                # Check if this subject-stream has already been scheduled today
+                # Prevent the same subject in same stream from appearing more than once per day
+                if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                     continue
 
                 # Try all teachers for this subject
@@ -385,6 +398,9 @@ def create_full_schedule(
                         slot_lookup[(day_str, period_index, "teacher", teacher)] = True
                         slot_lookup[(day_str, period_index, "room", room)] = True
 
+                        # Increment the subject-stream count for this day
+                        subject_stream_daily[(day_str, subject, stream)] += 1
+
                         # Update teacher workload
                         teacher_workload[teacher]["total"] += 1
                         teacher_workload[teacher]["daily"][day_str] += 1
@@ -398,8 +414,9 @@ def create_full_schedule(
 
                     if scheduled:
                         break
-        # frappe.throw(str(slot_lookup))
+
     # Second pass: Try with relaxed room constraints but still enforce teacher workload limits
+    # and subject frequency limits
     if remaining_items:
         for day_index, day in enumerate(school_days):
             day_str = day.strftime("%Y-%m-%d")
@@ -414,6 +431,10 @@ def create_full_schedule(
 
                     # Check if stream is already scheduled in this period
                     if (day_str, period_index, "stream", stream) in slot_lookup:
+                        continue
+
+                    # Check if this subject-stream has already been scheduled today
+                    if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                         continue
 
                     # Try all teachers with teacher workload constraints
@@ -471,6 +492,9 @@ def create_full_schedule(
                             )
                             slot_lookup[(day_str, period_index, "room", room)] = True
 
+                            # Increment the subject-stream count for this day
+                            subject_stream_daily[(day_str, subject, stream)] += 1
+
                             # Update teacher workload
                             teacher_workload[teacher]["total"] += 1
                             teacher_workload[teacher]["daily"][day_str] += 1
@@ -485,11 +509,27 @@ def create_full_schedule(
                         if scheduled:
                             break
 
-    # Third pass: Try with relaxed constraints but still respect daily teacher limits
+    # Third pass: Handle remaining items with more relaxed constraints
+    # but still respect daily teacher limits and subject frequency per day
     if remaining_items:
-        for day_index, day in enumerate(school_days):
+        # Find days with fewer scheduled items to better distribute workload
+        days_with_capacity = {}
+        for day in school_days:
             day_str = day.strftime("%Y-%m-%d")
+            # Count total items scheduled this day across all streams
+            scheduled_count = sum(
+                1
+                for key, value in subject_stream_daily.items()
+                if key[0] == day_str and value > 0
+            )
+            days_with_capacity[day_str] = scheduled_count
 
+        # Sort days by scheduled count (ascending)
+        sorted_days = [
+            day for day, _ in sorted(days_with_capacity.items(), key=lambda x: x[1])
+        ]
+
+        for day_str in sorted_days:
             for period_index, period in enumerate(period_slots):
                 # Process a copy to avoid modification during iteration
                 current_items = remaining_items.copy()
@@ -500,6 +540,10 @@ def create_full_schedule(
 
                     # Check if stream is already scheduled in this period
                     if (day_str, period_index, "stream", stream) in slot_lookup:
+                        continue
+
+                    # Still respect the once-per-day limit for subject-stream combinations
+                    if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                         continue
 
                     # Try all teachers with only daily workload constraints
@@ -546,6 +590,9 @@ def create_full_schedule(
                         slot_lookup[(day_str, period_index, "stream", stream)] = True
                         slot_lookup[(day_str, period_index, "teacher", teacher)] = True
 
+                        # Increment the subject-stream count for this day
+                        subject_stream_daily[(day_str, subject, stream)] += 1
+
                         # Update teacher workload
                         teacher_workload[teacher]["total"] += 1
                         teacher_workload[teacher]["daily"][day_str] += 1
@@ -567,6 +614,14 @@ def create_full_schedule(
             "within_limits": data["total"] <= MAX_LESSONS_PER_WEEK
             and all(count <= MAX_LESSONS_PER_DAY for count in data["daily"].values()),
         }
+
+    # Generate subject-stream distribution report
+    subject_distribution = {}
+    for (day_str, subject, stream), count in subject_stream_daily.items():
+        if count > 0:  # Only include scheduled instances
+            subject_distribution.setdefault((subject, stream), {}).setdefault(
+                day_str, count
+            )
 
     return temp_schedule, scheduled_items, unscheduled_items
 
