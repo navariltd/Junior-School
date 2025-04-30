@@ -19,13 +19,14 @@
   "section_break_qhrd",
   "promotion_rules_engine",
   "section_break_7",
+  "column_break_12",
+  "new_academic_year",
+  "new_academic_term",
+  "column_break_itzf",
   "new_program",
   "new_stream",
   "new_student_batch",
-  "enroll_students",
-  "column_break_12",
-  "new_academic_year",
-  "new_academic_term"
+  "enroll_students"
  ],
  "fields": [
   {
@@ -99,7 +100,7 @@
    "label": "Enrollment Details"
   },
   {
-   "depends_on": "eval:doc.get_students_from==\"Program Enrollment\"",
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "new_program",
    "fieldtype": "Link",
    "label": "New Class",
@@ -163,13 +164,17 @@
    "fieldtype": "Table",
    "label": "Promotion Rules Engine",
    "options": "Promotion Rules Engine"
+  },
+  {
+   "fieldname": "column_break_itzf",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-29 12:27:20.378758",
+ "modified": "2025-04-30 11:04:10.483034",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",
