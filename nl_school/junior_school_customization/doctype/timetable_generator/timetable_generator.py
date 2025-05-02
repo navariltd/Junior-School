@@ -268,7 +268,6 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
             if not capable_teachers:
                 continue
 
-            # Create scheduling entries for this subject-stream combination
             for i in range(frequency):
                 scheduling_data.append(
                     {
@@ -282,7 +281,6 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
                     }
                 )
 
-    # Shuffle for better distribution but respect priority
     random.shuffle(scheduling_data)
     scheduling_data.sort(key=lambda x: -x["priority"])
     return scheduling_data
@@ -315,11 +313,20 @@ def create_full_schedule(
 
     slot_lookup = {}
 
+    # Track subject occurrences per stream per day
+    subject_stream_daily = {}  # Format: {(day_str, subject, stream): count}
+
     remaining_items.sort(key=lambda x: -x.get("priority", 1))
 
     # First pass: Schedule with all constraints
     for day_index, day in enumerate(school_days):
         day_str = day.strftime("%Y-%m-%d")
+
+        # Initialize daily tracking for this day
+        for item in remaining_items:
+            subject = item["subject"]
+            stream = item["stream"]
+            subject_stream_daily.setdefault((day_str, subject, stream), 0)
 
         for period_index, period in enumerate(period_slots):
             current_items = remaining_items.copy()
@@ -327,8 +334,14 @@ def create_full_schedule(
             for item in current_items:
                 subject = item["subject"]
                 stream = item["stream"]
+
                 # Check if stream is already scheduled in this period
                 if (day_str, period_index, "stream", stream) in slot_lookup:
+                    continue
+
+                # Check if this subject-stream has already been scheduled today
+                # Prevent the same subject in same stream from appearing more than once per day
+                if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                     continue
 
                 # Try all teachers for this subject
@@ -385,6 +398,9 @@ def create_full_schedule(
                         slot_lookup[(day_str, period_index, "teacher", teacher)] = True
                         slot_lookup[(day_str, period_index, "room", room)] = True
 
+                        # Increment the subject-stream count for this day
+                        subject_stream_daily[(day_str, subject, stream)] += 1
+
                         # Update teacher workload
                         teacher_workload[teacher]["total"] += 1
                         teacher_workload[teacher]["daily"][day_str] += 1
@@ -398,8 +414,9 @@ def create_full_schedule(
 
                     if scheduled:
                         break
-        # frappe.throw(str(slot_lookup))
+
     # Second pass: Try with relaxed room constraints but still enforce teacher workload limits
+    # and subject frequency limits
     if remaining_items:
         for day_index, day in enumerate(school_days):
             day_str = day.strftime("%Y-%m-%d")
@@ -414,6 +431,10 @@ def create_full_schedule(
 
                     # Check if stream is already scheduled in this period
                     if (day_str, period_index, "stream", stream) in slot_lookup:
+                        continue
+
+                    # Check if this subject-stream has already been scheduled today
+                    if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                         continue
 
                     # Try all teachers with teacher workload constraints
@@ -471,6 +492,9 @@ def create_full_schedule(
                             )
                             slot_lookup[(day_str, period_index, "room", room)] = True
 
+                            # Increment the subject-stream count for this day
+                            subject_stream_daily[(day_str, subject, stream)] += 1
+
                             # Update teacher workload
                             teacher_workload[teacher]["total"] += 1
                             teacher_workload[teacher]["daily"][day_str] += 1
@@ -485,11 +509,27 @@ def create_full_schedule(
                         if scheduled:
                             break
 
-    # Third pass: Try with relaxed constraints but still respect daily teacher limits
+    # Third pass: Handle remaining items with more relaxed constraints
+    # but still respect daily teacher limits and subject frequency per day
     if remaining_items:
-        for day_index, day in enumerate(school_days):
+        # Find days with fewer scheduled items to better distribute workload
+        days_with_capacity = {}
+        for day in school_days:
             day_str = day.strftime("%Y-%m-%d")
+            # Count total items scheduled this day across all streams
+            scheduled_count = sum(
+                1
+                for key, value in subject_stream_daily.items()
+                if key[0] == day_str and value > 0
+            )
+            days_with_capacity[day_str] = scheduled_count
 
+        # Sort days by scheduled count (ascending)
+        sorted_days = [
+            day for day, _ in sorted(days_with_capacity.items(), key=lambda x: x[1])
+        ]
+
+        for day_str in sorted_days:
             for period_index, period in enumerate(period_slots):
                 # Process a copy to avoid modification during iteration
                 current_items = remaining_items.copy()
@@ -500,6 +540,10 @@ def create_full_schedule(
 
                     # Check if stream is already scheduled in this period
                     if (day_str, period_index, "stream", stream) in slot_lookup:
+                        continue
+
+                    # Still respect the once-per-day limit for subject-stream combinations
+                    if subject_stream_daily.get((day_str, subject, stream), 0) >= 1:
                         continue
 
                     # Try all teachers with only daily workload constraints
@@ -546,6 +590,9 @@ def create_full_schedule(
                         slot_lookup[(day_str, period_index, "stream", stream)] = True
                         slot_lookup[(day_str, period_index, "teacher", teacher)] = True
 
+                        # Increment the subject-stream count for this day
+                        subject_stream_daily[(day_str, subject, stream)] += 1
+
                         # Update teacher workload
                         teacher_workload[teacher]["total"] += 1
                         teacher_workload[teacher]["daily"][day_str] += 1
@@ -567,6 +614,14 @@ def create_full_schedule(
             "within_limits": data["total"] <= MAX_LESSONS_PER_WEEK
             and all(count <= MAX_LESSONS_PER_DAY for count in data["daily"].values()),
         }
+
+    # Generate subject-stream distribution report
+    subject_distribution = {}
+    for (day_str, subject, stream), count in subject_stream_daily.items():
+        if count > 0:  # Only include scheduled instances
+            subject_distribution.setdefault((subject, stream), {}).setdefault(
+                day_str, count
+            )
 
     return temp_schedule, scheduled_items, unscheduled_items
 
@@ -673,15 +728,10 @@ def retry_scheduling(
     return newly_scheduled, still_unscheduled, temp_schedule
 
 
-def save_schedule(schedule, academic_term, batch_size=50):
+def save_schedule(schedule, batch_size=50):
     """Save schedule entries to the database in batches."""
     successful = 0
     failed = 0
-
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Saving schedule entries", "progress": 0, "total": len(schedule)},
-    )
 
     for i in range(0, len(schedule), batch_size):
         batch = schedule[i : i + batch_size]
@@ -697,23 +747,8 @@ def save_schedule(schedule, academic_term, batch_size=50):
                 frappe.log_error(f"Failed to create schedule entry: {str(e)}")
                 failed += 1
 
-        if batch_success > 0:
-            frappe.db.commit()
-
-        progress_percent = min(100, int((i + len(batch)) / len(schedule) * 100))
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {
-                "status": "Saving schedule entries",
-                "progress": progress_percent,
-                "total": len(schedule),
-            },
-        )
-
-    frappe.publish_realtime(
-        "timetable_generation_complete",
-        {"academic_term": academic_term, "success": successful, "failed": failed},
-    )
+        # if batch_success > 0:
+        #     frappe.db.commit()
 
     return successful, failed
 
@@ -725,24 +760,12 @@ def clear_existing_schedules(academic_term):
         start_date = term_doc.term_start_date
         end_date = term_doc.term_end_date
 
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {"status": "Clearing existing schedules", "progress": 0},
-        )
-
-        deleted_count = frappe.db.sql(
+        frappe.db.sql(
             """
         DELETE FROM `tabCourse Schedule`
         WHERE schedule_date BETWEEN %s AND %s
     """,
             (start_date, end_date),
-        )
-        print(f"Deleted {deleted_count} existing schedules for term {academic_term}")
-        frappe.db.commit()
-
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {"status": "Existing schedules cleared", "progress": 100},
         )
 
         return True
@@ -752,34 +775,29 @@ def clear_existing_schedules(academic_term):
 
 
 def process_timetable_generation(config=None):
-    """
-    Background job processing function that handles the actual timetable generation.
-    This will be called by frappe.enqueue to run in the background.
-    """
+    """Main entry point for timetable generation"""
     if not config:
         config = load_configuration()
-    academic_term = config["academic_term"]
 
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Starting timetable generation", "progress": 0},
-    )
-    clear_existing_schedules(academic_term)
+    validate_config(config)
+    clear_existing_schedules(config["academic_term"])
 
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Preparing timetable data", "progress": 10},
-    )
+    schedule_data = generate_initial_schedule(config)
 
+    if schedule_data["unscheduled_items"]:
+        schedule_data = retry_unscheduled_items(config, schedule_data)
+
+    return save_and_report_results(config, schedule_data)
+
+
+def generate_initial_schedule(config):
+    """Generate the initial timetable schedule"""
     school_days = get_school_days(config["term_start_date"])
     period_slots = get_period_slots(config["timetable_doc"])
     scheduling_data = prepare_scheduling_data(
         config["teacher_preferences"], config["subject_rules"], config["all_streams"]
     )
-    total_items = len(scheduling_data)
-    frappe.publish_realtime(
-        "timetable_generation_progress", {"status": "Creating schedule", "progress": 20}
-    )
+
     final_schedule, scheduled_items, unscheduled_items = create_full_schedule(
         scheduling_data,
         config["teacher_preferences"],
@@ -788,93 +806,106 @@ def process_timetable_generation(config=None):
         period_slots,
     )
 
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Processing unscheduled items", "progress": 70},
+    return {
+        "total_items": len(scheduling_data),
+        "final_schedule": final_schedule,
+        "scheduled_items": scheduled_items,
+        "unscheduled_items": unscheduled_items,
+    }
+
+
+def retry_unscheduled_items(config, schedule_data):
+    """Attempt to schedule remaining items with extended days"""
+    extended_days = get_school_days(config["term_start_date"] + timedelta(days=7), 5)
+
+    newly_scheduled, still_unscheduled, updated_schedule = retry_scheduling(
+        schedule_data["unscheduled_items"],
+        config["teacher_preferences"],
+        config["classrooms"],
+        extended_days,
+        get_period_slots(config["timetable_doc"]),
+        schedule_data["final_schedule"],
     )
 
-    if unscheduled_items:
-        extended_days = get_school_days(
-            config["term_start_date"] + timedelta(days=7), 5
-        )
-        newly_scheduled, still_unscheduled, updated_schedule = retry_scheduling(
-            unscheduled_items,
-            config["teacher_preferences"],
-            config["classrooms"],
-            extended_days,
-            period_slots,
-            final_schedule,
-        )
-        scheduled_items.extend(newly_scheduled)
-        unscheduled_items = still_unscheduled
-        final_schedule = updated_schedule
+    return {
+        **schedule_data,
+        "final_schedule": updated_schedule,
+        "scheduled_items": schedule_data["scheduled_items"] + newly_scheduled,
+        "unscheduled_items": still_unscheduled,
+    }
 
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Saving timetable to database", "progress": 80},
-    )
 
-    successful, failed = save_schedule(final_schedule, academic_term)
+def save_and_report_results(config, schedule_data):
+    """Save the generated schedule and create result records"""
+    successful, failed = save_schedule(schedule_data["final_schedule"])
 
-    total_scheduled = len(scheduled_items)
-    total_unscheduled = len(unscheduled_items)
+    total_scheduled = len(schedule_data["scheduled_items"])
+    total_unscheduled = len(schedule_data["unscheduled_items"])
 
-    result_doc = frappe.get_doc(
-        {
-            "doctype": "Timetable Generation Result",
-            "academic_term": academic_term,
-            "generation_date": datetime.now(),
-            "total_subjects": total_items,
-            "scheduled_count": total_scheduled,
-            "unscheduled_count": total_unscheduled,
-            "saved_count": successful,
-            "failed_count": failed,
-            "status": "Complete" if total_unscheduled == 0 else "Partial",
-        }
-    )
-
-    if unscheduled_items:
-        unscheduled_info = []
-        for item in unscheduled_items:
-            unscheduled_info.append(
-                {"subject": item["subject"], "stream": item["stream"]}
-            )
-        result_doc.unscheduled_subjects = json.dumps(unscheduled_info)
-
-    result_doc.insert(ignore_permissions=True)
-    frappe.db.commit()
-
-    # Final notification
-    frappe.publish_realtime(
-        "timetable_generation_complete",
-        {
-            "success": total_unscheduled == 0,
-            "message": f"Generated {successful} schedule entries. Unscheduled: {total_unscheduled}",
-            "stats": {
-                "total_items": total_items,
-                "scheduled": total_scheduled,
-                "unscheduled": total_unscheduled,
-                "save_success": successful,
-                "save_failed": failed,
-            },
-            "unscheduled_items": [
-                {"subject": s["subject"], "stream": s["stream"]}
-                for s in unscheduled_items
-            ],
-        },
+    create_result_document(
+        config["academic_term"],
+        schedule_data["total_items"],
+        total_scheduled,
+        total_unscheduled,
+        successful,
+        failed,
+        schedule_data["unscheduled_items"],
     )
 
     return {
         "success": total_unscheduled == 0,
         "message": f"Generated {successful} schedule entries in the background.",
         "stats": {
-            "total_items": total_items,
+            "total_items": schedule_data["total_items"],
             "scheduled": total_scheduled,
             "unscheduled": total_unscheduled,
             "save_success": successful,
             "save_failed": failed,
         },
     }
+
+
+# Creation of Timetable Generation Result Document which keeps track of the results
+def create_result_document(
+    academic_term,
+    total_items,
+    scheduled,
+    unscheduled,
+    successful,
+    failed,
+    unscheduled_items=None,
+):
+    """Create and save Timetable Generation Result document"""
+    result_doc = frappe.get_doc(
+        {
+            "doctype": "Timetable Generation Result",
+            "academic_term": academic_term,
+            "generation_date": datetime.now(),
+            "total_subjects": total_items,
+            "scheduled_count": scheduled,
+            "unscheduled_count": unscheduled,
+            "saved_count": successful,
+            "failed_count": failed,
+            "status": "Complete" if unscheduled == 0 else "Partial",
+        }
+    )
+
+    if unscheduled_items:
+        result_doc.unscheduled_subjects = json.dumps(
+            [
+                {"subject": item["subject"], "stream": item["stream"]}
+                for item in unscheduled_items
+            ]
+        )
+
+    result_doc.insert(ignore_permissions=True)
+    return result_doc
+
+
+def validate_config(config):
+    """Validate configuration parameters"""
+    if config["term_start_date"] >= config["term_end_date"]:
+        frappe.throw("Invalid Academic Term dates")
 
 
 @frappe.whitelist()

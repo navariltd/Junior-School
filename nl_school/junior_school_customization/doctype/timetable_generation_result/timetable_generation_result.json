@@ -16,7 +16,9 @@
   "unscheduled_count",
   "column_break_ijjv",
   "saved_count",
-  "failed_count"
+  "failed_count",
+  "section_break_ksqh",
+  "unscheduled_subjects"
  ],
  "fields": [
   {
@@ -72,12 +74,21 @@
    "fieldname": "failed_count",
    "fieldtype": "Int",
    "label": "Failed Count"
+  },
+  {
+   "fieldname": "section_break_ksqh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "unscheduled_subjects",
+   "fieldtype": "Small Text",
+   "label": "Unscheduled Subjects"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-04 16:37:01.422414",
+ "modified": "2025-05-02 08:41:45.236373",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Timetable Generation Result",
@@ -97,6 +108,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

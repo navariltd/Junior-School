@@ -177,7 +177,7 @@ class ModifiedStudent(Document):
                 {
                     "doctype": "User",
                     "first_name": self.first_name,
-                    "last_name": "Mokeira",
+                    "last_name": self.last_name,
                     "email": self.student_email_id,
                     "gender": self.gender,
                     "username": safe_username,
