@@ -618,7 +618,7 @@ def create_full_schedule(
     # Generate subject-stream distribution report
     subject_distribution = {}
     for (day_str, subject, stream), count in subject_stream_daily.items():
-        if count > 0:  # Only include scheduled instances
+        if count > 0:
             subject_distribution.setdefault((subject, stream), {}).setdefault(
                 day_str, count
             )
