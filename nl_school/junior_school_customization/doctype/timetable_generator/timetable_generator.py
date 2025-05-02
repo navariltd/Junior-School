@@ -285,6 +285,10 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
     return scheduling_data
 
 
+# TODO : Check duplicate entries in the schedule
+# TODO : Check on how to handle the case when a teacher is not available for a specific period
+# TODO : Check if the schedule is not conflicting with the existing schedule
+# TODO: Refactor the function into 3 sections 1st pass, 2nd pass and 3rd pass
 def create_full_schedule(
     scheduling_data, teacher_prefs, classrooms, school_days, period_slots
 ):
@@ -308,12 +312,12 @@ def create_full_schedule(
             teacher_workload[teacher]["daily"][day_str] = 0
 
     MAX_LESSONS_PER_DAY = 7
-    MAX_LESSONS_PER_WEEK = 35
+    MAX_LESSONS_PER_WEEK = 30
 
     slot_lookup = {}
 
     # Track subject occurrences per stream per day
-    subject_stream_daily = {}  # Format: {(day_str, subject, stream): count}
+    subject_stream_daily = {}
 
     remaining_items.sort(key=lambda x: -x.get("priority", 1))
 
@@ -508,8 +512,8 @@ def create_full_schedule(
                         if scheduled:
                             break
 
-    # Third pass: Handle remaining items with more relaxed constraints
-    # but still respect daily teacher limits and subject frequency per day
+    # # Third pass: Handle remaining items with more relaxed constraints
+    # # but still respect daily teacher limits and subject frequency per day
     if remaining_items:
         # Find days with fewer scheduled items to better distribute workload
         days_with_capacity = {}
@@ -635,6 +639,7 @@ def convert_timedelta_to_time(timedelta_obj):
     return time(hour=hours, minute=minutes, second=seconds)
 
 
+# Creating the program/class schedule
 def save_schedule(schedule, batch_size=50):
     """Save schedule entries to the database in batches."""
     successful = 0

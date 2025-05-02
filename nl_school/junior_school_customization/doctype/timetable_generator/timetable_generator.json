@@ -14,6 +14,10 @@
   "default_time_slot",
   "column_break_msil",
   "lesson_ends",
+  "section_break_jmyh",
+  "default_maximum_lessons_per_day",
+  "column_break_vvis",
+  "default_maximum_lessons_per_week",
   "subject_rules_tab",
   "subject_rules",
   "slot_and_breaks_tab",
@@ -128,13 +132,31 @@
    "label": "Teaching Rooms",
    "options": "Teaching Rooms",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_jmyh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "default_maximum_lessons_per_day",
+   "fieldtype": "Int",
+   "label": "Default Maximum Lessons Per Day"
+  },
+  {
+   "fieldname": "column_break_vvis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_maximum_lessons_per_week",
+   "fieldtype": "Int",
+   "label": "Default Maximum Lessons Per Week"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-29 11:06:44.409145",
+ "modified": "2025-05-02 17:20:06.511891",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Timetable Generator",
