@@ -11,7 +11,6 @@ class TimetableGenerator(Document):
 
 def check_conflicts(day, from_time, to_time, teacher, room, student_group):
     """Check for scheduling conflicts with existing course schedules."""
-    # return True
     try:
         conflicts = frappe.db.sql(
             """
@@ -636,98 +635,6 @@ def convert_timedelta_to_time(timedelta_obj):
     return time(hour=hours, minute=minutes, second=seconds)
 
 
-def retry_scheduling(
-    unscheduled_items,
-    teacher_prefs,
-    classrooms,
-    school_days,
-    period_slots,
-    existing_schedule,
-):
-    """Try again to schedule unscheduled items with relaxed constraints."""
-    temp_schedule = existing_schedule.copy()
-    newly_scheduled = []
-    still_unscheduled = []
-    teacher_workload = {}
-    for entry in existing_schedule:
-        teacher = entry["instructor"]
-        day = entry["schedule_date"]
-
-        if teacher not in teacher_workload:
-            teacher_workload[teacher] = {"total": 0, "daily": {}}
-
-        teacher_workload[teacher]["total"] = (
-            teacher_workload[teacher].get("total", 0) + 1
-        )
-        if day not in teacher_workload[teacher]["daily"]:
-            teacher_workload[teacher]["daily"][day] = 0
-        teacher_workload[teacher]["daily"][day] += 1
-
-    # Initialize any missing teachers
-    for t in teacher_prefs:
-        if t["teacher"] not in teacher_workload:
-            teacher_workload[t["teacher"]] = {"total": 0, "daily": {}}
-
-    # Try all combinations of days and periods
-    for item in unscheduled_items:
-        item_scheduled = False
-
-        # Try all days and periods
-        for day in school_days:
-            if item_scheduled:
-                break
-
-            day_str = day.strftime("%Y-%m-%d")
-
-            for period in period_slots:
-                if item_scheduled:
-                    break
-
-                for teacher_data in item["teachers"]:
-                    teacher = teacher_data["teacher"]
-
-                    room = "HTL-ROOM-2025-00016"
-                    for classroom in classrooms:
-                        if classroom["subject"] == item["subject"]:
-                            room = classroom["room"]
-                            break
-
-                    schedule_entry = {
-                        "doctype": "Course Schedule",
-                        "instructor": teacher,
-                        "student_group": item["stream"],
-                        "course": item["subject"],
-                        "from_time": period["from_time"],
-                        "to_time": period["to_time"],
-                        "schedule_date": day_str,
-                        "room": room,
-                    }
-
-                    from_time = datetime.strptime(str(period["from_time"]), "%H:%M:%S")
-                    to_time = datetime.strptime(str(period["to_time"]), "%H:%M:%S")
-
-                    if check_conflicts(
-                        day, from_time, to_time, teacher, room, item["stream"]
-                    ):
-                        if check_temp_conflicts(schedule_entry, temp_schedule):
-                            temp_schedule.append(schedule_entry)
-                            item["scheduled"] = True
-                            newly_scheduled.append(item)
-
-                            teacher_workload[teacher]["total"] += 1
-                            if day_str not in teacher_workload[teacher]["daily"]:
-                                teacher_workload[teacher]["daily"][day_str] = 0
-                            teacher_workload[teacher]["daily"][day_str] += 1
-
-                            item_scheduled = True
-                            break
-
-        if not item["scheduled"]:
-            still_unscheduled.append(item)
-
-    return newly_scheduled, still_unscheduled, temp_schedule
-
-
 def save_schedule(schedule, batch_size=50):
     """Save schedule entries to the database in batches."""
     successful = 0
@@ -746,9 +653,6 @@ def save_schedule(schedule, batch_size=50):
             except Exception as e:
                 frappe.log_error(f"Failed to create schedule entry: {str(e)}")
                 failed += 1
-
-        # if batch_success > 0:
-        #     frappe.db.commit()
 
     return successful, failed
 
@@ -784,9 +688,6 @@ def process_timetable_generation(config=None):
 
     schedule_data = generate_initial_schedule(config)
 
-    if schedule_data["unscheduled_items"]:
-        schedule_data = retry_unscheduled_items(config, schedule_data)
-
     return save_and_report_results(config, schedule_data)
 
 
@@ -811,27 +712,6 @@ def generate_initial_schedule(config):
         "final_schedule": final_schedule,
         "scheduled_items": scheduled_items,
         "unscheduled_items": unscheduled_items,
-    }
-
-
-def retry_unscheduled_items(config, schedule_data):
-    """Attempt to schedule remaining items with extended days"""
-    extended_days = get_school_days(config["term_start_date"] + timedelta(days=7), 5)
-
-    newly_scheduled, still_unscheduled, updated_schedule = retry_scheduling(
-        schedule_data["unscheduled_items"],
-        config["teacher_preferences"],
-        config["classrooms"],
-        extended_days,
-        get_period_slots(config["timetable_doc"]),
-        schedule_data["final_schedule"],
-    )
-
-    return {
-        **schedule_data,
-        "final_schedule": updated_schedule,
-        "scheduled_items": schedule_data["scheduled_items"] + newly_scheduled,
-        "unscheduled_items": still_unscheduled,
     }
 
 
