@@ -639,7 +639,7 @@ def convert_timedelta_to_time(timedelta_obj):
     return time(hour=hours, minute=minutes, second=seconds)
 
 
-# Creating the program/class schedule
+
 def save_schedule(schedule, batch_size=50):
     """Save schedule entries to the database in batches."""
     successful = 0
