@@ -728,15 +728,10 @@ def retry_scheduling(
     return newly_scheduled, still_unscheduled, temp_schedule
 
 
-def save_schedule(schedule, academic_term, batch_size=50):
+def save_schedule(schedule, batch_size=50):
     """Save schedule entries to the database in batches."""
     successful = 0
     failed = 0
-
-    frappe.publish_realtime(
-        "timetable_generation_progress",
-        {"status": "Saving schedule entries", "progress": 0, "total": len(schedule)},
-    )
 
     for i in range(0, len(schedule), batch_size):
         batch = schedule[i : i + batch_size]
@@ -752,23 +747,8 @@ def save_schedule(schedule, academic_term, batch_size=50):
                 frappe.log_error(f"Failed to create schedule entry: {str(e)}")
                 failed += 1
 
-        if batch_success > 0:
-            frappe.db.commit()
-
-        progress_percent = min(100, int((i + len(batch)) / len(schedule) * 100))
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {
-                "status": "Saving schedule entries",
-                "progress": progress_percent,
-                "total": len(schedule),
-            },
-        )
-
-    frappe.publish_realtime(
-        "timetable_generation_complete",
-        {"academic_term": academic_term, "success": successful, "failed": failed},
-    )
+        # if batch_success > 0:
+        #     frappe.db.commit()
 
     return successful, failed
 
@@ -780,24 +760,12 @@ def clear_existing_schedules(academic_term):
         start_date = term_doc.term_start_date
         end_date = term_doc.term_end_date
 
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {"status": "Clearing existing schedules", "progress": 0},
-        )
-
-        deleted_count = frappe.db.sql(
+        frappe.db.sql(
             """
         DELETE FROM `tabCourse Schedule`
         WHERE schedule_date BETWEEN %s AND %s
     """,
             (start_date, end_date),
-        )
-        print(f"Deleted {deleted_count} existing schedules for term {academic_term}")
-        frappe.db.commit()
-
-        frappe.publish_realtime(
-            "timetable_generation_progress",
-            {"status": "Existing schedules cleared", "progress": 100},
         )
 
         return True
@@ -869,14 +837,11 @@ def retry_unscheduled_items(config, schedule_data):
 
 def save_and_report_results(config, schedule_data):
     """Save the generated schedule and create result records"""
-    successful, failed = save_schedule(
-        schedule_data["final_schedule"], config["academic_term"]
-    )
+    successful, failed = save_schedule(schedule_data["final_schedule"])
 
     total_scheduled = len(schedule_data["scheduled_items"])
     total_unscheduled = len(schedule_data["unscheduled_items"])
 
-    # Create result document
     create_result_document(
         config["academic_term"],
         schedule_data["total_items"],
