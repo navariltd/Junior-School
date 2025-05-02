@@ -811,7 +811,7 @@ def generate_timetable():
     #         job_name=f"Timetable Generation ",
     #         config=config
     #     )
-    #     time.sleep(30)  # Give some time for the job to start
+    #     time.sleep(30)
     #     return {
     #         "success": True,
     #         "message": "Timetable generation started in background. You will be notified when complete."
