@@ -36,6 +36,8 @@
    "default": "Present",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
    "options": "\nPresent\nAbsent",
    "reqd": 1
@@ -45,7 +47,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-05-06 17:04:07.957687",
+ "modified": "2025-05-06 17:47:04.876594",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentored Students",
