@@ -104,3 +104,22 @@ def get_students_for_stream():
         students.append({"student": row.student, "student_name": row.student_name})
 
     return students
+
+
+@frappe.whitelist()
+def get_template_details():
+    template_name = frappe.form_dict.get("template_name")
+
+    """Fetch mentor and students from Mentorship Activity Template without saving anything."""
+    if not template_name:
+        return {}
+
+    template = frappe.get_doc("Mentorship Activity Template", template_name)
+
+    return {
+        "mentor": template.mentor,
+        "students": [
+            {"student": row.student, "student_name": row.student_name}
+            for row in template.students
+        ],
+    }

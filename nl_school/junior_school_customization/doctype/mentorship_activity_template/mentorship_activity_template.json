@@ -33,7 +33,8 @@
    "fieldname": "students",
    "fieldtype": "Table",
    "label": "Students",
-   "options": "Student Group Student"
+   "options": "Student Group Student",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_xpuy",
@@ -72,7 +73,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-06 17:00:54.602089",
+ "modified": "2025-05-06 17:24:51.753148",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity Template",

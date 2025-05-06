@@ -25,4 +25,33 @@ frappe.ui.form.on("Mentorship Activity", {
       },
     });
   },
+  activity_template: function (frm) {
+    if (!frm.doc.activity_template) return;
+
+    frappe.call({
+      method:
+        "nl_school.junior_school_customization.utils.get_template_details",
+      args: {
+        template_name: frm.doc.activity_template,
+      },
+      callback: function (r) {
+        if (!r.message) return;
+
+        frm.set_value("mentor", r.message.mentor);
+
+        frm.clear_table("student_in_attendance");
+
+        (r.message.students || []).forEach((student) => {
+          let row = frm.add_child("student_in_attendance", {
+            student: student.student,
+            student_name: student.student_name,
+          });
+        });
+
+        frm.refresh_field("student_in_attendance");
+      },
+    });
+  },
 });
+
+frappe.ui.form.on("Mentorship Activity", {});
