@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{mentor}-{##}",
+ "creation": "2025-05-06 16:49:42.432701",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "mentor",
+  "column_break_xpuy",
+  "academic_year",
+  "filter_section",
+  "stream",
+  "section_break_uoqh",
+  "get_students",
+  "section_break_dqhc",
+  "students"
+ ],
+ "fields": [
+  {
+   "fieldname": "mentor",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Mentor",
+   "options": "Mentor",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_dqhc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "students",
+   "fieldtype": "Table",
+   "label": "Students",
+   "options": "Student Group Student"
+  },
+  {
+   "fieldname": "column_break_xpuy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "filter_section",
+   "fieldtype": "Section Break",
+   "label": "Filter"
+  },
+  {
+   "fieldname": "stream",
+   "fieldtype": "Link",
+   "label": "Stream",
+   "options": "Student Group"
+  },
+  {
+   "fieldname": "section_break_uoqh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_students",
+   "fieldtype": "Button",
+   "label": "Get Students"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-05-06 17:00:54.602089",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Mentorship Activity Template",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

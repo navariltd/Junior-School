@@ -7,7 +7,9 @@
  "engine": "InnoDB",
  "field_order": [
   "student",
-  "student_name"
+  "student_name",
+  "column_break_zfpx",
+  "status"
  ],
  "fields": [
   {
@@ -15,7 +17,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Student",
-   "options": "Student"
+   "options": "Student",
+   "reqd": 1
   },
   {
    "fetch_from": "student.student_name",
@@ -24,13 +27,25 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Student Name"
+  },
+  {
+   "fieldname": "column_break_zfpx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Present",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "\nPresent\nAbsent",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-04-29 16:26:26.604107",
+ "modified": "2025-05-06 17:04:07.957687",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentored Students",

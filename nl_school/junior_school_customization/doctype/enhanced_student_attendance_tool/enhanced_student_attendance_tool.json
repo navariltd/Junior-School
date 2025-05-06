@@ -116,7 +116,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-27 16:47:32.395636",
+ "modified": "2025-05-06 15:29:43.553037",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Student Attendance Tool",
@@ -133,6 +133,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
