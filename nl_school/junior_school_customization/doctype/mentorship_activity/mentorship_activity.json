@@ -5,11 +5,12 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "mentors",
+  "education_level",
   "date_and_time",
   "column_break_uaxk",
-  "teachers",
-  "education_level",
+  "activity_template",
+  "mentors",
+  "mentor",
   "section_break_yffd",
   "location",
   "filters_section",
@@ -29,12 +30,6 @@
    "fieldtype": "Table MultiSelect",
    "label": "Mentors",
    "options": "Mentor Doctype"
-  },
-  {
-   "fieldname": "teachers",
-   "fieldtype": "Table MultiSelect",
-   "label": "Teachers",
-   "options": "Teacher Multiselect"
   },
   {
    "fieldname": "date_and_time",
@@ -113,12 +108,25 @@
    "fieldname": "get_students",
    "fieldtype": "Button",
    "label": "Get Students"
+  },
+  {
+   "fieldname": "mentor",
+   "fieldtype": "Link",
+   "label": "Mentor",
+   "options": "Mentor"
+  },
+  {
+   "fieldname": "activity_template",
+   "fieldtype": "Link",
+   "label": "Activity Template",
+   "mandatory_depends_on": "eval: doc.education_level==\"Primary\"",
+   "options": "Mentorship Activity Template"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-29 16:09:34.604576",
+ "modified": "2025-05-06 17:30:16.873425",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity",
