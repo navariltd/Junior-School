@@ -1,70 +1,53 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{first_name} {last_name}",
+ "autoname": "format:MENT-{YY}-{####}",
  "creation": "2025-03-18 12:18:18.542113",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "first_name",
-  "last_name",
-  "column_break_gxkc",
-  "full_name",
-  "section_break_lpgq",
+  "mentors_name",
   "place_of_work",
-  "column_break_vzmd",
+  "column_break_ggbk",
+  "mentor_type",
   "area_of_specialisation"
  ],
  "fields": [
   {
-   "fieldname": "first_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "First Name",
-   "reqd": 1
-  },
-  {
-   "fieldname": "last_name",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Last Name",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_gxkc",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "full_name",
-   "fieldtype": "Data",
-   "label": "Full Name",
-   "read_only": 1
-  },
-  {
-   "fieldname": "section_break_lpgq",
-   "fieldtype": "Section Break"
-  },
-  {
+   "depends_on": "eval:doc.mentor_type==\"Individual\"",
    "fieldname": "place_of_work",
    "fieldtype": "Data",
    "label": "Place of Work"
   },
   {
-   "fieldname": "column_break_vzmd",
-   "fieldtype": "Column Break"
-  },
-  {
+   "depends_on": "eval: doc.mentor_type==\"Individual\"",
    "fieldname": "area_of_specialisation",
    "fieldtype": "Data",
    "label": "Area of Specialisation"
+  },
+  {
+   "fieldname": "column_break_ggbk",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "mentor_type",
+   "fieldtype": "Select",
+   "label": "Mentor Type",
+   "options": "\nIndividual\nOrganistion",
+   "reqd": 1
+  },
+  {
+   "fieldname": "mentors_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Mentors' Name / Organisation",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-06 17:10:41.541732",
+ "modified": "2025-05-07 16:15:27.743427",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentor",
@@ -85,6 +68,7 @@
   }
  ],
  "row_format": "Dynamic",
+ "search_fields": "mentors_name, mentor_type",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []
