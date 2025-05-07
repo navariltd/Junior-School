@@ -95,6 +95,20 @@ def cancel_class_enrollment(student):
 
 
 @frappe.whitelist()
+def get_students_for_stream():
+    stream = frappe.form_dict.get("stream")
+    if not stream:
+        frappe.throw(_("Stream is required."))
+    doc = frappe.get_doc("Student Group", stream)
+    students = []
+
+    for row in doc.students:
+        students.append({"student": row.student, "student_name": row.student_name})
+
+    return students
+
+
+@frappe.whitelist()
 def get_students_education_level():
     education_level = frappe.form_dict.get("education_level")
     """Fetch students based on education level without saving anything."""

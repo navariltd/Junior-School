@@ -25,11 +25,11 @@
  ],
  "fields": [
   {
-   "depends_on": "eval:doc.education_level==\"High School\"",
+   "depends_on": "eval:doc.education_level==\"High School\" || doc.education_level==\"Higher Education\"",
    "fieldname": "mentors",
    "fieldtype": "Table MultiSelect",
    "label": "Mentors",
-   "mandatory_depends_on": "eval:doc.education_level==\"High School\"",
+   "mandatory_depends_on": "eval:doc.education_level==\"High School\" || doc.education_level==\"Higher Education\"",
    "options": "Mentor Doctype"
   },
   {
@@ -127,7 +127,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-07 16:35:40.280250",
+ "modified": "2025-05-07 16:37:48.517302",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity",
