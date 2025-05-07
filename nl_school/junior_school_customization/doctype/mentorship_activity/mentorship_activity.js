@@ -5,9 +5,9 @@ frappe.ui.form.on("Mentorship Activity", {
   get_students: function (frm) {
     frappe.call({
       method:
-        "nl_school.junior_school_customization.utils.get_students_for_stream",
+        "nl_school.junior_school_customization.utils.get_students_education_level",
       args: {
-        stream: frm.doc.stream,
+        education_level: frm.doc.education_level,
       },
       callback: function (r) {
         if (r.message) {
@@ -15,7 +15,7 @@ frappe.ui.form.on("Mentorship Activity", {
 
           r.message.forEach((row) => {
             let child = frm.add_child("student_in_attendance");
-            child.student = row.student;
+            child.student = row.name;
             child.student_name = row.student_name;
           });
 
