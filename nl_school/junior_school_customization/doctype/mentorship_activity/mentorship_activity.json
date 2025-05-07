@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:MENT-{YY}-{###}",
  "creation": "2025-03-18 12:17:29.237724",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -9,32 +10,34 @@
   "date_and_time",
   "column_break_uaxk",
   "activity_template",
-  "mentors",
   "mentor",
+  "mentors",
   "section_break_yffd",
   "location",
-  "filters_section",
-  "stream",
-  "column_break_jvhr",
-  "class",
   "student_attended_section",
   "get_students",
   "student_in_attendance",
+  "activities_done_section",
+  "activities",
   "discussions_tab",
   "topic_of_discussion",
   "feedbackoutcomes"
  ],
  "fields": [
   {
+   "depends_on": "eval:doc.education_level==\"HighSchool\"",
    "fieldname": "mentors",
    "fieldtype": "Table MultiSelect",
    "label": "Mentors",
+   "mandatory_depends_on": "eval:doc.education_level==\"HighSchool\"",
    "options": "Mentor Doctype"
   },
   {
    "fieldname": "date_and_time",
    "fieldtype": "Datetime",
-   "label": "Date & Time"
+   "in_list_view": 1,
+   "label": "Date & Time",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_uaxk",
@@ -43,8 +46,10 @@
   {
    "fieldname": "education_level",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Education Level",
-   "options": "\nPrimary\nHighschool\nHigher Education"
+   "options": "\nPrimary\nHighSchool\nHigher Education",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_yffd",
@@ -54,29 +59,8 @@
    "fieldname": "location",
    "fieldtype": "Link",
    "label": "Location",
-   "options": "Location"
-  },
-  {
-   "collapsible": 1,
-   "fieldname": "filters_section",
-   "fieldtype": "Section Break",
-   "label": "Filters"
-  },
-  {
-   "fieldname": "stream",
-   "fieldtype": "Link",
-   "label": "Stream",
-   "options": "Student Group"
-  },
-  {
-   "fieldname": "column_break_jvhr",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "class",
-   "fieldtype": "Link",
-   "label": "Class",
-   "options": "Program"
+   "options": "Location",
+   "reqd": 1
   },
   {
    "fieldname": "discussions_tab",
@@ -102,34 +86,51 @@
    "fieldname": "student_in_attendance",
    "fieldtype": "Table",
    "label": "Student In Attendance",
-   "options": "Mentored Students"
+   "options": "Mentored Students",
+   "reqd": 1
   },
   {
+   "depends_on": "eval:doc.education_level==\"HighSchool\"",
    "fieldname": "get_students",
    "fieldtype": "Button",
    "label": "Get Students"
   },
   {
+   "depends_on": "eval:doc.education_level==\"Primary\"",
    "fieldname": "mentor",
    "fieldtype": "Link",
    "label": "Mentor",
+   "mandatory_depends_on": "eval:doc.education_level==\"Primary\"",
    "options": "Mentor"
   },
   {
+   "depends_on": "eval:doc.education_level==\"Primary\"",
    "fieldname": "activity_template",
    "fieldtype": "Link",
    "label": "Activity Template",
    "mandatory_depends_on": "eval: doc.education_level==\"Primary\"",
    "options": "Mentorship Activity Template"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "activities_done_section",
+   "fieldtype": "Section Break",
+   "label": "Activities Done"
+  },
+  {
+   "fieldname": "activities",
+   "fieldtype": "Small Text",
+   "label": "Activities"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-06 17:30:16.873425",
+ "modified": "2025-05-07 16:17:36.615196",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
