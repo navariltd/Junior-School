@@ -34,5 +34,17 @@ frappe.ui.form.on("Student Report Generation Tool", {
         "/api/method/nl_school.junior_school_customization.controllers.student_report_generation_tool.preview_report_card";
       open_url_post(url, { doc: frm.doc }, true);
     });
+    setTimeout(() => {
+      const buttons = [...document.querySelectorAll(".btn")];
+      const customButton = buttons.find(
+        (btn) => btn.innerText.trim() === "Custom Print Report Card",
+      );
+
+      if (customButton) {
+        customButton.style.backgroundColor = "black";
+        customButton.style.color = "white";
+        customButton.style.border = "none";
+      }
+    }, 50);
   },
 });
