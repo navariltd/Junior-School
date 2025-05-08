@@ -23,6 +23,12 @@ def preview_report_card(doc):
     """Main function to generate report card PDF"""
     doc = process_document_input(doc)
     template_data = prepare_report_card_data(doc)
+
+    # Course to remove the grade level from the course name
+    for item in template_data.get("assessment_result", []):
+        if "course" in item and "-" in item["course"]:
+            item["course"] = item["course"].split("-")[0].strip()
+
     generate_pdf_response(doc, template_data)
 
 
