@@ -23,7 +23,7 @@ def preview_report_card(doc):
     """Main function to generate report card PDF"""
     doc = process_document_input(doc)
     template_data = prepare_report_card_data(doc)
-
+    print(str(template_data))
     # Course to remove the grade level from the course name
     for item in template_data.get("assessment_result", []):
         if "course" in item and "-" in item["course"]:
@@ -70,9 +70,9 @@ def prepare_report_card_data(doc):
         "class_teacher": class_teacher,
         "student_image": get_student_image(doc.student),
         "show_levels": True,
-        "show_opener": exam_types_present["Opening Term Exam"],
-        "show_midterm": exam_types_present["Mid Term Exam"],
-        "show_endterm": exam_types_present["End Term Exam"],
+        "show_opener": exam_types_present["Opening Term Assessment"],
+        "show_midterm": exam_types_present["Mid Term Assessment"],
+        "show_endterm": exam_types_present["End Term Assessment"],
         "date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
@@ -108,9 +108,9 @@ def process_assessment_results(assessment_results):
 def detect_exam_types(assessment_results):
     """Determine which exam types are present in the results"""
     exam_types_present = {
-        "Opening Term Exam": False,
-        "Mid Term Exam": False,
-        "End Term Exam": False,
+        "Opening Term Assessment": False,
+        "Mid Term Assessment": False,
+        "End Term Assessment": False,
     }
 
     for result in assessment_results:
@@ -136,11 +136,11 @@ def calculate_averages(assessment_result):
                 "Assessment Result", result["name"], "grading_scale"
             )
 
-        if result["assessment_group"] == "Opening Term Exam":
+        if result["assessment_group"] == "Opening Term Assessment":
             opener_scores.append(result["total_score"])
-        elif result["assessment_group"] == "Mid Term Exam":
+        elif result["assessment_group"] == "Mid Term Assessment":
             mid_term_scores.append(result["total_score"])
-        elif result["assessment_group"] == "End Term Exam":
+        elif result["assessment_group"] == "End Term Assessment":
             end_term_scores.append(result["total_score"])
 
     # Default values when no assessments exist
