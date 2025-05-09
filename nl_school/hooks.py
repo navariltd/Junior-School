@@ -194,7 +194,8 @@ scheduler_events = {
         "0 1 1 2 *": [
             "nl_school.junior_school_customization.utils.update_enrolment_tool"
         ],
-    }
+    },
+    "Weekly": ["nl_school.junior_school_customization.utils.update_academic_term"],
 }
 
 # scheduler_events = {

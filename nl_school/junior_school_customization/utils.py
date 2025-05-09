@@ -1,5 +1,6 @@
 import frappe
 from frappe import _
+from frappe.utils import getdate
 
 
 def create_academic_year():
@@ -139,3 +140,53 @@ def get_template_details():
             for row in template.students
         ],
     }
+
+
+def update_academic_term():
+    """Automatically updates academic terms for student groups based on today's date."""
+    today = getdate()
+    current_year = getdate().year
+    academic_year_name = f"{current_year} Academic Year"
+
+    # Find the academic term that matches today's date
+    academic_term = frappe.get_all(
+        "Academic Term",
+        filters={
+            "term_start_date": ["<=", today],
+            "term_end_date": [">=", today],
+            "academic_year": academic_year_name,
+        },
+        fields=["name"],
+        limit=1,
+    )
+
+    if not academic_term:
+        frappe.log_error(
+            "No Academic Term found for today's date", "Academic Term Update"
+        )
+        return
+
+    academic_term_name = academic_term[0]["name"]
+
+    # Get all student groups for the current academic year
+    streams = frappe.get_all(
+        "Student Group",
+        filters={"academic_year": academic_year_name},
+        fields=["name", "academic_term"],
+    )
+
+    # Update each student group with the new academic term
+    for stream in streams:
+        if stream.academic_term != academic_term_name:
+            frappe.db.set_value(
+                "Student Group", stream.name, "academic_term", academic_term_name
+            )
+        else:
+            frappe.db.set_value(
+                "Student Group", stream.name, "academic_term", academic_term_name
+            )
+        frappe.db.commit()
+
+    frappe.msgprint(
+        f"Academic Term updated to {academic_term_name} for {len(streams)} student groups."
+    )
