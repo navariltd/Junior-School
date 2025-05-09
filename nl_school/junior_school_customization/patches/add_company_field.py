@@ -24,7 +24,7 @@ def execute():
 
     # Process mandatory fields
     for doctype, options in doctypes_with_mandatory.items():
-        fieldname = "company"
+        fieldname = "school"
         custom_field_name = f"{doctype.lower().replace(' ', '_')}-{fieldname}"
         if frappe.db.exists("Custom Field", custom_field_name):
             frappe.delete_doc("Custom Field", custom_field_name, force=True)
