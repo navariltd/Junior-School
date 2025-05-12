@@ -27,4 +27,21 @@ frappe.ui.form.on("Mentorship Activity Template", {
       },
     });
   },
+  company: function (frm) {
+    if (frm.doc.company) {
+      frm.set_query("stream", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+    } else {
+      frm.set_query("stream", function () {
+        return {
+          filters: {},
+        };
+      });
+    }
+  },
 });

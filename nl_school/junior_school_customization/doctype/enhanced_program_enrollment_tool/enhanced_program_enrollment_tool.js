@@ -38,8 +38,15 @@ frappe.ui.form.on("Enhanced Program Enrollment Tool", {
   },
   company: function (frm) {
     if (frm.doc.company) {
-      frappe.msgprint("here");
-      frm.set_query("student_group", function () {
+      frm.set_query("stream", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+
+      frm.set_query("new_stream", function () {
         return {
           filters: {
             company: frm.doc.company,
@@ -48,7 +55,12 @@ frappe.ui.form.on("Enhanced Program Enrollment Tool", {
       });
     } else {
       // Clear filter if no school is selected
-      frm.set_query("student_group", function () {
+      frm.set_query("stream", function () {
+        return {
+          filters: {},
+        };
+      });
+      frm.set_query("new_stream", function () {
         return {
           filters: {},
         };

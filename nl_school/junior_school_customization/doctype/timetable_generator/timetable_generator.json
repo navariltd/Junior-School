@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "details_section",
+  "company",
   "academic_year",
   "column_break_plar",
   "academic_term",
@@ -39,7 +40,8 @@
    "fieldname": "academic_year",
    "fieldtype": "Link",
    "label": "Academic Year",
-   "options": "Academic Year"
+   "options": "Academic Year",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_plar",
@@ -49,7 +51,8 @@
    "fieldname": "academic_term",
    "fieldtype": "Link",
    "label": "Academic Term",
-   "options": "Academic Term"
+   "options": "Academic Term",
+   "reqd": 1
   },
   {
    "fieldname": "subject_rules_tab",
@@ -60,7 +63,8 @@
    "fieldname": "subject_rules",
    "fieldtype": "Table",
    "label": "Subject Rules",
-   "options": "Subject Rules"
+   "options": "Subject Rules",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_cikz",
@@ -98,7 +102,8 @@
    "fieldname": "time_slots",
    "fieldtype": "Table",
    "label": "Time Slots",
-   "options": "Time Slots"
+   "options": "Time Slots",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_hfxy",
@@ -150,13 +155,20 @@
    "fieldname": "default_maximum_lessons_per_week",
    "fieldtype": "Int",
    "label": "Default Maximum Lessons Per Week"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-02 17:20:06.511891",
+ "modified": "2025-05-12 08:47:27.481433",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Timetable Generator",
