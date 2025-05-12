@@ -1,0 +1,114 @@
+# Copyright (c) 2025, Navari and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe import _, msgprint
+from frappe.utils import formatdate, getdate, add_days
+from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
+from education.education.doctype.student_attendance.student_attendance import (
+    get_holiday_list,
+)
+
+
+def execute(filters=None):
+    if not filters:
+        filters = {}
+
+    from_date = filters.get("from_date")
+    to_date = filters.get("to_date")
+    company = filters.get("company")
+    stream = filters.get("stream")
+
+    if not from_date or not to_date:
+        msgprint(_("Please select both From Date and To Date"), raise_exception=1)
+    if not company:
+        msgprint(_("Please select a School"), raise_exception=1)
+
+    columns = get_columns()
+    data = []
+
+    holiday_list = get_holiday_list()
+    current_date = getdate(from_date)
+
+    while current_date <= getdate(to_date):
+        if is_holiday(holiday_list, current_date):
+            current_date = add_days(current_date, 1)
+            continue
+
+        absent_students = get_absent_students(current_date, company, stream)
+        leave_applicants = get_leave_applications(current_date)
+
+        for student in absent_students:
+            if student.student not in leave_applicants:
+                row = [
+                    student.student,
+                    student.student_name,
+                    student.student_group,
+                    student.custom_shift or "",
+                    formatdate(current_date),
+                ]
+
+                stud_details = frappe.db.get_value(
+                    "Student",
+                    student.student,
+                    ["student_email_id", "student_mobile_number"],
+                    as_dict=True,
+                )
+
+                row.append(stud_details.student_email_id or "")
+                row.append(stud_details.student_mobile_number or "")
+
+                data.append(row)
+
+        current_date = add_days(current_date, 1)
+
+    return columns, data
+
+
+def get_columns():
+    return [
+        _("Student") + ":Link/Student:90",
+        _("Student Name") + "::150",
+        _("Student Group") + ":Link/Student Group:180",
+        _("Shift") + ":Link/Shift Type:120",
+        _("Absent Date") + ":Date:110",
+        _("Student Email Address") + "::180",
+        _("Student Mobile No.") + "::150",
+    ]
+
+
+def get_absent_students(date, company, stream=None):
+    conditions = "AND company = %(company)s"
+    if stream:
+        conditions += " AND student_group = %(stream)s"
+
+    return frappe.db.sql(
+        f"""
+		SELECT student, student_name, student_group, custom_shift
+		FROM `tabStudent Attendance`
+		WHERE
+			status = 'Absent'
+			AND docstatus = 1
+			AND date = %(date)s
+			{conditions}
+		ORDER BY student_group, student_name
+		""",
+        {"date": date, "company": company, "stream": stream},
+        as_dict=True,
+    )
+
+
+def get_leave_applications(date):
+    result = frappe.db.sql(
+        """
+		SELECT student
+		FROM `tabStudent Leave Application`
+		WHERE docstatus = 1
+			AND mark_as_present = 1
+			AND from_date <= %s
+			AND to_date >= %s
+		""",
+        (date, date),
+        as_list=True,
+    )
+    return {row[0] for row in result}
