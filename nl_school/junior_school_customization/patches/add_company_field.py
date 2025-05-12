@@ -8,11 +8,12 @@ def execute():
         "Instructor": {"insert_after": "instructor_name"},
         "Room": {"insert_before": "room_name"},
         "Assessment Plan": {"insert_before": "student_group"},
-        "Assessment Result": {"insert_after": "assessment_plan"},
-        "Student Log": {"insert_after": "student_name"},
+        "Assessment Result": {"insert_before": "assessment_plan"},
+        "Student Log": {"insert_before": "student"},
         "Course Schedule": {"insert_before": "student_group"},
         "Student Group": {"insert_before": "academic_year"},
         "Program Enrollment": {"insert_after": "student_name"},
+        "Student Attendance": {"insert_before": "student"},
     }
 
     doctypes_with_optional = {

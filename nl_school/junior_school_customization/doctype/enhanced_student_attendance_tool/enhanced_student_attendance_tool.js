@@ -79,6 +79,23 @@ frappe.ui.form.on("Enhanced Student Attendance Tool", {
       students,
     );
   },
+  company: function (frm) {
+    if (frm.doc.company) {
+      frm.set_query("student_group", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+    } else {
+      frm.set_query("student_group", function () {
+        return {
+          filters: {},
+        };
+      });
+    }
+  },
 });
 
 education.StudentsEditor = class StudentsEditor {

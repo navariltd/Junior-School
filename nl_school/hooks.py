@@ -67,8 +67,15 @@ fixtures = [
 
 # include js in doctype views
 doctype_js = {
-    "Student Report Generation Tool": "public/js/student_report_generation_tool.js"
+    "Student Report Generation Tool": "public/js/student_report_generation_tool.js",
+    "Course Schedule": "public/js/class_schedule.js",
+    "Assessment Plan": "public/js/assessment_plan.js",
+    "Assessment Result": "public/js/assessment_result.js",
+    "Student Log": "public/js/student_log.js",
+    "Program Enrollment": "public/js/program_enrollment.js",
+    "Student Attendance": "public/js/student_attendance.js",
 }
+
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}

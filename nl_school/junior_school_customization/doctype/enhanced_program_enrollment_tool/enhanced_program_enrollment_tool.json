@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "get_students_from",
+  "company",
   "program",
   "stream",
   "student_batch",
@@ -168,13 +169,20 @@
   {
    "fieldname": "column_break_itzf",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-04-30 11:04:10.483034",
+ "modified": "2025-05-12 08:42:04.770689",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",

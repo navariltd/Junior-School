@@ -10,6 +10,8 @@
   "column_break_xpuy",
   "academic_year",
   "filter_section",
+  "company",
+  "column_break_oekt",
   "stream",
   "section_break_uoqh",
   "get_students",
@@ -68,12 +70,23 @@
    "fieldname": "get_students",
    "fieldtype": "Button",
    "label": "Get Students"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_oekt",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-06 17:24:51.753148",
+ "modified": "2025-05-12 08:50:11.130400",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Mentorship Activity Template",
