@@ -36,6 +36,25 @@ frappe.ui.form.on("Enhanced Program Enrollment Tool", {
       "enrollment_date",
     );
   },
+  company: function (frm) {
+    if (frm.doc.company) {
+      frappe.msgprint("here");
+      frm.set_query("student_group", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+    } else {
+      // Clear filter if no school is selected
+      frm.set_query("student_group", function () {
+        return {
+          filters: {},
+        };
+      });
+    }
+  },
 
   get_students_from: function (frm) {
     if (frm.doc.get_students_from == "Student Applicant") {
