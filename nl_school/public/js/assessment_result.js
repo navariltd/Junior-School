@@ -1,4 +1,4 @@
-frappe.ui.form.on("Course Schedule", {
+frappe.ui.form.on("Assessment Result", {
   company: function (frm) {
     if (frm.doc.company) {
       frm.set_query("student_group", function () {
@@ -9,7 +9,15 @@ frappe.ui.form.on("Course Schedule", {
         };
       });
 
-      frm.set_query("room", function () {
+      frm.set_query("student", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+
+      frm.set_query("assessment_plan", function () {
         return {
           filters: {
             company: frm.doc.company,
