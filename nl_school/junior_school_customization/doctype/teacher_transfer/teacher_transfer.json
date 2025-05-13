@@ -1,0 +1,205 @@
+{
+ "actions": [],
+ "autoname": "HR-TR-.YYYY.-.#####",
+ "creation": "2025-05-13 08:24:20.516423",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "teacher",
+  "teacher_name",
+  "transfer_date",
+  "column_break_3",
+  "company",
+  "new_company",
+  "department",
+  "details_section",
+  "transfer_details",
+  "reallocate_leaves",
+  "create_new_teacher_id",
+  "new_id",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "transfer_date",
+   "fieldtype": "Date",
+   "label": "Transfer Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_company",
+   "fieldtype": "Link",
+   "label": "New School",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fetch_from": "employee.department",
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "New Department",
+   "options": "Department",
+   "reqd": 1
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Teacher Transfer Details"
+  },
+  {
+   "fieldname": "transfer_details",
+   "fieldtype": "Table",
+   "label": "Teacher Transfer Details",
+   "options": "Employee Property History"
+  },
+  {
+   "default": "0",
+   "fieldname": "reallocate_leaves",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Re-allocate Leaves"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Teacher Transfer",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Teacher Transfer",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "teacher",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Teacher",
+   "options": "Instructor",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "teacher_name",
+   "fieldtype": "Data",
+   "label": "Teacher Name",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "create_new_teacher_id",
+   "fieldtype": "Check",
+   "label": "Create New Teacher Id"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "new_id",
+   "fieldtype": "Link",
+   "label": "New Teacher ID",
+   "options": "Employee",
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2025-05-13 09:18:48.921455",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Teacher Transfer",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Employee",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Academics User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Instructor",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "teacher_name",
+ "track_changes": 1
+}

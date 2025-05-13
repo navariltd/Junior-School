@@ -182,7 +182,7 @@
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-12 08:42:04.770689",
+ "modified": "2025-05-13 08:32:39.092851",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",
@@ -190,8 +190,19 @@
  "permissions": [
   {
    "create": 1,
+   "delete": 1,
    "read": 1,
    "role": "Education Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Academics User",
+   "share": 1,
    "write": 1
   }
  ],

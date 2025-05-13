@@ -4,9 +4,6 @@
 import frappe
 from frappe import _
 
-# from education.education.report.course_wise_assessment_report.course_wise_assessment_report import (
-# 	get_formatted_result,
-# )
 from nl_school.junior_school_customization.report.utils import get_formatted_result
 
 
