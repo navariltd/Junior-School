@@ -7,13 +7,15 @@
  "engine": "InnoDB",
  "field_order": [
   "student",
-  "teacher_name",
+  "student_name",
   "transfer_date",
+  "new_academic_year",
+  "new_academic_term",
   "column_break_3",
   "company",
   "new_company",
-  "new_class",
-  "new_stream",
+  "new_program",
+  "new_student_group",
   "details_section",
   "reallocate_leaves",
   "create_new_student_id",
@@ -22,13 +24,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fetch_from": "employee.employee_name",
-   "fieldname": "teacher_name",
-   "fieldtype": "Data",
-   "label": "Student Name",
-   "read_only": 1
-  },
   {
    "fieldname": "transfer_date",
    "fieldtype": "Date",
@@ -91,7 +86,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Student",
-   "options": "Instructor",
+   "options": "Student",
    "reqd": 1
   },
   {
@@ -115,22 +110,44 @@
   {
    "bold": 1,
    "fetch_from": "employee.department",
-   "fieldname": "new_class",
+   "fieldname": "new_program",
    "fieldtype": "Link",
    "label": "New Class",
-   "options": "Department",
+   "options": "Program",
    "reqd": 1
   },
   {
-   "fieldname": "new_stream",
+   "fieldname": "new_student_group",
    "fieldtype": "Link",
    "label": "New Stream",
-   "options": "Student Group"
+   "options": "Student Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_academic_year",
+   "fieldtype": "Link",
+   "label": "New Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_academic_term",
+   "fieldtype": "Link",
+   "label": "New Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-13 09:42:01.373906",
+ "modified": "2025-05-13 10:14:48.665185",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Student Transfer",
@@ -205,6 +222,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "teacher_name",
+ "title_field": "student_name",
  "track_changes": 1
 }
