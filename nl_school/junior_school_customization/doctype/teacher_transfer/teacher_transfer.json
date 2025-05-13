@@ -14,9 +14,9 @@
   "new_company",
   "department",
   "details_section",
-  "transfer_details",
   "reallocate_leaves",
   "create_new_teacher_id",
+  "column_break_qkgp",
   "new_id",
   "amended_from"
  ],
@@ -59,12 +59,6 @@
    "fieldname": "details_section",
    "fieldtype": "Section Break",
    "label": "Teacher Transfer Details"
-  },
-  {
-   "fieldname": "transfer_details",
-   "fieldtype": "Table",
-   "label": "Teacher Transfer Details",
-   "options": "Employee Property History"
   },
   {
    "default": "0",
@@ -121,11 +115,15 @@
    "label": "New Teacher ID",
    "options": "Instructor",
    "read_only": 1
+  },
+  {
+   "fieldname": "column_break_qkgp",
+   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-13 09:22:54.751507",
+ "modified": "2025-05-13 12:06:20.848725",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Teacher Transfer",
