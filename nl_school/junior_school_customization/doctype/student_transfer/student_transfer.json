@@ -1,23 +1,26 @@
 {
  "actions": [],
- "autoname": "HR-TR-.YYYY.-.#####",
- "creation": "2025-05-13 08:24:20.516423",
+ "autoname": "SH-ST-.YYYY.-.#####",
+ "creation": "2025-05-13 09:29:09.465110",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "teacher",
-  "teacher_name",
+  "student",
+  "student_name",
   "transfer_date",
+  "new_academic_year",
+  "new_academic_term",
   "column_break_3",
   "company",
   "new_company",
-  "department",
+  "new_program",
+  "new_student_group",
   "details_section",
   "reallocate_leaves",
-  "create_new_teacher_id",
-  "column_break_qkgp",
-  "new_id",
+  "create_new_student_id",
+  "column_break_bxlm",
+  "new_student_id",
   "amended_from"
  ],
  "fields": [
@@ -47,18 +50,9 @@
    "reqd": 1
   },
   {
-   "bold": 1,
-   "fetch_from": "employee.department",
-   "fieldname": "department",
-   "fieldtype": "Link",
-   "label": "New Department",
-   "options": "Department",
-   "reqd": 1
-  },
-  {
    "fieldname": "details_section",
    "fieldtype": "Section Break",
-   "label": "Teacher Transfer Details"
+   "label": "Student Transfer Details"
   },
   {
    "default": "0",
@@ -72,7 +66,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Teacher Transfer",
+   "options": "Student Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -82,51 +76,81 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Teacher Transfer",
+   "options": "Student Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
   },
   {
-   "fieldname": "teacher",
+   "fieldname": "student",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Teacher",
-   "options": "Instructor",
+   "label": "Student",
+   "options": "Student",
    "reqd": 1
   },
   {
-   "fetch_from": "employee.employee_name",
-   "fieldname": "teacher_name",
-   "fieldtype": "Data",
-   "label": "Teacher Name",
-   "read_only": 1
+   "default": "0",
+   "fieldname": "create_new_student_id",
+   "fieldtype": "Check",
+   "label": "Create New Student Id"
   },
   {
-   "default": "0",
-   "fieldname": "create_new_teacher_id",
-   "fieldtype": "Check",
-   "label": "Create New Teacher Id"
+   "fieldname": "column_break_bxlm",
+   "fieldtype": "Column Break"
   },
   {
    "allow_on_submit": 1,
-   "fieldname": "new_id",
+   "fieldname": "new_student_id",
    "fieldtype": "Link",
-   "label": "New Teacher ID",
+   "label": "New Student ID",
    "options": "Instructor",
    "read_only": 1
   },
   {
-   "fieldname": "column_break_qkgp",
-   "fieldtype": "Column Break"
+   "bold": 1,
+   "fetch_from": "employee.department",
+   "fieldname": "new_program",
+   "fieldtype": "Link",
+   "label": "New Class",
+   "options": "Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_student_group",
+   "fieldtype": "Link",
+   "label": "New Stream",
+   "options": "Student Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_academic_year",
+   "fieldtype": "Link",
+   "label": "New Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_academic_term",
+   "fieldtype": "Link",
+   "label": "New Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "student.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-13 12:06:20.848725",
+ "modified": "2025-05-13 10:14:48.665185",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Teacher Transfer",
+ "name": "Student Transfer",
  "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
@@ -198,6 +222,6 @@
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
- "title_field": "teacher_name",
+ "title_field": "student_name",
  "track_changes": 1
 }
