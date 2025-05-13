@@ -6,3 +6,15 @@
 
 // 	},
 // });
+
+frappe.ui.form.on("Teacher Transfer", {
+  new_company: function (frm) {
+    frm.set_query("department", function () {
+      return {
+        filters: {
+          company: frm.doc.new_company,
+        },
+      };
+    });
+  },
+});

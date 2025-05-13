@@ -124,7 +124,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-12 08:33:27.530503",
+ "modified": "2025-05-13 08:32:58.101020",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Student Attendance Tool",
@@ -137,6 +137,16 @@
    "print": 1,
    "read": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Academics User",
    "share": 1,
    "write": 1
   }
