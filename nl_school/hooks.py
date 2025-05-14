@@ -202,7 +202,10 @@ scheduler_events = {
             "nl_school.junior_school_customization.utils.update_enrolment_tool"
         ],
     },
-    "Weekly": ["nl_school.junior_school_customization.utils.update_academic_term"],
+    "Weekly": [
+        "nl_school.junior_school_customization.utils.update_academic_term",
+        "nl_school.junior_school_customization.utils.close_assessment_plan",
+    ],
 }
 
 # scheduler_events = {
