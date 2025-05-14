@@ -12,6 +12,7 @@ import re
 def mark_attendance(
     students_present,
     students_absent,
+    company,
     course_schedule=None,
     student_group=None,
     date=None,
@@ -52,6 +53,7 @@ def mark_attendance(
             d["student"],
             d["student_name"],
             "Present",
+            company,
             course_schedule,
             student_group,
             date,
@@ -65,6 +67,7 @@ def mark_attendance(
             d["student"],
             d["student_name"],
             "Absent",
+            company,
             course_schedule,
             student_group,
             date,
@@ -79,6 +82,7 @@ def make_attendance_records(
     student,
     student_name,
     status,
+    company,
     course_schedule=None,
     student_group=None,
     date=None,
@@ -97,6 +101,7 @@ def make_attendance_records(
             "course_schedule": course_schedule,
             "student_group": student_group,
             "custom_shift": shift,
+            "company": company,
         },
     )
 
@@ -119,6 +124,7 @@ def make_attendance_records(
     student_attendance.custom_shift = shift
     student_attendance.custom_start_time = start_time
     student_attendance.custom_end_time = end_time
+    student_attendance.company = company
     student_attendance.insert()
     student_attendance.submit()
 

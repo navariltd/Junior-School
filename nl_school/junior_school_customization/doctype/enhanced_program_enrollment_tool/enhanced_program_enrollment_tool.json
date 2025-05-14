@@ -44,8 +44,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Program",
-   "options": "Program",
-   "reqd": 1
+   "mandatory_depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
+   "options": "Program"
   },
   {
    "depends_on": "eval:doc.get_students_from==\"Program Enrollment\"",
@@ -146,8 +146,8 @@
    "fieldname": "stream",
    "fieldtype": "Link",
    "label": "Stream",
-   "options": "Student Group",
-   "reqd": 1
+   "mandatory_depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
+   "options": "Student Group"
   },
   {
    "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
@@ -182,7 +182,7 @@
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-13 08:32:39.092851",
+ "modified": "2025-05-14 11:49:37.252917",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",

@@ -17,11 +17,11 @@ class EnhancedProgramEnrollmentTool(Document):
     @frappe.whitelist()
     def get_students(self):
         students = []
-        if not self.get_students_from:
-            frappe.throw(_("Mandatory field - Get Students From"))
-        elif not self.program:
-            frappe.throw(_("Mandatory field - Program"))
-        elif not self.academic_year:
+        # if not self.get_students_from:
+        # 	frappe.throw(_("Mandatory field - Get Students From"))
+        # elif not self.program:
+        # 	frappe.throw(_("Mandatory field - Program"))
+        if not self.academic_year:
             frappe.throw(_("Mandatory field - Academic Year"))
         else:
             if self.get_students_from == "Student Applicant":
@@ -53,6 +53,8 @@ class EnhancedProgramEnrollmentTool(Document):
                         program_enrollment.student_batch_name,
                         program_enrollment.student_category,
                         program_enrollment.program,
+                        program_enrollment.company,
+                        program_enrollment.custom_stream,
                     )
                     .where(program_enrollment.academic_year == self.academic_year)
                 )
@@ -77,6 +79,7 @@ class EnhancedProgramEnrollmentTool(Document):
                             students.remove(student)
 
         if students:
+            # frappe.throw(str(students))
             return students
         else:
             frappe.throw(_("No students Found"))
@@ -85,12 +88,14 @@ class EnhancedProgramEnrollmentTool(Document):
     def enroll_students(self):
         total = len(self.students)
         students = self.get_students()
+
         enroll_students_based_on_promotion(
             students,
             self.promotion_rules_engine,
             academic_year=self.new_academic_year,
             academic_term=self.new_academic_term,
         )
+
         process_promotions(self)
         frappe.msgprint(_("{0} Students have been enrolled").format(total))
 
@@ -213,12 +218,14 @@ def enroll_students_based_on_promotion(
     created_enrollments = 0
 
     promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
+    new_stream_map = {rule.current_stream: rule.new_stream for rule in promotion_rules}
 
     try:
         for student in students:
             current_program = student.program
 
             new_program = promotion_map.get(current_program)
+            new_stream = new_stream_map.get(student.custom_stream)
             if not new_program:
                 continue
 
@@ -228,6 +235,7 @@ def enroll_students_based_on_promotion(
             new_enrollment.student_name = student.student_name
             new_enrollment.student_category = student.student_category
             new_enrollment.program = new_program
+            new_enrollment.custom_stream = new_stream
             new_enrollment.academic_year = academic_year
             new_enrollment.academic_term = academic_term
             new_enrollment.student_batch_name = student.student_batch_name
