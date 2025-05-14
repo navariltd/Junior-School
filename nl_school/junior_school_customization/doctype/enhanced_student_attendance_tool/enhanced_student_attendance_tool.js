@@ -192,6 +192,7 @@ education.StudentsEditor = class StudentsEditor {
                   shift: frm.doc.shift,
                   start_time: frm.doc.start_time,
                   end_time: frm.doc.end_time,
+                  company: frm.doc.company,
                 },
                 callback: function (r) {
                   $(me.wrapper.find(".btn-mark-att")).attr("disabled", false);
