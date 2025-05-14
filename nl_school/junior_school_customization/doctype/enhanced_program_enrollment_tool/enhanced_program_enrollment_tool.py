@@ -17,16 +17,14 @@ class EnhancedProgramEnrollmentTool(Document):
     @frappe.whitelist()
     def get_students(self):
         students = []
-        # if not self.get_students_from:
-        # 	frappe.throw(_("Mandatory field - Get Students From"))
-        # elif not self.program:
-        # 	frappe.throw(_("Mandatory field - Program"))
+
         if not self.academic_year:
             frappe.throw(_("Mandatory field - Academic Year"))
         else:
             if self.get_students_from == "Student Applicant":
                 student_applicant = frappe.qb.DocType("Student Applicant")
-
+                if not self.program:
+                    frappe.throw(_("Mandatory field - Program"))
                 students = (
                     frappe.qb.from_(student_applicant)
                     .select(
@@ -79,7 +77,6 @@ class EnhancedProgramEnrollmentTool(Document):
                             students.remove(student)
 
         if students:
-            # frappe.throw(str(students))
             return students
         else:
             frappe.throw(_("No students Found"))
@@ -219,7 +216,6 @@ def enroll_students_based_on_promotion(
 
     promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
     new_stream_map = {rule.current_stream: rule.new_stream for rule in promotion_rules}
-
     try:
         for student in students:
             current_program = student.program
