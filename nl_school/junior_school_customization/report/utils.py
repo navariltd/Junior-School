@@ -18,6 +18,7 @@ def get_formatted_result(args, get_course=False):
             "assessment_group",
             "total_score",
             "grade",
+            "student_group",
         ],
         order_by="",
     )

@@ -39,7 +39,7 @@ frappe.query_reports["Enhanced Final Assessment Grades"] = {
       label: __("Student Group"),
       fieldtype: "Link",
       options: "Student Group",
-      reqd: 1,
+      // reqd: 1,
       get_query: function () {
         return {
           filters: {
@@ -50,6 +50,12 @@ frappe.query_reports["Enhanced Final Assessment Grades"] = {
           },
         };
       },
+    },
+    {
+      fieldname: "program",
+      label: __("Class"),
+      fieldtype: "Link",
+      options: "Program",
     },
     {
       fieldname: "assessment_group",
