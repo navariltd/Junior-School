@@ -36,6 +36,7 @@ fixtures = [
                     "Student-custom_status",
                     "Student Report Generation Tool-custom_teachers_comment",
                     "Company-custom_rubber_stamp",
+                    "Assessment Plan-custom_status",
                 ),
             ]
         ],
@@ -67,6 +68,7 @@ fixtures = [
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
+
 doctype_js = {
     "Student Report Generation Tool": "public/js/student_report_generation_tool.js",
     "Course Schedule": "public/js/class_schedule.js",
@@ -75,6 +77,7 @@ doctype_js = {
     "Student Log": "public/js/student_log.js",
     "Program Enrollment": "public/js/program_enrollment.js",
     "Student Attendance": "public/js/student_attendance.js",
+    "Assessment Result Tool": "public/js/assessment_result_tool.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
