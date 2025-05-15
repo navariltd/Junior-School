@@ -7,7 +7,7 @@ from frappe.model.document import Document
 from frappe.utils import cint
 
 
-class EnhancedProgramEnrollmentTool(Document):
+class AutomatedProgramEnrollmentTool(Document):
     def onload(self):
         academic_term_reqd = cint(
             frappe.db.get_single_value("Education Settings", "academic_term_reqd")
