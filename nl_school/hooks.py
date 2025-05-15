@@ -35,6 +35,7 @@ fixtures = [
                     "Student-custom_reason_for_exiting",
                     "Student-custom_status",
                     "Student Report Generation Tool-custom_teachers_comment",
+                    "Company-custom_rubber_stamp",
                 ),
             ]
         ],

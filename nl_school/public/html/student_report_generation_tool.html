@@ -201,8 +201,13 @@
     <div class="footer-image">
 
 <div class="letterhead-footer">
-    {% set letterhead = frappe.get_doc("Letter Head", "Default") %}
-    {{ letterhead.footer or letterhead.content }}
+    {% if rubber_stamp %}
+    <div style="text-align: right; margin-top: 40px;">
+        <img src="{{ rubber_stamp }}" alt="Rubber Stamp" style="width: 150px; height: auto;">
+        <p style="font-size: 12px; color: #555;">Authorized Stamp</p>
+    </div>
+{% endif %}
+
 </div>    </div>
 
     <div class="timestamp">
