@@ -23,7 +23,7 @@ def preview_report_card(doc):
     """Main function to generate report card PDF"""
     doc = process_document_input(doc)
     template_data = prepare_report_card_data(doc)
-    print(str(template_data))
+
     # Course to remove the grade level from the course name
     for item in template_data.get("assessment_result", []):
         if "course" in item and "-" in item["course"]:
@@ -57,6 +57,7 @@ def prepare_report_card_data(doc):
     averages = calculate_averages(values.get("assessment_result", []))
     exam_types_present = detect_exam_types(values.get("assessment_result", []))
 
+    print(str(get_rubber_stamp(doc.student)))
     return {
         "doc": doc,
         "values": values,
@@ -64,6 +65,7 @@ def prepare_report_card_data(doc):
         "courses": values.get("courses"),
         "assessment_groups": assessment_groups,
         "letterhead": letterhead and letterhead.get("content", None),
+        "rubber_stamp": get_rubber_stamp(doc.student),
         "add_letterhead": doc.add_letterhead if doc.add_letterhead else 0,
         "averages": averages,
         "academic_term": doc.academic_term,
@@ -75,6 +77,13 @@ def prepare_report_card_data(doc):
         "show_endterm": exam_types_present["End Term Assessment"],
         "date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
     }
+
+
+def get_rubber_stamp(student):
+    school = frappe.get_value("Student", student, "company")
+    company = frappe.get_doc("Company", school)
+    rubber_stamp = company.custom_rubber_stamp
+    return rubber_stamp if rubber_stamp else None
 
 
 def generate_pdf_response(doc, template_data):
