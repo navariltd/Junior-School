@@ -14,6 +14,7 @@ def execute():
         "Student Group": {"insert_before": "academic_year"},
         "Program Enrollment": {"insert_after": "student_name"},
         "Student Attendance": {"insert_before": "student"},
+        "Student Report Generation Tool": {"insert_before": "student"},
     }
 
     doctypes_with_optional = {

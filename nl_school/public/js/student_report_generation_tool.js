@@ -47,4 +47,13 @@ frappe.ui.form.on("Student Report Generation Tool", {
       }
     }, 50);
   },
+  company: function (frm) {
+    frm.set_query("student", function () {
+      return {
+        filters: {
+          company: frm.doc.company,
+        },
+      };
+    });
+  },
 });
