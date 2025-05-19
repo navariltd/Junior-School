@@ -55,5 +55,16 @@ frappe.ui.form.on("Student Report Generation Tool", {
         },
       };
     });
+    if (frm.doc.company) {
+      frappe.db
+        .get_value("Company", frm.doc.company, "default_letter_head")
+        .then((r) => {
+          if (r.message && r.message.default_letter_head) {
+            frm.set_value("letter_head", r.message.default_letter_head);
+          } else {
+            frm.set_value("letter_head", null);
+          }
+        });
+    }
   },
 });
