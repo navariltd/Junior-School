@@ -1,15 +1,7 @@
 // Copyright (c) 2025, Navari and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Enhanced Program Enrollment Tool", {
-// 	refresh(frm) {
-
-// 	},
-// });
-// Copyright (c) 2016, Frappe and contributors
-// For license information, please see license.txt
-
-frappe.ui.form.on("Enhanced Program Enrollment Tool", {
+frappe.ui.form.on("Automated Program Enrollment Tool", {
   setup: function (frm) {
     frm.add_fetch("student", "title", "student_name");
     frm.add_fetch("student_applicant", "title", "student_name");

@@ -1,8 +1,9 @@
 {
  "actions": [],
  "allow_copy": 1,
+ "autoname": "field:company",
  "beta": 1,
- "creation": "2025-04-24 17:06:31.873811",
+ "creation": "2025-05-15 16:07:23.690150",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -40,6 +41,14 @@
    "reqd": 1
   },
   {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
    "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "program",
    "fieldtype": "Link",
@@ -47,6 +56,14 @@
    "label": "Program",
    "mandatory_depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "options": "Program"
+  },
+  {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
+   "fieldname": "stream",
+   "fieldtype": "Link",
+   "label": "Stream",
+   "mandatory_depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
+   "options": "Student Group"
   },
   {
    "depends_on": "eval:doc.get_students_from==\"Program Enrollment\"",
@@ -97,30 +114,19 @@
    "options": "Program Enrollment Tool Student"
   },
   {
+   "fieldname": "section_break_qhrd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "promotion_rules_engine",
+   "fieldtype": "Table",
+   "label": "Promotion Rules Engine",
+   "options": "Promotion Rules Engine"
+  },
+  {
    "fieldname": "section_break_7",
    "fieldtype": "Section Break",
    "label": "Enrollment Details"
-  },
-  {
-   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
-   "fieldname": "new_program",
-   "fieldtype": "Link",
-   "label": "New Class",
-   "mandatory_depends_on": "eval:doc.get_students_from==\"Student Applicant\"",
-   "options": "Program"
-  },
-  {
-   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
-   "fieldname": "new_student_batch",
-   "fieldtype": "Link",
-   "label": "New Student Batch",
-   "mandatory_depends_on": "eval:doc.student_batch",
-   "options": "Student Batch Name"
-  },
-  {
-   "fieldname": "enroll_students",
-   "fieldtype": "Button",
-   "label": "Enroll Students"
   },
   {
    "fieldname": "column_break_12",
@@ -143,12 +149,16 @@
    "options": "Academic Term"
   },
   {
+   "fieldname": "column_break_itzf",
+   "fieldtype": "Column Break"
+  },
+  {
    "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
-   "fieldname": "stream",
+   "fieldname": "new_program",
    "fieldtype": "Link",
-   "label": "Stream",
-   "mandatory_depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
-   "options": "Student Group"
+   "label": "New Class",
+   "mandatory_depends_on": "eval:doc.get_students_from==\"Student Applicant\"",
+   "options": "Program"
   },
   {
    "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
@@ -158,35 +168,27 @@
    "options": "Student Group"
   },
   {
-   "fieldname": "section_break_qhrd",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "promotion_rules_engine",
-   "fieldtype": "Table",
-   "label": "Promotion Rules Engine",
-   "options": "Promotion Rules Engine"
-  },
-  {
-   "fieldname": "column_break_itzf",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "company",
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
+   "fieldname": "new_student_batch",
    "fieldtype": "Link",
-   "label": "School",
-   "options": "Company",
-   "reqd": 1
+   "label": "New Student Batch",
+   "mandatory_depends_on": "eval:doc.student_batch",
+   "options": "Student Batch Name"
+  },
+  {
+   "fieldname": "enroll_students",
+   "fieldtype": "Button",
+   "label": "Enroll Students"
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
- "issingle": 1,
  "links": [],
- "modified": "2025-05-15 16:49:12.827084",
+ "modified": "2025-05-15 16:48:03.570740",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Enhanced Program Enrollment Tool",
+ "name": "Automated Program Enrollment Tool",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
