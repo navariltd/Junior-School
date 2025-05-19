@@ -78,8 +78,14 @@
     <table class="header-table">
         <tr>
             <td style="width: 25%; text-align: left;">
-                <img class="student-image" src="{{ student_image }}" alt="Student Image">
-            </td>
+    {% if student_image %}
+        <img class="student-image" src="{{ student_image }}" alt="Student Image">
+    {% else %}
+        <img class="student-image" src="https://ui-avatars.com/api/?name=Girl+Student&background=22b573&color=fff&size=128" alt="Default Girl Avatar">
+    {% endif %}
+</td>
+
+
             <td style="width: 50%; text-align: center;">
                 <div class="header">
                     {% if letterhead %}
