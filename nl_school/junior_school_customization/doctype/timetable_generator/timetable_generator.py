@@ -1087,7 +1087,7 @@ def save_schedule(schedule, batch_size=50):
     return successful, failed
 
 
-def clear_existing_schedules(academic_term):
+def clear_existing_schedules(academic_term, school):
     """Clear existing schedules for the academic term."""
     try:
         term_doc = frappe.get_doc("Academic Term", academic_term)
@@ -1098,8 +1098,9 @@ def clear_existing_schedules(academic_term):
             """
         DELETE FROM `tabCourse Schedule`
         WHERE schedule_date BETWEEN %s AND %s
+        AND company = %s
     """,
-            (start_date, end_date),
+            (start_date, end_date, school),
         )
 
         return True
@@ -1114,7 +1115,7 @@ def process_timetable_generation(config=None):
         config = load_configuration()
 
     validate_config(config)
-    clear_existing_schedules(config["academic_term"])
+    clear_existing_schedules(config["academic_term"], config["school"])
 
     schedule_data = generate_initial_schedule(config)
 

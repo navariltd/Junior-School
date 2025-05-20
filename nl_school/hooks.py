@@ -124,6 +124,8 @@ doctype_js = {
 # Uninstallation
 # ------------
 
+# after_migrate = ["nl_school.junior_school_customization.patches.override_overlap"]
+
 # before_uninstall = "nl_school.uninstall.before_uninstall"
 # after_uninstall = "nl_school.uninstall.after_uninstall"
 
