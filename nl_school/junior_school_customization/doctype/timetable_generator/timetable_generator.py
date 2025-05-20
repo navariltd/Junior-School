@@ -173,12 +173,16 @@ def get_period_slots(timetable_doc):
         slots.append(
             {
                 "period": slot.period,
-                "from_time": slot.start_time.strftime("%H:%M")
-                if hasattr(slot.start_time, "strftime")
-                else slot.start_time,
-                "to_time": slot.end_time.strftime("%H:%M")
-                if hasattr(slot.end_time, "strftime")
-                else slot.end_time,
+                "from_time": (
+                    slot.start_time.strftime("%H:%M")
+                    if hasattr(slot.start_time, "strftime")
+                    else slot.start_time
+                ),
+                "to_time": (
+                    slot.end_time.strftime("%H:%M")
+                    if hasattr(slot.end_time, "strftime")
+                    else slot.end_time
+                ),
             }
         )
     return slots
@@ -188,6 +192,7 @@ def load_configuration():
     """Load timetable configuration from documents."""
     try:
         timetable_doc = frappe.get_doc("Timetable Generator")
+        frappe.log(f"generated timetable:{timetable_doc.as_dict}")
         academic_term = frappe.get_doc("Academic Term", timetable_doc.academic_term)
 
         term_start_date = academic_term.term_start_date
@@ -1050,7 +1055,6 @@ def convert_timedelta_to_time(timedelta_obj):
     minutes, seconds = divmod(remainder, 60)
 
     return time(hour=hours, minute=minutes, second=seconds)
-
 
 
 def save_schedule(schedule, batch_size=50):
