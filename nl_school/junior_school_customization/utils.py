@@ -22,6 +22,7 @@ def create_academic_year():
         frappe.msgprint(f"Created: {academic_year_name}")
 
 
+# TODO: Just incase you decide to go with this doctype for automatic enrolment, then uncomment the code, but i created teh other one for multi-schools purpose
 # def update_enrolment_tool():
 #     enrolment_doc = frappe.get_single("Enhanced Program Enrollment Tool")
 

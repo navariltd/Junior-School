@@ -189,6 +189,7 @@ def load_configuration():
     try:
         timetable_doc = frappe.get_doc("Timetable Generator")
         academic_term = frappe.get_doc("Academic Term", timetable_doc.academic_term)
+        school = timetable_doc.company
 
         term_start_date = academic_term.term_start_date
         term_end_date = academic_term.term_end_date
@@ -232,6 +233,7 @@ def load_configuration():
             "academic_term": timetable_doc.academic_term,
             "all_streams": all_streams,
             "timetable_doc": timetable_doc,
+            "school": school,
         }
     except Exception as e:
         frappe.log_error(f"Failed to load configuration: {str(e)}")
@@ -630,7 +632,7 @@ def prepare_scheduling_data(teacher_preferences, subject_rules, all_streams):
 
 
 def create_full_schedule(
-    scheduling_data, teacher_prefs, classrooms, school_days, period_slots
+    scheduling_data, teacher_prefs, classrooms, school_days, period_slots, school
 ):
     temp_schedule = []
     scheduled_items = []
@@ -648,6 +650,7 @@ def create_full_schedule(
 
     # First pass: Strict constraints
     first_pass(
+        school,
         remaining_items,
         school_days,
         period_slots,
@@ -665,6 +668,7 @@ def create_full_schedule(
     # Second pass: Relax room constraints
     if remaining_items:
         second_pass(
+            school,
             remaining_items,
             school_days,
             period_slots,
@@ -682,6 +686,7 @@ def create_full_schedule(
     # Third pass: More relaxed constraints
     if remaining_items:
         third_pass(
+            school,
             remaining_items,
             school_days,
             period_slots,
@@ -706,6 +711,7 @@ def create_full_schedule(
 
 
 def first_pass(
+    school,
     remaining_items,
     school_days,
     period_slots,
@@ -774,6 +780,7 @@ def first_pass(
 
                         # Create and add schedule entry
                         add_schedule_entry(
+                            school,
                             day_str,
                             period_index,
                             period,
@@ -797,6 +804,7 @@ def first_pass(
 
 
 def second_pass(
+    school,
     remaining_items,
     school_days,
     period_slots,
@@ -858,6 +866,7 @@ def second_pass(
 
                         # Create and add schedule entry
                         add_schedule_entry(
+                            school,
                             day_str,
                             period_index,
                             period,
@@ -881,6 +890,7 @@ def second_pass(
 
 
 def third_pass(
+    school,
     remaining_items,
     school_days,
     period_slots,
@@ -944,6 +954,7 @@ def third_pass(
 
                     # Create and add schedule entry
                     add_schedule_entry(
+                        school,
                         day_str,
                         period_index,
                         period,
@@ -980,6 +991,7 @@ def initialize_teacher_workload(teacher_prefs, school_days):
 
 
 def add_schedule_entry(
+    school,
     day_str,
     period_index,
     period,
@@ -995,6 +1007,7 @@ def add_schedule_entry(
 ):
     schedule_entry = {
         "doctype": "Course Schedule",
+        "company": school,
         "instructor": teacher,
         "student_group": stream,
         "course": subject,
@@ -1050,7 +1063,6 @@ def convert_timedelta_to_time(timedelta_obj):
     minutes, seconds = divmod(remainder, 60)
 
     return time(hour=hours, minute=minutes, second=seconds)
-
 
 
 def save_schedule(schedule, batch_size=50):
@@ -1113,6 +1125,7 @@ def generate_initial_schedule(config):
     """Generate the initial timetable schedule"""
     school_days = get_school_days(config["term_start_date"])
     period_slots = get_period_slots(config["timetable_doc"])
+    school = config["school"]
     scheduling_data = prepare_scheduling_data(
         config["teacher_preferences"], config["subject_rules"], config["all_streams"]
     )
@@ -1123,6 +1136,7 @@ def generate_initial_schedule(config):
         config["classrooms"],
         school_days,
         period_slots,
+        school,
     )
 
     return {
