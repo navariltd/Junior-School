@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from unittest.mock import patch
 
 
 class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
@@ -181,3 +182,40 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
             tool.get_students()
 
         self.assertIn("No students Found", str(context.exception))
+
+    def test_enroll_students_triggers_expected_workflow(self):
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Student Applicant",
+            "program": "Test Program",
+            "academic_year": "2025-2026",
+            "academic_term": "Term 1",
+            "promotion_rules_engine": [
+                {
+                    "current_class": "Test Program",
+                    "current_stream": "Stream A",
+                    "new_class": "Next Program",
+                    "new_stream": "Stream B"
+                }
+            ],
+            "new_academic_year": "2026-2027",
+            "new_academic_term": "Term 2",
+        })
+
+        # Manually assign mock students to the `students` field
+        tool.students = [{"item": "fake"}] * 3
+
+        # Patch dependencies
+        with patch("nl_school.junior_school_customization.doctype.enhanced_program_enrollment_tool.enhanced_program_enrollment_tool.enroll_students_based_on_promotion") as mock_enroll, \
+            patch("nl_school.junior_school_customization.doctype.enhanced_program_enrollment_tool.enhanced_program_enrollment_tool.process_promotions") as mock_process, \
+            patch("frappe.msgprint") as mock_msg:
+
+            # Stub out get_students to return mock student records
+            tool.get_students = lambda: [{"student": "S001", "student_name": "John Doe"}]
+
+            tool.enroll_students()
+
+            # Assertions
+            mock_enroll.assert_called_once()
+            mock_process.assert_called_once_with(tool)
+            mock_msg.assert_called_once_with("3 Students have been enrolled")
