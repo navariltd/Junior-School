@@ -161,3 +161,23 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
 
         # Confirm the disabled student is NOT in the results
         self.assertFalse(any(s["student"] == student.name for s in students))
+
+    def test_get_students_returns_error_when_no_students_found(self):
+        """
+        Test that get_students raises an error when no students are found
+        for the specified criteria.
+        """
+        # Create the tool instance with filters that will match no records
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Student Applicant",
+            "program": "Nonexistent Program",
+            "academic_year": "2030-2031",
+            "academic_term": "Term X"
+        })
+
+        # Confirm that the method raises the expected exception
+        with self.assertRaises(frappe.ValidationError) as context:
+            tool.get_students()
+
+        self.assertIn("No students Found", str(context.exception))
