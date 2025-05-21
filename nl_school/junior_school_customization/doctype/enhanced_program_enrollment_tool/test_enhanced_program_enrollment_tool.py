@@ -183,7 +183,57 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
 
         self.assertIn("No students Found", str(context.exception))
 
+    def test_get_students_throws_if_academic_year_missing(self):
+        """
+        Test that get_students raises an error if the academic year is not provided
+        when retrieving students from Student Applicant.
+        """
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Student Applicant",
+            "program": "Test Program"
+        })
+
+        with self.assertRaises(frappe.ValidationError) as context:
+            tool.get_students()
+
+        self.assertIn("Mandatory field - Academic Year", str(context.exception))
+
+    def test_get_students_throws_if_program_missing_for_applicant(self):
+        """
+        Test that get_students raises an error if the program is not provided
+        when retrieving students from Student Applicant.
+        """
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Student Applicant",
+            "academic_year": "2025-2026"
+        })
+
+        with self.assertRaises(frappe.ValidationError) as context:
+            tool.get_students()
+
+        self.assertIn("Mandatory field - Program", str(context.exception))
+
+    def test_get_students_with_invalid_source_throws_no_students(self):
+        """ Test that get_students raises an error when an invalid source is provided """
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Invalid Source",
+            "program": "Test Program",
+            "academic_year": "2025-2026"
+        })
+
+        with self.assertRaises(frappe.ValidationError) as context:
+            tool.get_students()
+
+        self.assertIn("No students Found", str(context.exception))
+
     def test_enroll_students_triggers_expected_workflow(self):
+        """
+        Test that the enroll_students method triggers the expected workflow
+        when called with valid data.
+        """
         tool = frappe.get_doc({
             "doctype": "Enhanced Program Enrollment Tool",
             "get_students_from": "Student Applicant",
