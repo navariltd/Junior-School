@@ -82,4 +82,43 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         # Check if the student applicant is in the result
         self.assertTrue(any(s["student_applicant"] == applicant.name for s in students))
 
-    
+    def test_get_students_from_program_enrollment(self):
+        """
+        Test that Enhanced Program Enrollment Tool retrieves students enrolled via Program
+        Enrollment for a given academic year and term.
+        """
+        student = frappe.get_doc(
+            {"doctype": "Student", "student_name": "Active Student", "enabled": 1}
+        ).insert(ignore_permissions=True)
+
+        # Insert Program Enrollment
+        enrollment = frappe.get_doc(
+            {
+                "doctype": "Program Enrollment",
+                "student": student.name,
+                "student_name": student.student_name,
+                "student_batch_name": "Batch A",
+                "student_category": "General",
+                "program": "Test Program",
+                "company": "Test Company",
+                "custom_stream": "Stream A",
+                "academic_year": "2025-2026",
+                "academic_term": "Term 1",
+            }
+        ).insert(ignore_permissions=True)
+
+        # Create the tool instance
+        tool = frappe.get_doc(
+            {
+                "doctype": "Enhanced Program Enrollment Tool",
+                "get_students_from": "Program Enrollment",
+                "academic_year": "2025-2026",
+                "academic_term": "Term 1",
+            }
+        )
+
+        # Call the method to get students
+        students = tool.get_students()
+
+        # confirm that the student is in the result
+        self.assertTrue(any(s["student"] == student.name for s in students))
