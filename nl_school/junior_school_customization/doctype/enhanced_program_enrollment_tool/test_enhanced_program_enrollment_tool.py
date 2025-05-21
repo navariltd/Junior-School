@@ -86,7 +86,7 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         """
         Test that Enhanced Program Enrollment Tool retrieves students enrolled via Program
         Enrollment for a given academic year and term.
-        """
+            """
         student = frappe.get_doc(
             {"doctype": "Student", "student_name": "Active Student", "enabled": 1}
         ).insert(ignore_permissions=True)
@@ -122,3 +122,42 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
 
         # confirm that the student is in the result
         self.assertTrue(any(s["student"] == student.name for s in students))
+
+    def test_disabled_students_are_filtered_out(self):
+        """
+        Test that disabled students
+        are not included in the results when retrieving students from Program Enrollment.
+        """
+        # Insert a disabled student
+        student = frappe.get_doc({
+            "doctype": "Student",
+            "student_name": "Inactive Student",
+            "enabled": 0
+        }).insert(ignore_permissions=True)
+
+        # Insert a Program Enrollment for the disabled student
+        enrollment = frappe.get_doc({
+            "doctype": "Program Enrollment",
+            "student": student.name,
+            "student_name": student.student_name,
+            "student_batch_name": "Batch B",
+            "student_category": "General",
+            "program": "Test Program",
+            "company": "Test Company",
+            "custom_stream": "Stream B",
+            "academic_year": "2025-2026",
+            "academic_term": "Term 1"
+        }).insert(ignore_permissions=True)
+
+        # Create the tool document
+        tool = frappe.get_doc({
+            "doctype": "Enhanced Program Enrollment Tool",
+            "get_students_from": "Program Enrollment",
+            "academic_year": "2025-2026",
+            "academic_term": "Term 1"
+        })
+
+        students = tool.get_students()
+
+        # Confirm the disabled student is NOT in the results
+        self.assertFalse(any(s["student"] == student.name for s in students))
