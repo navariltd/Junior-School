@@ -1,0 +1,31 @@
+{
+ "cards": [
+  {
+   "card": "Open Assessment Plans"
+  },
+  {
+   "card": "Closed Assessment Plans"
+  }
+ ],
+ "charts": [
+  {
+   "width": "Half"
+  },
+  {
+   "chart": "Average Performance per Stream-1",
+   "width": "Full"
+  }
+ ],
+ "creation": "2025-05-23 19:24:57.959951",
+ "dashboard_name": "Junior School",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "modified": "2025-05-23 19:54:21.321430",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Junior School",
+ "owner": "Administrator"
+}

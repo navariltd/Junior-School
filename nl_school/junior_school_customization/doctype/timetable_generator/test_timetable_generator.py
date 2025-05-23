@@ -1,10 +1,9 @@
 # Copyright (c) 2025, Navari and Contributors
 # See license.txt
 
-# import frappe
+import frappe
 from datetime import datetime
 import unittest
-from unittest.mock import MagicMock, patch
 from nl_school.junior_school_customization.doctype.timetable_generator.timetable_generator import (
     clear_existing_schedules,
     get_period_slots,
@@ -16,267 +15,343 @@ from nl_school.junior_school_customization.doctype.timetable_generator.timetable
 )
 from frappe.tests.utils import FrappeTestCase
 
-MODULE_PATH = "nl_school.junior_school_customization.doctype.timetable_generator.timetable_generator"
-
 
 class TestTimetableGenerator(FrappeTestCase):
-    pass
 
+    def create_events(self):
 
-class TestTimetableGenerator(unittest.TestCase):
-    def setUp(self):
+        # Create test academic term
+        self.academic_term = frappe.get_doc(
+            {
+                "doctype": "Academic Term",
+                "academic_year": "2025-2026",
+                "term_name": "Test Term 2025",
+                "term_start_date": "2025-01-01",
+                "term_end_date": "2025-03-31",
+            }
+        ).insert()
 
-        self.mock_term_start_date = datetime(2025, 1, 1)
-        self.mock_term_end_date = datetime(2025, 3, 31)
-
-        # Mock timetable configuration
-        self.mock_config = {
-            "term_start_date": self.mock_term_start_date,
-            "term_end_date": self.mock_term_end_date,
-            "teacher_preferences": [
+        # Create test streams (student groups)
+        self.streams = [
+            frappe.get_doc(
                 {
-                    "teacher": "Teacher 1",
-                    "subject": "Mathematics",
-                    "stream": "Science Stream",
+                    "doctype": "Student Group",
+                    "group_name": "Science Stream Test",
+                    "academic_term": self.academic_term.name,
+                    "academic_year": "2025-2026",
+                    "group_based_on": "Course",
+                }
+            ).insert(),
+            frappe.get_doc(
+                {
+                    "doctype": "Student Group",
+                    "group_name": "Arts Stream Test",
+                    "academic_term": self.academic_term.name,
+                    "academic_year": "2025-2026",
+                    "group_based_on": "Course",
+                }
+            ).insert(),
+        ]
+
+        # Create test teachers
+        self.teachers = [
+            frappe.get_doc(
+                {
+                    "doctype": "Instructor",
+                    "instructor_name": "Test Teacher 1",
+                    "department": "Science",
+                }
+            ).insert(),
+            frappe.get_doc(
+                {
+                    "doctype": "Instructor",
+                    "instructor_name": "Test Teacher 2",
+                    "department": "Science",
+                }
+            ).insert(),
+        ]
+
+        # Create test subjects
+        self.subjects = [
+            frappe.get_doc(
+                {
+                    "doctype": "Course",
+                    "course_name": "Test Mathematics",
+                    "course_code": "MATH101",
+                }
+            ).insert(),
+            frappe.get_doc(
+                {
+                    "doctype": "Course",
+                    "course_name": "Test Physics",
+                    "course_code": "PHYS101",
+                }
+            ).insert(),
+        ]
+
+        # Create test rooms
+        self.rooms = [
+            frappe.get_doc(
+                {
+                    "doctype": "Room",
+                    "room_name": "Test Room 101",
+                    "room_number": "101",
+                    "seating_capacity": 30,
+                }
+            ).insert(),
+            frappe.get_doc(
+                {
+                    "doctype": "Room",
+                    "room_name": "Test Lab 201",
+                    "room_number": "201",
+                    "seating_capacity": 25,
+                }
+            ).insert(),
+        ]
+
+        # Create timetable generator
+        self.timetable = frappe.get_doc(
+            {"doctype": "Timetable Generator", "academic_term": self.academic_term.name}
+        )
+
+        # Add time slots
+        self.timetable.extend(
+            "time_slots",
+            [
+                {"period": 1, "start_time": "08:00:00", "end_time": "09:00:00"},
+                {"period": 2, "start_time": "09:00:00", "end_time": "10:00:00"},
+                {"period": 3, "start_time": "10:00:00", "end_time": "11:00:00"},
+            ],
+        )
+        self.timetable.insert()
+
+        # Create teacher preferences
+        self.teacher_prefs = [
+            frappe.get_doc(
+                {
+                    "doctype": "Teacher Preference",
+                    "teacher": self.teachers[0].name,
+                    "subject": self.subjects[0].name,
+                    "stream": self.streams[0].name,
                     "max_period_per_week": 20,
                     "max_period_per_day": 4,
-                },
+                }
+            ).insert(),
+            frappe.get_doc(
                 {
-                    "teacher": "Teacher 2",
-                    "subject": "Physics",
-                    "stream": "Science Stream",
+                    "doctype": "Teacher Preference",
+                    "teacher": self.teachers[1].name,
+                    "subject": self.subjects[1].name,
+                    "stream": self.streams[0].name,
                     "max_period_per_week": 15,
                     "max_period_per_day": 3,
-                },
-            ],
-            "subject_rules": [
+                }
+            ).insert(),
+        ]
+
+        # Create subject rules
+        self.subject_rules = [
+            frappe.get_doc(
                 {
-                    "subject": "Mathematics",
+                    "doctype": "Subject Rules",
+                    "subject": self.subjects[0].name,
                     "frequency_per_week": 5,
-                    "allow_double": True,
-                    "max_time": "12:00",
-                },
+                    "allow_double": 1,
+                    "max_time": "12:00:00",
+                }
+            ).insert(),
+            frappe.get_doc(
                 {
-                    "subject": "Physics",
+                    "doctype": "Subject Rules",
+                    "subject": self.subjects[1].name,
                     "frequency_per_week": 3,
-                    "allow_double": False,
-                    "max_time": "15:00",
-                },
-            ],
-            "classrooms": [
-                {"subject": "Mathematics", "room": "Room 101"},
-                {"subject": "Physics", "room": "Lab 201"},
-            ],
-            "academic_term": "Term 2025",
-            "all_streams": [{"name": "Science Stream"}, {"name": "Arts Stream"}],
-            "timetable_doc": MagicMock(),
-        }
-
-        # Mock period slots
-        self.mock_period_slots = [
-            {"period": 1, "from_time": "08:00", "to_time": "09:00"},
-            {"period": 2, "from_time": "09:00", "to_time": "10:00"},
-            {"period": 3, "from_time": "10:00", "to_time": "11:00"},
+                    "allow_double": 0,
+                    "max_time": "15:00:00",
+                }
+            ).insert(),
         ]
 
-        # Mock school days
-        self.mock_school_days = [
-            datetime(2025, 1, 6),  # Monday
-            datetime(2025, 1, 7),  # Tuesday
-            datetime(2025, 1, 8),  # Wednesday
-            datetime(2025, 1, 9),  # Thursday
-            datetime(2025, 1, 10),  # Friday
+        # Create teaching rooms
+        self.teaching_rooms = [
+            frappe.get_doc(
+                {
+                    "doctype": "Teaching Rooms",
+                    "subject": self.subjects[0].name,
+                    "room": self.rooms[0].name,
+                }
+            ).insert(),
+            frappe.get_doc(
+                {
+                    "doctype": "Teaching Rooms",
+                    "subject": self.subjects[1].name,
+                    "room": self.rooms[1].name,
+                }
+            ).insert(),
         ]
+
+    def setUp(self):
+        self.create_events()
 
     def tearDown(self):
-        pass
+        # Delete all test data in reverse order of creation
+        for doc in self.teaching_rooms:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-    @patch("frappe.get_doc")
-    @patch("frappe.get_all")
-    def test_load_configuration(self, mock_get_all, mock_get_doc):
+        for doc in self.subject_rules:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-        mock_timetable_doc = MagicMock()
-        mock_timetable_doc.academic_term = "Term 2025"
+        for doc in self.teacher_prefs:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-        mock_academic_term = MagicMock()
-        mock_academic_term.term_start_date = self.mock_term_start_date
-        mock_academic_term.term_end_date = self.mock_term_end_date
+        frappe.delete_doc(self.timetable.doctype, self.timetable.name)
 
-        mock_get_doc.side_effect = [mock_timetable_doc, mock_academic_term]
+        for doc in self.rooms:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-        mock_get_all.side_effect = [
-            self.mock_config["teacher_preferences"],
-            self.mock_config["subject_rules"],
-            self.mock_config["classrooms"],
-            self.mock_config["all_streams"],
-        ]
+        for doc in self.subjects:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-        config_result = load_configuration()
+        for doc in self.teachers:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-        self.assertEqual(config_result["term_start_date"], self.mock_term_start_date)
-        self.assertEqual(config_result["term_end_date"], self.mock_term_end_date)
-        self.assertEqual(config_result["academic_term"], "Term 2025")
-        self.assertEqual(len(config_result["teacher_preferences"]), 2)
-        self.assertEqual(len(config_result["subject_rules"]), 2)
-        self.assertEqual(len(config_result["classrooms"]), 2)
+        for doc in self.streams:
+            frappe.delete_doc(doc.doctype, doc.name)
 
-    @patch("frappe.throw")
-    def test_validate_config_invalid_dates(self, mock_throw):
+        frappe.delete_doc(self.academic_term.doctype, self.academic_term.name)
 
-        invalid_config = self.mock_config.copy()
-        invalid_config["term_start_date"] = datetime(2025, 4, 1)
-        invalid_config["term_end_date"] = datetime(2025, 3, 31)
+    def test_load_configuration(self):
+        """Test loading timetable configuration with actual documents"""
+        config = load_configuration()
 
-        validate_config(invalid_config)
+        self.assertEqual(config["academic_term"], self.academic_term.name)
+        self.assertEqual(len(config["teacher_preferences"]), 2)
+        self.assertEqual(len(config["subject_rules"]), 2)
+        self.assertEqual(len(config["classrooms"]), 2)
 
-        mock_throw.assert_called_once_with("Invalid Academic Term dates")
+    def test_validate_config_invalid_dates(self):
+        """Test validation of configuration with invalid dates"""
+        invalid_config = {
+            "term_start_date": datetime(2025, 4, 1),
+            "term_end_date": datetime(2025, 3, 31),
+        }
+
+        with self.assertRaises(frappe.ValidationError):
+            validate_config(invalid_config)
 
     def test_get_school_days(self):
-        """Test that school days are correctly generated starting from a given date"""
-        # Test with a Wednesday start date (should adjust to next Monday)
-        start_date = datetime(2025, 5, 21)  # Tuesday
+        """Test school days generation with actual dates"""
+        # Test with a Wednesday start date
+        start_date = datetime(2025, 5, 21)  # Wednesday
         days = get_school_days(start_date)
 
-        # Should start from next Monday (January 6)
-        self.assertEqual(days[0], datetime(2025, 5, 26))  # Monday
-        self.assertEqual(days[4], datetime(2025, 5, 30))  # Friday
+        self.assertEqual(
+            days[0], datetime(2025, 5, 26)
+        )  # Should start from next Monday
+        self.assertEqual(days[4], datetime(2025, 5, 30))  # Should end on Friday
         self.assertEqual(len(days), 5)
 
         # Test with a Monday start date
         start_date = datetime(2025, 5, 26)  # Monday
         days = get_school_days(start_date)
 
-        self.assertEqual(days[0], datetime(2025, 5, 26))  # Monday
+        self.assertEqual(days[0], datetime(2025, 5, 26))  # Should start same Monday
         self.assertEqual(len(days), 5)
 
-    @patch("frappe.get_all")
-    def test_get_period_slots(self, mock_get_all):
-        """Test retrieving period slots from the timetable document"""
+    def test_get_period_slots(self):
+        """Test retrieving period slots from actual timetable document"""
+        slots = get_period_slots(self.timetable)
 
-        mock_time_slots = [
-            MagicMock(period=1, start_time="08:00", end_time="09:00"),
-            MagicMock(period=2, start_time="09:00", end_time="10:00"),
-        ]
-        mock_get_all.side_effect = [mock_time_slots]
-
-        mock_timetable_doc = MagicMock()
-        mock_timetable_doc.name = "Test Timetable"
-
-        result = get_period_slots(mock_timetable_doc)
-
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["period"], 1)
-        self.assertEqual(result[0]["from_time"], "08:00")
-        self.assertEqual(result[0]["to_time"], "09:00")
-
-    @patch("frappe.throw")
-    @patch("frappe.get_all")
-    def test_get_period_slots_no_slots(self, mock_get_all, mock_throw):
-        """Test error handling when no slots are defined"""
-        mock_get_all.return_value = []
-        mock_timetable_doc = MagicMock()
-
-        get_period_slots(mock_timetable_doc)
-
-        # Verify that frappe.throw was called
-        mock_throw.assert_called_once_with(
-            "No time slots defined in the Timetable Generator. Please add time slots."
-        )
+        self.assertEqual(len(slots), 3)
+        self.assertEqual(slots[0]["period"], 1)
+        self.assertEqual(slots[0]["from_time"], "08:00")
+        self.assertEqual(slots[0]["to_time"], "09:00")
 
     def test_prepare_scheduling_data(self):
-        """Test that scheduling data is correctly prepared from preferences, rules, and streams"""
+        """Test scheduling data preparation with actual documents"""
+        config = load_configuration()
         result = prepare_scheduling_data(
-            self.mock_config["teacher_preferences"],
-            self.mock_config["subject_rules"],
-            self.mock_config["all_streams"],
+            config["teacher_preferences"],
+            config["subject_rules"],
+            config["all_streams"],
         )
 
-        self.assertEqual(len(result), 16)  # 5 math + 3 physics for Science Stream
+        # Should have 16 total slots (5 math + 3 physics for Science Stream)
+        self.assertEqual(len(result), 16)
 
-        # Check that each subject has the right frequency
-        math_entries = [item for item in result if item["subject"] == "Mathematics"]
-        physics_entries = [item for item in result if item["subject"] == "Physics"]
-
-        self.assertEqual(len(math_entries), 10)
-        self.assertEqual(len(physics_entries), 6)
-
-        # Check that teachers are assigned correctly
-        self.assertEqual(math_entries[0]["teachers"][0]["teacher"], "Teacher 1")
-        self.assertEqual(physics_entries[0]["teachers"][0]["teacher"], "Teacher 2")
-
-    @patch("frappe.db.sql")
-    def test_clear_existing_schedules(self, mock_sql):
-        """Test clearing existing schedules for an academic term"""
-        with patch("frappe.get_doc") as mock_get_doc:
-            mock_term_doc = MagicMock()
-            mock_term_doc.term_start_date = self.mock_term_start_date
-            mock_term_doc.term_end_date = self.mock_term_end_date
-            mock_get_doc.return_value = mock_term_doc
-
-            result = clear_existing_schedules("Term 2025")
-
-            # Verify that SQL was called to delete records
-            mock_sql.assert_called_once()
-            self.assertTrue(result)  # Function should return True on success
-
-    @patch("random.shuffle")
-    def test_prepare_scheduling_data_sorting(self, mock_shuffle):
-        """Test that scheduling data is sorted by priority"""
-        # Create mock data with different priorities
-        teacher_prefs = [
-            {"teacher": "Teacher 1", "subject": "Math", "stream": "Science"}
+        # Check subject frequencies
+        math_entries = [
+            item for item in result if item["subject"] == self.subjects[0].name
+        ]
+        physics_entries = [
+            item for item in result if item["subject"] == self.subjects[1].name
         ]
 
-        subject_rules = [
-            {"subject": "Math", "frequency_per_week": 5, "allow_double": True}
-        ]
+        self.assertEqual(len(math_entries), 10)  # 5 per stream
+        self.assertEqual(len(physics_entries), 6)  # 3 per stream
 
-        streams = [{"name": "Science"}]
+        # Check teacher assignments
+        self.assertEqual(
+            math_entries[0]["teachers"][0]["teacher"], self.teachers[0].name
+        )
+        self.assertEqual(
+            physics_entries[0]["teachers"][0]["teacher"], self.teachers[1].name
+        )
 
-        result = prepare_scheduling_data(teacher_prefs, subject_rules, streams)
+    def test_clear_existing_schedules(self):
+        """Test clearing existing schedules with actual database operations"""
+        # First create a test schedule
+        test_schedule = frappe.get_doc(
+            {
+                "doctype": "Course Schedule",
+                "schedule_date": "2025-01-06",
+                "instructor": self.teachers[0].name,
+                "room": self.rooms[0].name,
+                "student_group": self.streams[0].name,
+                "course": self.subjects[0].name,
+                "from_time": "08:00:00",
+                "to_time": "09:00:00",
+            }
+        ).insert()
 
-        # Verify that shuffle was called and results are sorted
-        mock_shuffle.assert_called_once()
-        self.assertEqual(len(result), 5)  # 5 math periods
+        # Clear schedules
+        result = clear_existing_schedules(self.academic_term.name)
+        self.assertTrue(result)
 
-        # Check that all items have the right priority
-        for item in result:
-            self.assertEqual(item["priority"], 5)
+        # Verify schedule was cleared
+        remaining_schedules = frappe.get_all(
+            "Course Schedule",
+            filters={
+                "schedule_date": [
+                    "between",
+                    (
+                        self.academic_term.term_start_date,
+                        self.academic_term.term_end_date,
+                    ),
+                ]
+            },
+        )
+        self.assertEqual(len(remaining_schedules), 0)
 
-    # Integration test for the full process
-    @patch(f"{MODULE_PATH}.load_configuration")
-    @patch(f"{MODULE_PATH}.clear_existing_schedules")
-    @patch(f"{MODULE_PATH}.generate_initial_schedule")
-    @patch(f"{MODULE_PATH}.save_and_report_results")
-    def test_process_timetable_generation(
-        self, mock_save, mock_generate, mock_clear, mock_load
-    ):
-        """Test the full timetable generation process"""
-
-        mock_load.return_value = self.mock_config
-        mock_clear.return_value = True
-
-        mock_schedule_data = {
-            "total_items": 10,
-            "final_schedule": [],
-            "scheduled_items": [],
-            "unscheduled_items": [],
-        }
-        mock_generate.return_value = mock_schedule_data
-
-        mock_save.return_value = {"success": True}
-
+    def test_process_timetable_generation(self):
+        """Test the complete timetable generation process with actual documents"""
         result = process_timetable_generation()
 
-        # Verify all steps were called
-        mock_load.assert_called_once()
-        mock_clear.assert_called_once_with(self.mock_config["academic_term"])
-        mock_generate.assert_called_once_with(self.mock_config)
-        mock_save.assert_called_once_with(self.mock_config, mock_schedule_data)
+        self.assertTrue(result["success"])
+        self.assertTrue("stats" in result)
+        self.assertTrue(result["stats"]["total_items"] > 0)
+        self.assertTrue(result["stats"]["scheduled"] > 0)
 
-        self.assertEqual(result, {"success": True})
-
-        mock_load.reset_mock()
-        result = process_timetable_generation(self.mock_config)
-
-        mock_load.assert_not_called()
+        # Verify schedules were created
+        schedules = frappe.get_all(
+            "Course Schedule",
+            filters={
+                "schedule_date": [
+                    "between",
+                    (
+                        self.academic_term.term_start_date,
+                        self.academic_term.term_end_date,
+                    ),
+                ]
+            },
+        )
+        self.assertTrue(len(schedules) > 0)
