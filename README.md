@@ -315,3 +315,102 @@ We added a **scheduler job** that:
     
 
 This ensures accurate status without requiring manual updates.
+
+## 🎓 Academic Year Setup & Automated Student Promotion System
+
+### 📌 Overview
+
+This system is designed to automatically:
+
+-   **Create a new Academic Year** at the beginning of each calendar year.
+    
+-   **Promote students** to their next grade or stream using rules defined per school.
+    
+
+----------
+
+### 🕐 Scheduled Jobs
+
+#### **1. Academic Year Creation**
+
+-   **Trigger Time:** Every year on **January 1st at 12:00 AM**.
+    
+-   **Function:** `create_academic_year()`
+    
+-   **Description:** Automatically creates a new `Academic Year` document with:
+    
+    -   `year_start_date = YYYY-01-01`
+        
+    -   `year_end_date = YYYY-12-31`
+        
+    -   `academic_year_name = "YYYY Academic Year"`
+        
+
+#### **2. Auto Enrollment into New Year**
+
+-   **Trigger Time:** Immediately after academic year creation.
+    
+-   **Function:** `update_enrolment_tool()`
+    
+-   **Description:** Uses the Automated Program Enrollment Tool to:
+    
+    -   Load student enrollments from the **previous academic year**.
+        
+    -   Apply **promotion rules** (per class and stream).
+        
+    -   Enroll promoted students into the **new academic year and term**.
+        
+
+----------
+
+### Promotion Rules Engine
+
+Each school can configure **promotion rules** via the `Automated Program Enrollment Tool`:
+
+![image (16)](https://github.com/user-attachments/assets/a5d6ddb3-c0e4-4652-adc9-aee08afd2c5a)
+
+#### Fields Explained:
+
+-   **Get Students From:** Source of existing enrollments (e.g., _Class Enrollment_).
+    
+-   **Academic Year / Term:** Current (source) academic year and term.
+    
+-   **Enrollment Date:** Date to apply the new enrollment (typically start of next year).
+    
+
+#### 🔄 Promotion Rules:
+
+
+| Field           | Description         |
+|----------------|---------------------|
+| Current Class  | e.g., Grade 4       |
+| Current Stream | e.g., Grade 4 Blue  |
+| New Class      | e.g., Grade 5       |
+| New Stream     | e.g., Grade 5 Blue  |
+
+
+Each row defines how students will move from their current level to the next.
+
+#### Enrollment Details:
+
+-   **New Academic Year:** Target year for promotion (e.g., _2026 Academic Year_).
+    
+-   **New Academic Term:** Typically _Term 1_ of the new year.
+    
+-   **Enroll Students Button:** Executes the promotion based on defined rules.
+    
+
+----------
+
+### ✅ Result
+
+By running the above process:
+
+-   Each school seamlessly transitions into the new year.
+    
+-   All eligible students are promoted and re-enrolled automatically.
+    
+-   No manual intervention is required at the start of each year.
+![image (17)](https://github.com/user-attachments/assets/cd87ea76-0aa0-4895-a10a-272ff9b67126)
+
+
