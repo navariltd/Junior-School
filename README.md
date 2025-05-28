@@ -414,3 +414,29 @@ By running the above process:
 ![image (17)](https://github.com/user-attachments/assets/cd87ea76-0aa0-4895-a10a-272ff9b67126)
 
 
+## Student Auto-Deactivation on Leaving
+
+When a student's **Date of Leaving** is entered, the system automatically updates their status and removes related records to keep the database clean and consistent.
+
+### Actions Taken:
+
+- **Custom Status** is set to **"Left"**
+- The student record is **disabled** (`enabled = 0`)
+- The student is **removed from their assigned stream** (`Student Group Student`)
+- Any active **Class Enrollment** linked to the student is **cancelled**
+![Uploading image (18).png…]()
+
+This ensures that the student no longer appears in active lists or reports after their departure.
+
+---
+
+#### Similarity to Employee Deactivation
+
+This logic mirrors the behavior for employees:
+- When an **End Date** is entered for an employee, they are automatically marked as inactive.
+- The system adjusts the **active employee count** and deactivates any related links.
+
+This approach helps maintain data integrity and simplifies status tracking across both **students** and **employees**.
+
+
+
