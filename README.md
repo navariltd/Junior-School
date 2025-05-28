@@ -247,4 +247,35 @@ A new feature has been added to the `Student Report Generation Tool` to support 
     -   This approach is enabled by adjusting **System Settings** to allow username-based login.
 ### Backend Override
 
-The default Frappe logic for user creation has been overridden via a custom controller `ModifiedStudent`, where the user account is generated upon saving a new `Student` document.
+The default Frappe logic for user creation has been overridden via a custom controller, `ModifiedStudent`, where the user account is generated upon saving a new `Student` document.
+
+
+### 7.  Introducing **School as Company**
+
+To support **multi-school** or **multi-campus** setups within one ERPNext instance, we introduced a structural change: **each School is now treated as a Company**. This lets users leverage native ERPNext features like permissions, chart of accounts, assets, and HR, scoped to a school.
+
+#### ✅ Key Benefits
+
+-   Enables **multi-school management** under a single ERPNext instance.
+    
+-   Uses ERPNext's built-in `Company` logic to segment data per school.
+    
+-   Allows clear scoping for:
+    
+    -   Financials
+        
+    -   Student data
+        
+    -   Assessments
+        
+    -   Attendance
+        
+    -   Reporting
+        
+    -   Instructor and program tracking
+    -   Filters are applied across key doctypes (e.g., **Course Schedule**) to restrict selection to records relevant to the selected school:
+    ![image (13)](https://github.com/user-attachments/assets/8e7bf4bb-fc9f-4345-8f48-b8327de4c35c)
+
+    -   You can only select **streams**, **student groups**, or **instructors** that belong to the specified school.
+        
+    -   Ensures clean data separation and avoids cross-school data mixing.
