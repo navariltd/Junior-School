@@ -424,7 +424,8 @@ When a student's **Date of Leaving** is entered, the system automatically update
 - The student record is **disabled** (`enabled = 0`)
 - The student is **removed from their assigned stream** (`Student Group Student`)
 - Any active **Class Enrollment** linked to the student is **cancelled**
-![Uploading image (18).png…]()
+
+![image (18)](https://github.com/user-attachments/assets/c0f96a42-2404-4f0e-83da-542f267fddf7)
 
 This ensures that the student no longer appears in active lists or reports after their departure.
 
@@ -437,6 +438,19 @@ This logic mirrors the behavior for employees:
 - The system adjusts the **active employee count** and deactivates any related links.
 
 This approach helps maintain data integrity and simplifies status tracking across both **students** and **employees**.
+
+
+## Academic Term Update for Student Groups(streams)
+
+Update ensures that all **Student Groups(Streams)** reflect the correct **Academic Term** based on the current date.
+
+### Weekly scheduler which:
+- Checks today's date and determines the academic year (e.g., `2025 Academic Year`).
+- Finds the academic term that includes today's date.
+- Updates each **Student Group** in the academic year to use the correct academic term.
+![image (19)](https://github.com/user-attachments/assets/cba6ed14-ecd8-4b9d-8ac3-0700fdacc282)
+
+Helps: Keeping the **Academic Term** field up-to-date ensures accurate reporting, filtering, and planning based on term-specific data.
 
 
 
