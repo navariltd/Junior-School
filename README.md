@@ -127,6 +127,8 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
         -   `Shift` (Linked to HR shift types)
             
         -   `Start Time`, `End Time`
+          ![image](https://github.com/user-attachments/assets/6a0e0084-d894-4ad5-84ba-4f3f170b406c)
+
             
 -   `Student Attendance` Doctype Changes:
     
@@ -137,10 +139,9 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
         -   Allows multiple attendance entries per day based on shift.
             
         -   Ensures no overlapping shifts.
-            
+     ![image (14)](https://github.com/user-attachments/assets/7c01aaf1-506b-411c-8aee-9eb6474d8f50)
+       
 
-**🚧 Issue**:  
-Still under test in production to ensure consistency of teh override.
 
 ----------
 
