@@ -285,3 +285,33 @@ To support **multi-school** or **multi-campus** setups within one ERPNext instan
 -   You can apply **User Permissions** for `Company` to restrict access to specific school data.
     
 -   Customize **dashboards**, **reports**, and **queries** by filtering on `company`.
+
+
+  ### 8. **Assessment Plan Status: Open/Closed**
+  ![image (15)](https://github.com/user-attachments/assets/81a093ae-475f-48ca-8b9d-650d671b3b31)
+
+To improve filtering and tracking of assessments, we introduced a **`status`** field to the **Assessment Plan** doctype.
+
+#### ✅ Key Purpose
+
+-   Distinguish between **active** (open) and **completed** (closed) assessment plans.
+    
+-   Make it easier to **filter only "Open" plans** in tools like the **Assessment Result Tool**.
+  ![Screenshot 2025-05-28 at 19 39 19](https://github.com/user-attachments/assets/eba7dc26-29cd-402b-a2e7-de4adb87f612)
+    
+-   Enable **automation** to close assessment plans once the academic term ends.
+    
+----------
+
+### ⚙️ Scheduler for Auto-Closure
+
+We added a **scheduler job** that:
+
+-   Monitors assessment plans.
+    
+-   Checks the **term end date** linked to each plan.
+    
+-   Automatically updates `status` from **Open → Closed** once the term ends.
+    
+
+This ensures accurate status without requiring manual updates.
