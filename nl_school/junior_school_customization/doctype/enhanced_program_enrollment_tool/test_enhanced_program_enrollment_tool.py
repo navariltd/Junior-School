@@ -13,8 +13,21 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         self.program = "Test Program"
         self.academic_term = "Term 1"
 
-        # Insert a Student Applicant
-        self.student_applicant = frappe.get_doc(
+        # Insert a Student Applicant only if it does not exist
+        existing_applicant = frappe.db.exists(
+            "Student Applicant",
+            {
+            "title": "Test Student",
+            "program": self.program,
+            "academic_year": self.academic_year,
+            "academic_term": self.academic_term,
+            }
+        )
+        
+        if existing_applicant:
+            self.student_applicant = frappe.get_doc("Student Applicant", existing_applicant)
+        else:
+            self.student_applicant = frappe.get_doc(
             {
                 "doctype": "Student Applicant",
                 "title": "Test Student",
@@ -23,7 +36,7 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
                 "academic_year": self.academic_year,
                 "academic_term": self.academic_term,
             }
-        ).insert(ignore_permissions=True)
+            ).insert(ignore_permissions=True)
 
         # Insert a Program Enrollment and Student
         self.student = frappe.get_doc(
