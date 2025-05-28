@@ -73,7 +73,8 @@ Defines subject-level constraints:
 -   **Time Slots Table**: Define periods (e.g., period 1, 2...) with start/end times and durations.
     
 -   **Breaks Table**: Define breaks like breakfast, lunch, etc.. The user must have created this in the `Breaks` doctypes, because it auto-populates the start and end time from the chosen break.
-    
+ ![Screenshot 2025-05-28 at 21 25 14](https://github.com/user-attachments/assets/b43bbfb4-e528-4b99-a799-56d7088e7245)
+   
 
 **c) Teachers Tab**  
 Contains a child table `Teacher Preference` with:
