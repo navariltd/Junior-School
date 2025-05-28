@@ -279,3 +279,8 @@ To support **multi-school** or **multi-campus** setups within one ERPNext instan
     -   You can only select **streams**, **student groups**, or **instructors** that belong to the specified school.
         
     -   Ensures clean data separation and avoids cross-school data mixing.
+      Once this is implemented:
+
+-   You can apply **User Permissions** for `Company` to restrict access to specific school data.
+    
+-   Customize **dashboards**, **reports**, and **queries** by filtering on `company`.
