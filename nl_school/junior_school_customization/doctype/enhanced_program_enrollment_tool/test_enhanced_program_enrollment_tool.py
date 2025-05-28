@@ -49,6 +49,7 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         frappe.delete_doc("Student Applicant", self.student_applicant.name)
         frappe.delete_doc("Program Enrollment", self.program_enrollment.name)
         frappe.delete_doc("Student", self.student.name)
+        frappe.db.commit() # Ensure changes are committed 
 
     def test_get_students_from_applicant(self):
         """
