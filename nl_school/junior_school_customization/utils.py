@@ -4,6 +4,9 @@ from frappe.utils import getdate
 
 
 def create_academic_year():
+    settings = get_education_settings()
+    if not settings.custom_autocreate_academic_year:
+        return
     """Automatically creates an academic year at the start of each new year."""
     current_year = "2029"
     academic_year_name = f"{current_year} Academic Year"
@@ -62,6 +65,9 @@ def create_academic_year():
 
 
 def update_enrolment_tool():
+    settings = get_education_settings()
+    if not settings.custom_auto_enroll_students_yearly:
+        return
     for auto_enrollments in frappe.get_all(
         "Automated Program Enrollment Tool", fields=["name"]
     ):
@@ -246,3 +252,8 @@ def close_assessment_plan():
         academic_term = frappe.get_doc("Academic Term", assessment.academic_term)
         if getdate(academic_term.term_end_date) < getdate():
             frappe.db.set_value("Assessment Plan", assessment.name, "status", "Closed")
+
+
+def get_education_settings():
+    settings = frappe.get_single("Education Settings")
+    return settings
