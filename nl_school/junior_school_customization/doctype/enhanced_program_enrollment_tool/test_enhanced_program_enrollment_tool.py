@@ -14,32 +14,20 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         self.academic_term = "Term 1"
 
         # Insert a Student Applicant only if it does not exist
-        existing_applicant = frappe.db.exists(
+        self.student_applicant = self.get_or_create_doc(
             "Student Applicant",
-            {
+            filters={
                 "title": "Test Student",
                 "program": self.program,
                 "academic_year": self.academic_year,
                 "academic_term": self.academic_term,
             },
-            cache=False,
+            title="Test Student",
+            application_status="Approved",
+            program=self.program,
+            academic_year=self.academic_year,
+            academic_term=self.academic_term,
         )
-
-        if existing_applicant:
-            self.student_applicant = frappe.get_doc(
-                "Student Applicant", existing_applicant
-            )
-        else:
-            self.student_applicant = frappe.get_doc(
-                {
-                    "doctype": "Student Applicant",
-                    "title": "Test Student",
-                    "application_status": "Approved",
-                    "program": self.program,
-                    "academic_year": self.academic_year,
-                    "academic_term": self.academic_term,
-                }
-            ).insert(ignore_permissions=True)
 
         # Insert a Program Enrollment and Student
         self.student = frappe.get_doc(
@@ -73,25 +61,30 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         for the specified program, academic year, and term.
         """
         # Insert approved Student Applicant
-        applicant = frappe.get_doc(
-            {
-                "doctype": "Student Applicant",
+        # Insert approved Student Applicant only if it does not exist
+        applicant = self.get_or_create_doc(
+            "Student Applicant",
+            filters={
                 "title": "Test Applicant",
-                "application_status": "Approved",
-                "program": self.program.name,
-                "academic_year": self.academic_year.name,
-                "academic_term": self.academic_term.name,
-            }
-        ).insert()
+                "program": self.program,
+                "academic_year": self.academic_year,
+                "academic_term": self.academic_term,
+            },
+            title="Test Applicant",
+            application_status="Approved",
+            program=self.program,
+            academic_year=self.academic_year,
+            academic_term=self.academic_term,
+        )
 
         # Create the tool document
         tool = frappe.get_doc(
             {
                 "doctype": "Enhanced Program Enrollment Tool",
                 "get_students_from": "Student Applicant",
-                "program": self.program.name,
-                "academic_year": self.academic_year.name,
-                "academic_term": self.academic_term.name,
+                "program": self.program,
+                "academic_year": self.academic_year,
+                "academic_term": self.academic_term,
             }
         )
 
@@ -110,20 +103,24 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         ).insert(ignore_permissions=True)
 
         # Insert Program Enrollment
-        enrollment = frappe.get_doc(
-            {
-                "doctype": "Program Enrollment",
+        enrollment = self.get_or_create_doc(
+            "Program Enrollment",
+            filters={
                 "student": student.name,
-                "student_name": student.student_name,
-                "student_batch_name": "Batch A",
-                "student_category": "General",
                 "program": "Test Program",
-                "company": "Test Company",
-                "custom_stream": "Stream A",
                 "academic_year": "2025-2026",
                 "academic_term": "Term 1",
-            }
-        ).insert(ignore_permissions=True)
+            },
+            student=student.name,
+            student_name=student.student_name,
+            student_batch_name="Batch A",
+            student_category="General",
+            program="Test Program",
+            company="Test Company",
+            custom_stream="Stream A",
+            academic_year="2025-2026",
+            academic_term="Term 1",
+        )
 
         # Create the tool instance
         tool = frappe.get_doc(
@@ -152,20 +149,24 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
         ).insert(ignore_permissions=True)
 
         # Insert a Program Enrollment for the disabled student
-        enrollment = frappe.get_doc(
-            {
-                "doctype": "Program Enrollment",
+        enrollment = self.get_or_create_doc(
+            "Program Enrollment",
+            filters={
                 "student": student.name,
-                "student_name": student.student_name,
-                "student_batch_name": "Batch B",
-                "student_category": "General",
                 "program": "Test Program",
-                "company": "Test Company",
-                "custom_stream": "Stream B",
                 "academic_year": "2025-2026",
                 "academic_term": "Term 1",
-            }
-        ).insert(ignore_permissions=True)
+            },
+            student=student.name,
+            student_name=student.student_name,
+            student_batch_name="Batch B",
+            student_category="General",
+            program="Test Program",
+            company="Test Company",
+            custom_stream="Stream B",
+            academic_year="2025-2026",
+            academic_term="Term 1",
+        )
 
         # Create the tool document
         tool = frappe.get_doc(
@@ -306,3 +307,17 @@ class TestEnhancedProgramEnrollmentTool(FrappeTestCase):
             mock_enroll.assert_called_once()
             mock_process.assert_called_once_with(tool)
             mock_msg.assert_called_once_with("3 Students have been enrolled")
+
+    def get_or_create_doc(self, doctype, filters=None, **kwargs):
+        """
+        Helper function to get or create a document.
+        If the document exists, it returns the existing one.
+        If not, it creates a new document with the provided filters and kwargs.
+        """
+        if filters:
+            existing_doc = frappe.db.exists(doctype, filters, cache=False)
+            if existing_doc:
+                return frappe.get_doc(doctype, existing_doc)
+
+        doc = frappe.get_doc({"doctype": doctype, **kwargs})
+        return doc.insert(ignore_permissions=True)
