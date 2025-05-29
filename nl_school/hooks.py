@@ -37,6 +37,8 @@ fixtures = [
                     "Student Report Generation Tool-custom_teachers_comment",
                     "Company-custom_rubber_stamp",
                     "Assessment Plan-custom_status",
+                    "Education Settings-custom_autocreate_academic_year",
+                    "Education Settings-custom_auto_enroll_students_yearly"
                 ),
             ]
         ],
