@@ -22,42 +22,88 @@ def create_academic_year():
         frappe.msgprint(f"Created: {academic_year_name}")
 
 
+# TODO: Just incase you decide to go with this doctype for automatic enrolment, then uncomment the code, but i created teh other one for multi-schools purpose
+# def update_enrolment_tool():
+#     enrolment_doc = frappe.get_single("Enhanced Program Enrollment Tool")
+
+#     latest_academic_year = frappe.get_all(
+#         "Academic Year",
+#         fields=["name"],
+#         order_by="year_end_date desc",
+#         limit=1,
+#     )
+
+#     if not latest_academic_year:
+#         frappe.throw(_("No Academic Year found."))
+
+#     enrolment_doc.new_academic_year = latest_academic_year[0].name
+
+#     students = enrolment_doc.get_students()
+
+#     if students:
+#         enrolment_doc.students = []
+
+#         for student in students:
+#             enrolment_doc.append(
+#                 "students",
+#                 {
+#                     "student": student.get("student"),
+#                     "student_name": student.get("student_name"),
+#                     "student_category": student.get("student_category"),
+#                     "student_batch_name": student.get("student_batch_name"),
+#                 },
+#             )
+
+#         enrolment_doc.save()
+
+#         enrolment_doc.enroll_students()
+#     else:
+#         frappe.msgprint(_("No students found to enroll."))
+
+
 def update_enrolment_tool():
-    enrolment_doc = frappe.get_single("Enhanced Program Enrollment Tool")
+    for auto_enrollments in frappe.get_all(
+        "Automated Program Enrollment Tool", fields=["name"]
+    ):
+        enrolment_doc = frappe.get_doc(
+            "Automated Program Enrollment Tool", auto_enrollments.name
+        )
+        if not enrolment_doc:
+            continue
 
-    latest_academic_year = frappe.get_all(
-        "Academic Year",
-        fields=["name"],
-        order_by="year_end_date desc",
-        limit=1,
-    )
+        latest_academic_year = frappe.get_all(
+            "Academic Year",
+            fields=["name"],
+            order_by="year_end_date desc",
+            limit=1,
+        )
 
-    if not latest_academic_year:
-        frappe.throw(_("No Academic Year found."))
+        if not latest_academic_year:
+            frappe.throw(_("No Academic Year found."))
 
-    enrolment_doc.new_academic_year = latest_academic_year[0].name
+        enrolment_doc.new_academic_year = latest_academic_year[0].name
 
-    students = enrolment_doc.get_students()
+        students = enrolment_doc.get_students()
 
-    if students:
-        enrolment_doc.students = []
+        if students:
+            enrolment_doc.students = []
 
-        for student in students:
-            enrolment_doc.append(
-                "students",
-                {
-                    "student": student.get("student"),
-                    "student_name": student.get("student_name"),
-                    "student_category": student.get("student_category"),
-                    "student_batch_name": student.get("student_batch_name"),
-                },
-            )
+            for student in students:
+                enrolment_doc.append(
+                    "students",
+                    {
+                        "student": student.get("student"),
+                        "student_name": student.get("student_name"),
+                        "student_category": student.get("student_category"),
+                        "student_batch_name": student.get("student_batch_name"),
+                    },
+                )
 
-        enrolment_doc.save()
+            enrolment_doc.save()
 
-        enrolment_doc.enroll_students()
-    else:
-        frappe.msgprint(_("No students found to enroll."))
+            enrolment_doc.enroll_students()
+        else:
+            frappe.msgprint(_("No students found to enroll."))
 
 
 def change_student_status(doc):

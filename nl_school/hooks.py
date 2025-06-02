@@ -8,7 +8,7 @@ app_license = "agpl-3.0"
 # Apps
 # ------------------
 
-# required_apps = []
+required_apps = ["education"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -123,6 +123,8 @@ doctype_js = {
 
 # Uninstallation
 # ------------
+
+# after_migrate = ["nl_school.junior_school_customization.patches.override_overlap"]
 
 # before_uninstall = "nl_school.uninstall.before_uninstall"
 # after_uninstall = "nl_school.uninstall.after_uninstall"
