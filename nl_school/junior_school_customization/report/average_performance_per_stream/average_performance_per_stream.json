@@ -2,7 +2,7 @@
  "add_total_row": 0,
  "add_translate_data": 0,
  "columns": [],
- "creation": "2025-06-05 09:49:38.453074",
+ "creation": "2025-06-03 16:54:45.596138",
  "disabled": 0,
  "docstatus": 0,
  "doctype": "Report",
@@ -11,15 +11,25 @@
  "is_standard": "Yes",
  "letter_head": "Default",
  "letterhead": null,
- "modified": "2025-06-05 09:49:38.453074",
+ "modified": "2025-06-03 16:54:45.596138",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Annual Performance Comparison",
+ "name": "Average Performance per Stream",
  "owner": "Administrator",
  "prepared_report": 0,
  "ref_doctype": "Assessment Result",
- "report_name": "Annual Performance Comparison",
+ "report_name": "Average Performance per Stream",
  "report_type": "Script Report",
- "roles": [],
+ "roles": [
+  {
+   "role": "Student"
+  },
+  {
+   "role": "Academics User"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
  "timeout": 0
 }
