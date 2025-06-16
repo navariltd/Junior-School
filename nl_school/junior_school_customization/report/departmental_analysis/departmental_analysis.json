@@ -1,0 +1,35 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-06-15 10:52:44.386106",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Default",
+ "letterhead": null,
+ "modified": "2025-06-15 10:53:25.119958",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Departmental Analysis",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Assessment Result",
+ "report_name": "Departmental Analysis",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Student"
+  },
+  {
+   "role": "Academics User"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "timeout": 0
+}
