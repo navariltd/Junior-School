@@ -1,15 +1,73 @@
-## Frappe Education Extension Customization
+## 📚 Frappe Education Extension Customization
 
-## 📘 Education Module - `Junior School` Extension Documentation
+Frappe Education Extension Customization is a custom [Frappe](https://frappe.io/framework) application that extends the core [ERPNext Education Module](https://frappe.io/education) with enhanced features for junior school management. It provides comprehensive tools for scheduling, attendance tracking, assessment management, and automated student lifecycle processes, specifically designed for multi-school environments.
 
-This document outlines the enhancements and custom tools developed within the `Junior School Customization` module to better support scheduling, attendance tracking, and classroom management in schools.
+---
 
-----------
+## Table of Contents
+
+- [📚 Frappe Education Extension Customization](#-frappe-education-extension-customization)
+- [🚀 Project Overview](#-project-overview)  
+- [Key Features](#key-features)
+  - [1. 🗓️ School Timetable Page](#1-️-school-timetable-page)
+  - [2. ⚙️ Auto-Generation of Timetable](#2-️-auto-generation-of-timetable)
+  - [3. 🧑🏽‍🎓 Enhanced Student Attendance](#3--enhanced-student-attendance)
+  - [4. 🗂️ Subject Scheduling Tool](#4-️-subject-scheduling-tool)
+  - [5. 🧾 Student Report Generation Tool](#5--student-report-generation-tool)
+  - [6. 👨🏽‍💻 Student ID-Based Email and User Auto-Creation](#6--student-id-based-email-and-user-auto-creation)
+  - [7. 🏫 School as Company](#7--school-as-company)
+  - [8. 📊 Assessment Plan Status](#8--assessment-plan-status)
+  - [9. 🎓 Academic Year Setup & Automated Student Promotion System](#9--academic-year-setup--automated-student-promotion-system)
+  - [10. 🚪 Student Auto-Deactivation](#10--student-auto-deactivation)
+  - [11. 📅 Academic Term Update](#11--academic-term-update)
+- [🛠️ Installation](#️-installation)
+  - [✅ Dependencies](#-dependencies)
+  - [☁️ Managed Hosting Frappe Cloud](#️-managed-hosting-frappe-cloud)
+  - [🧑🏿‍💻 Self Hosting](#-self-hosting)
+- [Key DocTypes](#key-doctypes)
+- [Reports](#reports)
+
+---
+
+## 🚀 Project Overview
+
+This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard ERPNext Education while adding specialized functionality for enhanced school operations.
+
+---
+## 🔄 System Workflows
+
+### Core Process Flows
+
+```mermaid
+graph TD
+    A[Student Registration] --> B[Auto ID/Email Creation]
+    B --> C[Class Enrollment]
+    C --> D[Attendance Tracking]
+    D --> E[Assessments]
+    E --> F[Report Generation]
+    F --> G[Year-End Promotion]
+    G --> H[Auto-Deactivation if Leaving]
+    
+    I[Timetable Setup] --> J[Define Subjects/Rules]
+    J --> K[Assign Teachers/Rooms]
+    K --> L[Generate Timetable]
+    L --> M[Calendar View/Edits]
+    
+    N[Academic Year] --> O[Auto-Create Year]
+    O --> P[Update Terms]
+    P --> Q[Close Assessments]
+```
+---
+
+
+## Key Features
 
 ### 1. 🗓️ School Timetable Page
 
 A new **School Timetable View** has been implemented using a calendar interface. Type `Timetable` in search bar and click on first suggestion `Open Timetable`.
+
 ![Screenshot 2025-04-14 at 16 59 16](https://github.com/user-attachments/assets/f749a945-0457-4116-bb91-0cc266148b78)
+
 The key features include:
 
 -   **Calendar Display**: Weekly timetable view (Sun–Sat) showing subjects, teachers, and streams.
@@ -19,13 +77,14 @@ The key features include:
     -   **Levels**: e.g., Pre-primary, Primary
         
     -   **Teachers**: Filter to view specific teacher schedules
+        
         ![Screenshot 2025-04-14 at 17 03 03](https://github.com/user-attachments/assets/1449cf44-3351-4e17-a3a5-43657a2cac28)
     -   **Streams**: Allows filtering based on class streams
         
 -   **Print Functionality**: Filter as required and print the timetable (e.g., per teacher or per stream).
     
 -   **Assumption**: The timetable repeats weekly, so only a one-week view is necessary.
-    
+    ---
 
 **Interactive Editing**:
 
@@ -35,13 +94,16 @@ The key features include:
     
 ![Screenshot 2025-04-15 at 17 28 08](https://github.com/user-attachments/assets/a3135465-3e6c-4d56-ab64-a8bd81847b9f)
 
-- The user can also click in a space and schedule a class.
-----------
+* The user can also click in a space and schedule a class.
 
-### 2. ⚙️ Auto-Generation of Timetable (Like aSc TimeTables)
+---
+
+### 2. ⚙️ Auto-Generation of Timetable
 
 To streamline scheduling, an automated timetable generator has been introduced using a **Single Doctype**: `Timetable Generator`.
+
 ![Screenshot 2025-04-14 at 17 05 50](https://github.com/user-attachments/assets/3f8c5b49-30dd-4ae9-a449-827b3003e6cc)
+
 #### Structure:
 
 -   **Main Fields**:
@@ -73,7 +135,8 @@ Defines subject-level constraints:
 -   **Time Slots Table**: Define periods (e.g., period 1, 2...) with start/end times and durations.
     
 -   **Breaks Table**: Define breaks like breakfast, lunch, etc.. The user must have created this in the `Breaks` doctypes, because it auto-populates the start and end time from the chosen break.
- ![Screenshot 2025-05-28 at 21 25 14](https://github.com/user-attachments/assets/b43bbfb4-e528-4b99-a799-56d7088e7245)
+ 
+![Screenshot 2025-05-28 at 21 25 14](https://github.com/user-attachments/assets/b43bbfb4-e528-4b99-a799-56d7088e7245)
    
 
 **c) Teachers Tab**  
@@ -113,9 +176,7 @@ In the `Teaching Rooms` child table:
 -   Some logic misbehaviors.
     
 -   Double lessons are yet to be fully implemented.
-    
-
-----------
+  ---
 
 ### 3. 🧑🏽‍🎓 Enhanced Student Attendance
 
@@ -128,7 +189,8 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
         -   `Shift` (Linked to HR shift types)
             
         -   `Start Time`, `End Time`
-          ![image](https://github.com/user-attachments/assets/6a0e0084-d894-4ad5-84ba-4f3f170b406c)
+          
+![image](https://github.com/user-attachments/assets/6a0e0084-d894-4ad5-84ba-4f3f170b406c)
 
             
 -   `Student Attendance` Doctype Changes:
@@ -140,13 +202,11 @@ To support **multi-shift attendance** (e.g., morning & evening), the following h
         -   Allows multiple attendance entries per day based on shift.
             
         -   Ensures no overlapping shifts.
-     ![image (14)](https://github.com/user-attachments/assets/7c01aaf1-506b-411c-8aee-9eb6474d8f50)
-       
+     
+![image (14)](https://github.com/user-attachments/assets/7c01aaf1-506b-411c-8aee-9eb6474d8f50)
+---
 
-
-----------
-
-### 4. 🗂️ Subject Scheduling Tool (Improved Course Scheduling Tool)
+### 4. 🗂️ Subject Scheduling Tool
 
 Creating course schedules with consistent time across days was limiting. To address this:
 
@@ -168,9 +228,12 @@ Creating course schedules with consistent time across days was limiting. To addr
             
 
 This tool improves flexibility and real-world scheduling accuracy.
+
 ![Screenshot 2025-04-14 at 17 24 10](https://github.com/user-attachments/assets/662e0fa8-b0a8-43f7-889a-1fe115fd01ad)
 
-### 5. 🧾 Student Report Generation Tool – **Custom Print Report Card**
+---
+
+### 5. 🧾 Student Report Generation Tool
 
 A new feature has been added to the `Student Report Generation Tool` to support customizable report card printing.
 
@@ -189,20 +252,10 @@ A new feature has been added to the `Student Report Generation Tool` to support 
     -   Generate report cards for **any assessment group**.
         
     -   Allow students to take their report cards home during half-term or early departures without restriction.
+ 
+    ---
 
-----------
-## ✅ Summary
-
-| Feature                   | Status          | Notes                                                      |
-|---------------------------|------------------|------------------------------------------------------------|
-| Timetable Calendar Page   | ✅ Completed     | Interactive and printable with filters                     |
-| Auto Timetable Generator  | 🛠️ In Progress   | Handles rules, breaks, and teacher limits                  |
-| Enhanced Attendance       | ✅ Completed  | Shift-based validation works locally; prod inconsistency(still testing)  |
-| Subject Scheduling Tool   | ✅ Completed     | Supports flexible per-day time allocations                 |
-
-
-
-## 👨🏽‍💻 Student ID-Based Email and User Auto-Creation
+### 6. 👨🏽‍💻 Student ID-Based Email and User Auto-Creation
 
 #### 🛠️ Key Features:
 
@@ -215,16 +268,13 @@ A new feature has been added to the `Student Report Generation Tool` to support 
     -   Example: For a school with abbreviation `JNS`, the Student ID might be `JNS-0001`.
         
     -   ⚠️ _This logic is customizable depending on the use case or naming convention required._
-    ![image (12)](https://github.com/user-attachments/assets/8f31fccc-7aa3-4136-82d8-d13554acf013)
+    
+![image (12)](https://github.com/user-attachments/assets/8f31fccc-7aa3-4136-82d8-d13554acf013)
 
         
 -   **Auto-Generated Student Email**:
     
     -   Since younger students may not have emails, the system synthesizes one using the format:
-        
-        css
-        
-        CopyEdit
         
         `<student_id>@gmail.com` 
         
@@ -247,12 +297,13 @@ A new feature has been added to the `Student Report Generation Tool` to support 
     -   They use their Student ID (original) as the **password**.
         
     -   This approach is enabled by adjusting **System Settings** to allow username-based login.
-### Backend Override
+
+#### Backend Override
 
 The default Frappe logic for user creation has been overridden via a custom controller, `ModifiedStudent`, where the user account is generated upon saving a new `Student` document.
+---
 
-
-### 7.  Introducing **School as Company**
+### 7. 🏫 School as Company
 
 To support **multi-school** or **multi-campus** setups within one ERPNext instance, we introduced a structural change: **each School is now treated as a Company**. This lets users leverage native ERPNext features like permissions, chart of accounts, assets, and HR, scoped to a school.
 
@@ -275,21 +326,26 @@ To support **multi-school** or **multi-campus** setups within one ERPNext instan
     -   Reporting
         
     -   Instructor and program tracking
-    -   Filters are applied across key doctypes (e.g., **Course Schedule**) to restrict selection to records relevant to the selected school:
-    ![image (13)](https://github.com/user-attachments/assets/8e7bf4bb-fc9f-4345-8f48-b8327de4c35c)
-
-    -   You can only select **streams**, **student groups**, or **instructors** that belong to the specified school.
         
-    -   Ensures clean data separation and avoids cross-school data mixing.
-      Once this is implemented:
+-   Filters are applied across key doctypes (e.g., **Course Schedule**) to restrict selection to records relevant to the selected school:
+
+![image (13)](https://github.com/user-attachments/assets/8e7bf4bb-fc9f-4345-8f48-b8327de4c35c)
+
+-   You can only select **streams**, **student groups**, or **instructors** that belong to the specified school.
+        
+-   Ensures clean data separation and avoids cross-school data mixing.
+
+Once this is implemented:
 
 -   You can apply **User Permissions** for `Company` to restrict access to specific school data.
     
 -   Customize **dashboards**, **reports**, and **queries** by filtering on `company`.
 
+  ---
 
-  ### 8. **Assessment Plan Status: Open/Closed**
-  ![image (15)](https://github.com/user-attachments/assets/81a093ae-475f-48ca-8b9d-650d671b3b31)
+### 8. 📊 Assessment Plan Status
+
+![image (15)](https://github.com/user-attachments/assets/81a093ae-475f-48ca-8b9d-650d671b3b31)
 
 To improve filtering and tracking of assessments, we introduced a **`status`** field to the **Assessment Plan** doctype.
 
@@ -298,13 +354,12 @@ To improve filtering and tracking of assessments, we introduced a **`status`** f
 -   Distinguish between **active** (open) and **completed** (closed) assessment plans.
     
 -   Make it easier to **filter only "Open" plans** in tools like the **Assessment Result Tool**.
-  ![Screenshot 2025-05-28 at 19 39 19](https://github.com/user-attachments/assets/eba7dc26-29cd-402b-a2e7-de4adb87f612)
+
+![Screenshot 2025-05-28 at 19 39 19](https://github.com/user-attachments/assets/eba7dc26-29cd-402b-a2e7-de4adb87f612)
     
 -   Enable **automation** to close assessment plans once the academic term ends.
-    
-----------
 
-### ⚙️ Scheduler for Auto-Closure
+#### ⚙️ Scheduler for Auto-Closure
 
 We added a **scheduler job** that:
 
@@ -316,23 +371,23 @@ We added a **scheduler job** that:
     
 
 This ensures accurate status without requiring manual updates.
+---
 
-## 🎓 Academic Year Setup & Automated Student Promotion System
+### 9. 🎓 Academic Year Setup & Automated Student Promotion System
 
-### 📌 Overview
+#### 📌 Overview
 
 This system is designed to automatically:
 
 -   **Create a new Academic Year** at the beginning of each calendar year.
     
 -   **Promote students** to their next grade or stream using rules defined per school.
-    
 
-----------
+  ---
 
-### 🕐 Scheduled Jobs
+#### 🕐 Scheduled Jobs
 
-#### **1. Academic Year Creation**
+**1. Academic Year Creation**
 
 -   **Trigger Time:** Every year on **January 1st at 12:00 AM**.
     
@@ -345,9 +400,10 @@ This system is designed to automatically:
     -   `year_end_date = YYYY-12-31`
         
     -   `academic_year_name = "YYYY Academic Year"`
+      ---
         
 
-#### **2. Auto Enrollment into New Year**
+**2. Auto Enrollment into New Year**
 
 -   **Trigger Time:** Immediately after academic year creation.
     
@@ -360,11 +416,8 @@ This system is designed to automatically:
     -   Apply **promotion rules** (per class and stream).
         
     -   Enroll promoted students into the **new academic year and term**.
-        
 
-----------
-
-### Promotion Rules Engine
+#### Promotion Rules Engine
 
 Each school can configure **promotion rules** via the `Automated Program Enrollment Tool`:
 
@@ -377,10 +430,8 @@ Each school can configure **promotion rules** via the `Automated Program Enrollm
 -   **Academic Year / Term:** Current (source) academic year and term.
     
 -   **Enrollment Date:** Date to apply the new enrollment (typically start of next year).
-    
 
 #### 🔄 Promotion Rules:
-
 
 | Field           | Description         |
 |----------------|---------------------|
@@ -388,7 +439,6 @@ Each school can configure **promotion rules** via the `Automated Program Enrollm
 | Current Stream | e.g., Grade 4 Blue  |
 | New Class      | e.g., Grade 5       |
 | New Stream     | e.g., Grade 5 Blue  |
-
 
 Each row defines how students will move from their current level to the next.
 
@@ -399,11 +449,8 @@ Each row defines how students will move from their current level to the next.
 -   **New Academic Term:** Typically _Term 1_ of the new year.
     
 -   **Enroll Students Button:** Executes the promotion based on defined rules.
-    
 
-----------
-
-### ✅ Result
+#### ✅ Result
 
 By running the above process:
 
@@ -412,46 +459,102 @@ By running the above process:
 -   All eligible students are promoted and re-enrolled automatically.
     
 -   No manual intervention is required at the start of each year.
+
 ![image (17)](https://github.com/user-attachments/assets/cd87ea76-0aa0-4895-a10a-272ff9b67126)
 
-
-## Student Auto-Deactivation on Leaving
+### 10. 🚪 Student Auto-Deactivation
 
 When a student's **Date of Leaving** is entered, the system automatically updates their status and removes related records to keep the database clean and consistent.
 
-### Actions Taken:
+#### Actions Taken:
 
-- **Custom Status** is set to **"Left"**
-- The student record is **disabled** (`enabled = 0`)
-- The student is **removed from their assigned stream** (`Student Group Student`)
-- Any active **Class Enrollment** linked to the student is **cancelled**
+* **Custom Status** is set to **"Left"**
+* The student record is **disabled** (`enabled = 0`)
+* The student is **removed from their assigned stream** (`Student Group Student`)
+* Any active **Class Enrollment** linked to the student is **cancelled**
 
 ![image (18)](https://github.com/user-attachments/assets/c0f96a42-2404-4f0e-83da-542f267fddf7)
 
 This ensures that the student no longer appears in active lists or reports after their departure.
 
----
-
 #### Similarity to Employee Deactivation
 
 This logic mirrors the behavior for employees:
-- When an **End Date** is entered for an employee, they are automatically marked as inactive.
-- The system adjusts the **active employee count** and deactivates any related links.
+* When an **End Date** is entered for an employee, they are automatically marked as inactive.
+* The system adjusts the **active employee count** and deactivates any related links.
 
 This approach helps maintain data integrity and simplifies status tracking across both **students** and **employees**.
 
-
-## Academic Term Update for Student Groups(streams)
+### 11. 📅 Academic Term Update
 
 Update ensures that all **Student Groups(Streams)** reflect the correct **Academic Term** based on the current date.
 
-### Weekly scheduler which:
-- Checks today's date and determines the academic year (e.g., `2025 Academic Year`).
-- Finds the academic term that includes today's date.
-- Updates each **Student Group** in the academic year to use the correct academic term.
+#### Weekly scheduler which:
+* Checks today's date and determines the academic year (e.g., `2025 Academic Year`).
+* Finds the academic term that includes today's date.
+* Updates each **Student Group** in the academic year to use the correct academic term.
+
 ![image (19)](https://github.com/user-attachments/assets/cba6ed14-ecd8-4b9d-8ac3-0700fdacc282)
 
-Helps: Keeping the **Academic Term** field up-to-date ensures accurate reporting, filtering, and planning based on term-specific data.
+**Helps:** Keeping the **Academic Term** field up-to-date ensures accurate reporting, filtering, and planning based on term-specific data.
 
+---
 
+## 🛠️ Installation
+
+### ✅ Dependencies
+
+* [Frappe Framework](https://frappe.io/framework)
+* [ERPNext](https://frappe.io/erpnext)  
+* [ERPNext Education Module](https://frappe.io/education)
+* [Frappe HR](https://frappe.io/hr) 
+
+### ☁️ Managed Hosting [Frappe Cloud](https://frappecloud.com/)
+
+1. Login to your Frappe Cloud account
+2. Navigate to Sites/Bench Groups dashboard
+3. Go to **Apps** tab and select **+ Install APP** / **+ Add APP**
+4. Select **Add from Github** and add repository URL
+5. Install Application or Fetch Branches
+
+### 🧑🏿‍💻 Self Hosting
+
+1. Ensure you have a working Frappe and ERPNext instance with Education module
+2. Clone this repository into your Frappe bench apps directory:
+
+```bash
+bench get-app https://github.com/navariltd/Junior-School.git
+```
+
+3. Install the app into your site:
+
+```bash
+bench --site [your-site-name] install-app nl_school
+```
+
+4. Reload and restart the bench:
+
+```bash
+bench restart
+```
+
+---
+
+## Key DocTypes
+
+### Timetable Generator
+Central configuration doctype for automated timetable generation with subject rules, time slots, teacher preferences, and room assignments.
+
+### Enhanced Student Attendance Tool  
+Extended attendance tool supporting multi-shift tracking with shift-specific time ranges and validation.
+
+### Subject Scheduling Tool
+Flexible scheduling tool enabling different time allocations per day for improved real-world scheduling accuracy.
+
+### Automated Program Enrollment Tool
+Comprehensive student promotion management with configurable rules for academic year transitions.
+
+---
+
+## REPORTS
 
