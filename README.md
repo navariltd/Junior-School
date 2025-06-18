@@ -500,6 +500,119 @@ Update ensures that all **Student Groups(Streams)** reflect the correct **Academ
 
 ---
 
+## REPORTS
+### 1. Average Performance per Stream
+![image](https://github.com/user-attachments/assets/8e4551a5-1d94-44db-9f3f-db1a887c138a)
+
+This report calculates and visualizes the **average academic performance** per student group (stream) based on assessment results.
+
+### 🔍 Features
+
+- **Filters**:
+  - School (Company) ✅ *(Required)*
+  - Academic Year ✅ *(Required)*
+  - Academic Term *(Optional)* – allows filtering by a specific term or viewing data for the entire year.
+
+- **Metrics Displayed**:
+  - Stream (Student Group)
+  - Average Percentage Score (%), calculated as:
+    ```text
+    (total_score / maximum_score) * 100
+    ```
+### 📊 Chart
+
+- A **bar chart** summarizing average performance across streams.
+- Enables quick visual comparison of student performance by stream within a selected academic year or term.
+- Streams are sorted from **highest to lowest** average performance for better insights
+
+### 2. Analysis Report
+![image](https://github.com/user-attachments/assets/c3e62a6d-6245-4d8f-a3b5-831e9f796294)
+
+This report provides a breakdown of learners' grade distribution across different subjects within a selected school, academic year, and optionally a student group.
+
+### 🔍 Features
+
+- **Filters**:
+  - School (Company) ✅ *(Required)*
+  - Academic Year ✅ *(Required)*
+  - Student Group *(Optional)*
+
+- **Metrics Displayed**:
+  - Grade (e.g., A, B, C, etc.)
+  - Number of learners per grade **per subject**
+  - Total number of learners per grade
+
+- **Dynamic Columns**:
+  - Each subject becomes a column.
+  - Subject names are retrieved dynamically based on available data.
+
+### 📘 How It Works
+
+For each **grade**, the report:
+- Counts the number of assessment records (learners) achieving that grade in each subject.
+- Displays a total count of learners who received that grade across all subjects.
+
+This helps analyze how grades are distributed subject-wise and overall, making it easier to identify performance trends or challenges by subject or grade.
+
+### 3. Annual Performance Comparison
+
+![image](https://github.com/user-attachments/assets/1c70b84d-796f-4886-9fda-a12d2a38a923)
+This report compares the **average academic performance** of student groups (streams) between two academic years, helping educators and administrators track progress or decline over time.
+
+### 🔍 Features
+
+- **Filters**:
+  - School (Company) ✅ *(Required)*
+  - Current Year ✅ *(Required)*
+  - Compare Year ✅ *(Required)*
+  - Academic Term *(Optional)* – to narrow down the comparison within a specific term.
+
+- **Metrics Displayed**:
+  - Stream (Student Group)
+  - Average Score for each year
+  - **Deviation** – the difference between the current year and comparison year scores.
+
+### 🎨 Visual Enhancements
+
+- **Color-coded Deviation**:
+  - Green for positive deviation (performance improvement)
+  - Red for negative deviation (performance decline)
+
+- **School Mean Row**:
+  - A summary row showing the overall average score for the school in both years and their deviation.
+
+### 🧠 Use Case
+Use this report to:
+- Identify which streams have improved or declined in academic performance.
+- Support data-driven decision-making for curriculum or teaching adjustments.
+- Quickly visualize progress using intuitive formatting and mean calculations.
+
+
+
+
+
+---
+
+# DashBoards
+## 1. Students Overview
+
+![image](https://github.com/user-attachments/assets/3cc12ddd-4458-41c0-b598-1632a7135dd4)
+
+The **Student Overview Dashboard** provides a high-level summary of key student enrollment metrics, offering quick insights into school population, gender distribution, and class trends over time.
+
+### 🔍 Features
+
+- **Number Cards**:
+  - **Total Members per School**: Displays the total number of registered students for each school, helping track overall enrollment.
+  - **Gender Distribution**: Visualizes the count of male and female students, enabling quick assessment of gender balance.
+
+- **Trend Chart**:
+  - **Class Enrollment Trend (Line Graph)**: Shows how enrollment numbers have changed over time, allowing users to spot growth patterns or declines in class-level student registration.
+
+
+
+---
+
 ## 🛠️ Installation
 
 ### ✅ Dependencies
@@ -556,5 +669,5 @@ Comprehensive student promotion management with configurable rules for academic 
 
 ---
 
-## REPORTS
+
 
