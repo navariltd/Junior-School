@@ -15,7 +15,7 @@ frappe.query_reports["Assessment Group Analysis"] = {
       label: __("Academic Year"),
       fieldtype: "Link",
       options: "Academic Year",
-      reqd: 0,
+      reqd: 1,
     },
     {
       fieldname: "academic_term",
