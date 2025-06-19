@@ -26,6 +26,7 @@ Frappe Education Extension Customization is a custom [Frappe](https://frappe.io/
   - [🧑🏿‍💻 Self Hosting](#-self-hosting)
 - [Key DocTypes](#key-doctypes)
 - [Reports](#reports)
+- [Dashboards](#dashboards)
 
 ---
 
@@ -500,7 +501,7 @@ Update ensures that all **Student Groups(Streams)** reflect the correct **Academ
 
 ---
 
-## REPORTS
+# REPORTS
 ### 1. Average Performance per Stream
 ![image](https://github.com/user-attachments/assets/8e4551a5-1d94-44db-9f3f-db1a887c138a)
 
@@ -586,7 +587,70 @@ Use this report to:
 - Identify which streams have improved or declined in academic performance.
 - Support data-driven decision-making for curriculum or teaching adjustments.
 - Quickly visualize progress using intuitive formatting and mean calculations.
+- 
 
+### 4. Departmental Analysis Report
+![image](https://github.com/user-attachments/assets/ad8e83b4-8530-417d-84d0-c150a852d2ec)
+
+The **Departmental Analysis Report** provides a detailed breakdown of average scores across all courses for each stream (student group), with corresponding overall means and grade rubrics. It helps departments understand performance variations across subjects and student groups in a given academic period.
+
+### 🔍 Features
+
+- **Filters**:
+  - School (Company) ✅ *(Required)*
+  - Academic Year ✅ *(Required)*
+  - Academic Term ✅ *(Required)*
+  - Grading Scale ✅ *(Required)* – used to convert numeric means into letter/rubric grades.
+
+- **Metrics Displayed**:
+  - Stream (Student Group)
+  - Course-wise Average Scores per Stream
+  - Mean Score per Stream
+  - Grade (Rubric) per Stream – based on selected grading scale
+
+- **Summary Rows** (automatically added):
+  - **TOTAL**: Sum of average scores per course across all streams
+  - **MEAN**: Mean of average scores per course across all streams
+  - **MAX**/**MIN**: Highest and lowest average score per course across streams
+  - **Rubric**: Letter grade for each course average using grading scale
+
+### 🧠 Use Case
+
+This report enables:
+- Department heads and academic leads to identify high-performing or struggling subjects.
+- Comparative analysis of performance across streams and departments.
+- Insights into grading trends using rubric conversion based on average scores.
+
+### 5. Assessment Group Analysis
+
+![image](https://github.com/user-attachments/assets/7060567f-5e6e-488d-9c2d-035671b32823)
+The **Assessment Group Analysis Report** provides a comparative overview of key performance metrics across all subjects for a selected academic period. This report is useful for analyzing how a specific student group or stream is performing in each course.
+
+### 🔍 Features
+
+- **Filters**:
+  - School (Company) ✅ *(Required)*
+  - Academic Year ✅ *(Required)*
+  - Academic Term *(Optional)* – allows narrowing results to a specific term.
+  - Student Group *(Optional)* – filter performance data by stream.
+
+- **Metrics Displayed**:
+  The report generates rows based on core metrics, and columns dynamically based on subjects (courses) within the filtered scope:
+  - **Total Score** – Total marks accumulated by students in a subject.
+  - **Mean Score** – Average score per subject.
+  - **Grade** – The assigned grade code (if applicable).
+  - **Max Score** – Highest score achieved in each subject.
+  - **Min Score** – Lowest score recorded for each subject.
+
+- **Dynamic Column Generation**:
+  - Columns are created dynamically based on all unique courses available in the filtered dataset, making the report flexible across different institutions or terms.
+
+### 🧠 Use Case
+
+Use this report to:
+- Monitor subject-level performance within a specific stream or academic setting.
+- Compare performance across subjects using different metrics (mean, max, min, grade).
+- Quickly identify strengths and weaknesses in subject delivery or student understanding.
 
 
 
