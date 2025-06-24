@@ -31,17 +31,17 @@ def get_columns():
             "width": 150,
         },
         {
-            "label": _("current_term" + " Avg"),
+            "label": _("Current Term" + " Avg"),
             "fieldname": "current_term_avg",
             "fieldtype": "Float",
-            "width": 120,
+            "width": 200,
             "precision": 1,
         },
         {
-            "label": _("compare_term" + " Avg"),
+            "label": _("Compare Term" + " Avg"),
             "fieldname": "compare_term_avg",
             "fieldtype": "Float",
-            "width": 120,
+            "width": 200,
             "precision": 1,
         },
         {
