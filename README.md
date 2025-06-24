@@ -1,6 +1,6 @@
-## 📚 Frappe Education Extension Customization
+## 📚 Frappe Education Extension
 
-Frappe Education Extension Customization is a custom [Frappe](https://frappe.io/framework) application that extends the core [ERPNext Education Module](https://frappe.io/education) with enhanced features for junior school management. It provides comprehensive tools for scheduling, attendance tracking, assessment management, and automated student lifecycle processes, specifically designed for multi-school environments.
+Junior School is a custom Frappe application that extends the core Frappe Education. It provides comprehensive tools for scheduling, attendance tracking, assessment management, and automated student lifecycle processes, specifically designed for multi-school environments.
 
 ---
 
@@ -32,7 +32,7 @@ Frappe Education Extension Customization is a custom [Frappe](https://frappe.io/
 
 ## 🚀 Project Overview
 
-This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard ERPNext Education while adding specialized functionality for enhanced school operations.
+This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard Frappe Education while adding specialized functionality for enhanced school operations.
 
 ---
 ## 🔄 System Workflows
