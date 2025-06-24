@@ -1,6 +1,6 @@
 ## 📚 Frappe Education Extension
 
-Junior School is a custom Frappe application that extends the core Frappe Education. It provides comprehensive tools for scheduling, attendance tracking, assessment management, and automated student lifecycle processes, specifically designed for multi-school environments.
+Junior School is a custom [Frappe]([url](https://frappe.io/framework)) application that extends the core [Frappe Education]([url](https://frappe.io/education)). It provides comprehensive tools for scheduling, attendance tracking, assessment management, and automated student lifecycle processes, specifically designed for multi-school environments.
 
 ---
 
@@ -32,7 +32,7 @@ Junior School is a custom Frappe application that extends the core Frappe Educat
 
 ## 🚀 Project Overview
 
-This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard Frappe Education while adding specialized functionality for enhanced school operations.
+This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard [Frappe Education]([url](https://frappe.io/education)) while adding specialized functionality for enhanced school operations.
 
 ---
 ## 🔄 System Workflows
