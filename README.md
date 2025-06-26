@@ -652,10 +652,81 @@ Use this report to:
 - Compare performance across subjects using different metrics (mean, max, min, grade).
 - Quickly identify strengths and weaknesses in subject delivery or student understanding.
 
+### 6.  Most Improved Students 
+![redacted-image (1)](https://github.com/user-attachments/assets/1f2ac498-063c-4384-8992-98cb671732c9)
+The **Most Improved Students Report** is designed to help academic institutions highlight students who have demonstrated the greatest improvement across two academic terms. By comparing average assessment scores between a “comparison term” and the “current term,” this report identifies and displays the top improver in each student group.
 
 
+### 🔍 Features
+
+- **Filters**:
+  - **School (Company)** ✅ *(Required)* – the institution to scope the data to.
+  - **Academic Year** ✅ *(Required)* – defines the academic period in focus.
+  - **Current Term** ✅ *(Required)* – the term whose performance will be analyzed.
+  - **Comparison Term** ✅ *(Required)* – the prior term to compare against.
+  - **Student Group** *(Optional)* – narrow results to a specific stream or class.
+
+- **Metrics Displayed**:
+  - **Average (Current Term)** – mean score for each student in the selected current term.
+  - **Average (Comparison Term)** – mean score for the same student in the comparison term.
+  - **Deviation** – difference between the current and previous term averages.
+  - **Student Name** – the name of the top improved student per stream.
+  - **Student Group** – the class or stream they belong to.
+
+- **Highlighting**:
+  - Color-coded deviation values:
+    - 🟢 *Green* for improvement (positive deviation)
+    - 🔴 *Red* for decline (negative deviation)
+
+
+### 🧠 Use Case
+
+Use this report to:
+- Identify students who have made significant academic gains.
+- Recognize and reward improvement efforts across academic terms.
+- Track academic progress at a group or stream level.
+- Gain insight into the effectiveness of interventions or teaching strategies.
+- 
+### 7. Academic Performance Summary Report
+![perf ](https://github.com/user-attachments/assets/ff2771b5-bd59-4be3-89eb-2bec520103e3)
+![perfomance summary](https://github.com/user-attachments/assets/833b1ade-9aee-41b6-81af-d118819de611)
+
+The **Academic Performance Summary Report** provides schools with a comprehensive overview of student academic performance across a selected academic term. It aggregates total and average scores, assigns letter grades based on a defined grading scale, and includes a visual breakdown of grade distribution for quick insights.
 
 ---
+
+### 🔍 Features
+
+- **Filters**:
+  - **School (Company)** ✅ *(Required)* – the institution whose data is being analyzed.
+  - **Academic Year** ✅ *(Required)* – the academic year in context.
+  - **Academic Term** ✅ *(Required)* – the term to evaluate.
+  - **Student Group** *(Optional)* – filter data by stream or class.
+  - **Grading Scale** ✅ *(Required)* – define how numerical scores are translated to letter grades.
+
+- **Metrics Displayed**:
+  - **Total Score** – total marks accumulated by each student.
+  - **Average Score** – the mean score across assessments.
+  - **Grade** – letter grade assigned based on configured grading thresholds.
+  - **Student Group** – class or stream affiliation.
+  - **Student Name** – the learner whose performance is being reviewed.
+
+- **Highlighting & Visualization**:
+  - **Grade Highlighting** – letter grades appear in bold for visual emphasis.
+  - **Grade Distribution Pie Chart** – dynamically generated pie chart showing the spread of grades.
+
+---
+
+### 🧠 Use Case
+
+Use this report to:
+- Monitor overall academic performance of students within a specific term or stream.
+- Identify top-performing students or those needing additional support.
+- Visualize grade distribution across the entire student population.
+- Track consistency of grading across multiple subjects or streams.
+---
+
+
 
 # DashBoards
 ## 1. Students Overview
