@@ -1,15 +1,15 @@
-# Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
+# Copyright (c) 2025, Navari and contributors
 # For license information, please see license.txt
 
 import frappe
+from frappe.query_builder import DocType
+from frappe.query_builder.functions import Count
 from frappe import _
 
 
 def execute(filters=None):
-
     columns = get_columns()
     data = get_data(filters)
-
     return columns, data
 
 
@@ -18,23 +18,24 @@ def get_columns():
         {"fieldname": "grading", "label": "Grade", "fieldtype": "Data", "width": 120}
     ]
 
-    # Get all unique subjects from Assessment Results
-    subjects = frappe.db.sql(
-        """
-        SELECT DISTINCT course 
-        FROM `tabAssessment Result`
-        WHERE course IS NOT NULL 
-        ORDER BY course
-    """,
-        as_dict=1,
+    AssessmentResult = DocType("Assessment Result")
+
+    subject_query = (
+        frappe.qb.from_(AssessmentResult)
+        .select(AssessmentResult.course)
+        .where(AssessmentResult.course.isnotnull())
+        .distinct()
+        .orderby(AssessmentResult.course)
     )
 
-    # Add a column for each subject
-    for subject in subjects:
+    subjects = frappe.qb.run(subject_query)
+
+    for subject_row in subjects:
+        course_name = subject_row[0]
         columns.append(
             {
-                "fieldname": subject.course.lower().replace(" ", "_"),
-                "label": subject.course,
+                "fieldname": course_name.lower().replace(" ", "_"),
+                "label": course_name,
                 "fieldtype": "Int",
                 "width": 120,
             }
@@ -54,71 +55,57 @@ def get_columns():
 
 def get_data(filters):
     data = []
+    AssessmentResult = DocType("Assessment Result")
 
-    # Build filter conditions
-    conditions = get_conditions(filters)
-    where_clause = " AND ".join(conditions) if conditions else "1=1"
+    conditions = get_conditions(filters, AssessmentResult)
 
-    # Get all unique grades with filters applied
-    grades = frappe.db.sql(
-        f"""
-        SELECT DISTINCT grade 
-        FROM `tabAssessment Result`
-        WHERE grade IS NOT NULL
-        AND {where_clause}
-        ORDER BY grade
-        """,
-        filters or {},
-        as_dict=1,
+    grade_query = (
+        frappe.qb.from_(AssessmentResult)
+        .select(AssessmentResult.grade)
+        .where(AssessmentResult.grade.isnotnull(), *conditions)
+        .distinct()
+        .orderby(AssessmentResult.grade)
     )
 
-    # Get all subjects with filters applied
-    subjects = frappe.db.sql(
-        f"""
-        SELECT DISTINCT course 
-        FROM `tabAssessment Result`
-        WHERE course IS NOT NULL
-        AND {where_clause}
-        ORDER BY course
-        """,
-        filters or {},
-        as_dict=1,
+    grades = frappe.qb.run(grade_query)
+
+    subject_query = (
+        frappe.qb.from_(AssessmentResult)
+        .select(AssessmentResult.course)
+        .where(AssessmentResult.course.isnotnull(), *conditions)
+        .distinct()
+        .orderby(AssessmentResult.course)
     )
+    subjects = frappe.qb.run(subject_query)
 
-    # For each grade, get the count of assessment records for each subject
-    for grade in grades:
-        row = {"grading": grade.grade}
+    for grade_row in grades:
+        grade = grade_row[0]
+        row = {"grading": grade}
 
-        # Get subject-wise counts using 'name' field
-        for subject in subjects:
-            field_name = subject.course.lower().replace(" ", "_")
+        for subject_row in subjects:
+            course_name = subject_row[0]
+            fieldname = course_name.lower().replace(" ", "_")
 
-            count = frappe.db.sql(
-                f"""
-                SELECT COUNT(DISTINCT name) as count
-                FROM `tabAssessment Result`
-                WHERE course = %(course)s 
-                AND grade = %(grade)s
-                AND {where_clause}
-                """,
-                {"course": subject.course, "grade": grade.grade, **(filters or {})},
-                as_dict=1,
-            )[0].count
+            subject_count_query = (
+                frappe.qb.from_(AssessmentResult)
+                .select(Count("*").as_("count"))
+                .where(
+                    AssessmentResult.grade == grade,
+                    AssessmentResult.course == course_name,
+                    *conditions,
+                )
+            )
 
-            row[field_name] = count
+            subject_count = frappe.qb.run(subject_count_query)[0][0] or 0
+            row[fieldname] = subject_count
 
-        # Get total assessment records for this grade (using 'name')
-        total_count = frappe.db.sql(
-            f"""
-            SELECT COUNT(DISTINCT name) as count
-            FROM `tabAssessment Result`
-            WHERE grade = %(grade)s
-            AND {where_clause}
-            """,
-            {"grade": grade.grade, **(filters or {})},
-            as_dict=1,
-        )[0].count
+        total_query = (
+            frappe.qb.from_(AssessmentResult)
+            .select(Count("*").as_("count"))
+            .where(AssessmentResult.grade == grade, *conditions)
+        )
 
+        total_count = frappe.qb.run(total_query)[0][0] or 0
         row["total_learners"] = total_count
 
         data.append(row)
@@ -126,17 +113,24 @@ def get_data(filters):
     return data
 
 
-def get_conditions(filters):
+def get_conditions(filters, AssessmentResult):
+    """Return list of Frappe Query Builder conditions"""
     conditions = []
 
     if filters:
         if filters.get("company"):
-            conditions.append("company = %(company)s")
+            conditions.append(AssessmentResult.company == filters["company"])
         if filters.get("academic_year"):
-            conditions.append("academic_year = %(academic_year)s")
+            conditions.append(
+                AssessmentResult.academic_year == filters["academic_year"]
+            )
         if filters.get("academic_term"):
-            conditions.append("academic_term = %(academic_term)s")
+            conditions.append(
+                AssessmentResult.academic_term == filters["academic_term"]
+            )
         if filters.get("student_group"):
-            conditions.append("student_group = %(student_group)s")
+            conditions.append(
+                AssessmentResult.student_group == filters["student_group"]
+            )
 
     return conditions
