@@ -1,21 +1,20 @@
-# Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and contributors
+# Copyright (c) 2025, Navari and contributors
 # For license information, please see license.txt
 
 import frappe
 from frappe import _
+from frappe.query_builder import DocType
+from frappe.query_builder.functions import Avg, Round
 
 
 def execute(filters: dict | None = None):
-
     columns = get_columns()
     data = get_data(filters)
     chart = get_chart(data)
-
     return columns, data, None, chart
 
 
 def get_columns() -> list[dict]:
-
     return [
         {"label": "Stream", "fieldname": "stream", "fieldtype": "Data", "width": 200},
         {
@@ -28,51 +27,47 @@ def get_columns() -> list[dict]:
     ]
 
 
-def get_data(filters) -> list[list]:
-    conditions = get_conditions(filters)
+def get_data(filters) -> list[dict]:
+    AssessmentResult = DocType("Assessment Result")
+    conditions = get_conditions(filters, AssessmentResult)
 
-    query = f"""
-        SELECT
-            ar.student_group AS stream,
-            ROUND(AVG((ar.total_score / ar.maximum_score) * 100), 1) AS average_percentage
-        FROM
-            `tabAssessment Result` ar
-        WHERE
-            ar.total_score IS NOT NULL
-            AND ar.maximum_score IS NOT NULL
-            AND ar.maximum_score != 0
-            {conditions}
-        GROUP BY
-            ar.student_group
-        ORDER BY
-            ar.student_group
-    """
-
-    data = frappe.db.sql(
-        query,
-        filters,
-        as_dict=True,
+    percentage_expr = Round(
+        Avg((AssessmentResult.total_score / AssessmentResult.maximum_score) * 100), 1
     )
 
-    return data
+    query = (
+        frappe.qb.from_(AssessmentResult)
+        .select(
+            AssessmentResult.student_group.as_("stream"),
+            percentage_expr.as_("average_percentage"),
+        )
+        .where(
+            AssessmentResult.total_score.isnotnull(),
+            AssessmentResult.maximum_score.isnotnull(),
+            AssessmentResult.maximum_score != 0,
+            *conditions,
+        )
+        .groupby(AssessmentResult.student_group)
+        .orderby(AssessmentResult.student_group)
+    )
+
+    results = frappe.qb.run(query)
+    return [{"stream": row[0], "average_percentage": row[1]} for row in results]
 
 
 def get_chart(data):
     if not data:
         return None
 
-    schools = list(set(d.school for d in data))
-    datasets = []
-
-    for school in schools:
-        school_data = [d.average_percentage for d in data if d.school == school]
-        if school_data:
-            datasets.append({"name": school, "values": school_data})
-
     chart = {
         "data": {
-            "labels": [d.stream for d in data],
-            "datasets": datasets,
+            "labels": [d["stream"] for d in data],
+            "datasets": [
+                {
+                    "name": "Average %",
+                    "values": [d["average_percentage"] for d in data],
+                }
+            ],
         },
         "type": "bar",
         "title": "Average Performance by Stream",
@@ -81,13 +76,14 @@ def get_chart(data):
     return chart
 
 
-def get_conditions(filters):
-    conditions = ""
+def get_conditions(filters, AssessmentResult):
+    conditions = []
+
     if filters.get("academic_year"):
-        conditions += " AND ar.academic_year = %(academic_year)s"
+        conditions.append(AssessmentResult.academic_year == filters["academic_year"])
     if filters.get("academic_term"):
-        conditions += " AND ar.academic_term = %(academic_term)s"
+        conditions.append(AssessmentResult.academic_term == filters["academic_term"])
     if filters.get("school"):
-        conditions += " AND ar.company = %(school)s"
+        conditions.append(AssessmentResult.company == filters["school"])
 
     return conditions
