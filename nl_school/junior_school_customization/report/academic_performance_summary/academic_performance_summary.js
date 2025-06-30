@@ -25,6 +25,13 @@ frappe.query_reports["Academic Performance Summary"] = {
       reqd: 1,
     },
     {
+      fieldname: "program",
+      label: __("Class"),
+      fieldtype: "Link",
+      options: "Program",
+      reqd: 0,
+    },
+    {
       fieldname: "student_group",
       label: __("Stream"),
       fieldtype: "Link",

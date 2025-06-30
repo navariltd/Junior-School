@@ -135,6 +135,8 @@ def get_conditions(filters: dict) -> dict:
         conditions["grading_scale"] = filters["grading_scale"]
     if filters.get("student_group"):
         conditions["student_group"] = filters["student_group"]
+    if filters.get("program"):
+        conditions["program"] = filters["program"]
     return conditions
 
 
