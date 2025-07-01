@@ -10,7 +10,7 @@ from collections import defaultdict
 
 def execute(filters=None):
     columns = get_columns(filters)
-    data = get_data()
+    data = get_data(filters)
     return columns, data
 
 
@@ -67,15 +67,22 @@ def get_columns(filters=None):
                 "fieldtype": "Int",
                 "width": 170,
             },
+            {
+                "label": _("Grade"),
+                "fieldname": "grade",
+                "fieldtype": "Data",
+                "width": 120,
+            },
         ]
     )
 
     return columns
 
 
-def get_data(filters=None):
+def get_data(filters):
     AR = DocType("Assessment Result")
     conditions = get_conditions(filters) if filters else {}
+    grading_scales = get_grading_scales(filters) if filters else {}
 
     student_query = (
         frappe.qb.from_(AR)
@@ -131,12 +138,60 @@ def get_data(filters=None):
 
         pivot[student_id]["total"] = round(total, 2)
         pivot[student_id]["average"] = round(avg, 2)
+        pivot[student_id]["grade"] = get_grade(
+            pivot[student_id]["average"], grading_scales
+        )
+
     data = list(pivot.values())
+    print("data", data)
 
     return data
 
 
 def get_conditions(filters: dict) -> dict:
     conditions = {}
-
+    if not filters:
+        return {}
+    if filters.get("company"):
+        conditions["company"] = filters["company"]
+    if filters.get("academic_year"):
+        conditions["academic_year"] = filters["academic_year"]
+    if filters.get("academic_term"):
+        conditions["academic_term"] = filters["academic_term"]
+    if filters.get("grading_scale"):
+        conditions["grading_scale"] = filters["grading_scale"]
+    if filters.get("student_group"):
+        conditions["student_group"] = filters["student_group"]
+    if filters.get("program"):
+        conditions["program"] = filters["program"]
     return conditions
+
+
+def get_grading_scales(filters):
+    """Get grading scale to convert scores to grades"""
+    grading_scale = filters.get("grading_scale")
+    if not grading_scale:
+        return []
+
+    GradingScaleInterval = DocType("Grading Scale Interval")
+
+    results = (
+        frappe.qb.from_(GradingScaleInterval)
+        .select(GradingScaleInterval.grade_code, GradingScaleInterval.threshold)
+        .where(GradingScaleInterval.parent == grading_scale)
+        .orderby(GradingScaleInterval.threshold, order=frappe.qb.desc)
+    ).run(as_dict=True)
+
+    return results
+
+
+def get_grade(score, grading_scales):
+    """Convert score to grade based on grading scale"""
+    if not grading_scales:
+        return ""
+
+    for interval in grading_scales:
+        if score >= interval.threshold:
+            return interval.grade_code
+
+    return ""
