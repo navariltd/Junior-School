@@ -143,7 +143,7 @@ def get_data(filters):
         )
 
     data = list(pivot.values())
-    print("data", data)
+    data = sorted(data, key=lambda x: x["average"], reverse=True)
 
     return data
 
