@@ -728,6 +728,48 @@ Use this report to:
 
 
 
+### 8. Stream Wise Performance Report
+
+![image](https://github.com/user-attachments/assets/4e7c621b-8133-4ea2-b00a-9305fd8b70cd)
+
+The **Stream Wise Performance Report** provides a comprehensive, per-student breakdown of scores across all enrolled courses within a specific stream (student group). It highlights individual performance totals, averages, and final grades—enabling detailed comparisons among students in a given academic setting.
+
+### 🔍 Features
+
+* **Filters**:
+
+  * School (Company) ✅ *(Required)*
+  * Academic Year ✅ *(Required)*
+  * Academic Term ✅ *(Required)*
+  * Class (Program) ✅ *(Required)*
+  * Stream (Student Group) ✅ *(Required)*
+  * Grading Scale ✅ *(Required)* – used to assign a grade to each student's average score
+
+* **Metrics Displayed**:
+
+  * Student ID and Name
+  * Course-wise Total Scores per Student
+  * **Total**: Sum of scores across all courses for each student
+  * **Average**: Mean score for each student across all courses
+  * **Grade**: Letter grade assigned to average using the selected grading scale
+
+* **Formatting Enhancements**:
+
+  * **Bold styling** applied to total, average, and grade columns for improved readability
+  * Automatically sorts students in descending order by average to emphasize top performers
+
+### 🧠 Use Case
+
+This report enables:
+
+* Class teachers to view detailed student performance within a stream across all subjects
+* Academic administrators to identify top-performing and struggling students at a glance
+* Use of grading rubrics to standardize evaluations across different academic terms and programs
+
+---
+
+
+
 # DashBoards
 ## 1. Students Overview
 
