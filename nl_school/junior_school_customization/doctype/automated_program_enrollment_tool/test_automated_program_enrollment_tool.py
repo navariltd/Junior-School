@@ -1,21 +1,31 @@
 # Copyright (c) 2025, Navari and Contributors
 # See license.txt
- 
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import nowdate
 
 from nl_school.junior_school_customization.doctype.automated_program_enrollment_tool.automated_program_enrollment_tool import (
-
     AutomatedProgramEnrollmentTool,
     enroll_students_based_on_promotion,
     promote_students_based_on_rules,
     process_promotions,
 )
 
+
 class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
+    """
+    Unit tests for the Automated Program Enrollment Tool.
+    These tests cover the logic for fetching students, enrolling them
+    based on promotion rules, and executing student promotions.
+    """
+
     @classmethod
     def setUpClass(cls):
+        """
+        Set up shared test data: company, academic year, program, student, student groups, and enrollment.
+        Ensures consistent data for test isolation and reuse.
+        """
         super().setUpClass()
 
         # Disable term requirement for testing
@@ -26,14 +36,13 @@ class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
             "doctype": "Company",
             "company_name": "Test University",
             "default_currency": "KES"
-        }).insert(ignore_permissions=True,ignore_if_duplicate=True)
+        }).insert(ignore_permissions=True, ignore_if_duplicate=True)
 
         frappe.db.set_default("company", cls.company.name)
 
-
         cls.academic_year = frappe.get_doc({
             "doctype": "Academic Year",
-            "academic_year_name":"2025-2026",
+            "academic_year_name": "2025-2026",
             "academic_year": "2025-2026",
             "year_start_date": "2025-01-01",
             "year_end_date": "2026-12-31"
@@ -78,7 +87,7 @@ class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
         cls.applicant = frappe.get_doc({
             "doctype": "Student Applicant",
             "title": "Test Student",
-            "first_name":"Test",
+            "first_name": "Test",
             "student_name": cls.student.name,
             "application_status": "Approved",
             "program": cls.program.name,
@@ -146,12 +155,10 @@ class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
         self.assertTrue(any(s.get("student") == self.student.name for s in students))
 
     def test_enroll_students_based_on_promotion(self):
-
         """Should create enrollment based on promotion rules"""
         frappe.db.delete("Program Enrollment", {"student": self.student.name})
 
-            # Add the student to the current stream
-       
+        # Add the student to the current stream
         self.stream = frappe.get_doc("Student Group", self.stream.name)
         self.stream.append("students", {
             "student": self.student.name,
@@ -160,8 +167,6 @@ class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
         })
         self.stream.save(ignore_permissions=True)
 
-        
-        
         rules = [frappe._dict({
             "current_class": self.program.name,
             "current_stream": self.stream.name,
@@ -176,23 +181,21 @@ class TestAutomatedProgramEnrollmentTool(FrappeTestCase):
             "custom_stream": self.stream.name,
             "student_batch_name": "Batch 2025"
         })]
-        
+
         count = enroll_students_based_on_promotion(
             students,
             rules,
             academic_year=self.academic_year.name,
             academic_term=None
         )
-        
 
-           # Check if enrollment was created
+        # Check if enrollment was created
         created = frappe.get_all("Program Enrollment", filters={
             "student": self.student.name,
             "academic_year": self.academic_year.name,
             "program": self.program.name,
-            
         })
-        
+
         self.assertGreaterEqual(count, 1, "Expected at least one enrollment")
         self.assertTrue(created, "No Program Enrollment was created")
 
