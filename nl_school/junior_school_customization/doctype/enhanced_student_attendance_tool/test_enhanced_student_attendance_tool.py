@@ -130,3 +130,4 @@ class TestEnhancedStudentAttendanceTool(FrappeTestCase):
         self.assertEqual(student.student, self.student.name)
         self.assertEqual(student.status, "Present")
 
+
