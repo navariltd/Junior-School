@@ -35,7 +35,7 @@ class TestEnhancedStudentAttendanceTool(FrappeTestCase):
             "first_name": "Tom",
             "custom_student_id":"TOM001",
             "student_email_id":"tom1@example.com",
-            "branch": "branch3",
+            "branch": "branch2",
             "custom_branch": "Test Branch"
         }).insert()
 
