@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:SESS-{YYYY}-{type}-{####}",
  "creation": "2025-07-25 12:31:08.904051",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -122,15 +123,15 @@
    "fieldname": "case_history",
    "fieldtype": "Small Text",
    "label": "Case History",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.type===\"Individual Session\";"
   },
   {
    "depends_on": "eval:doc.type===\"Individual Session\";",
    "fieldname": "student",
    "fieldtype": "Link",
    "label": "Student",
-   "options": "Student",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.type===\"Individual Session\";",
+   "options": "Student"
   },
   {
    "fetch_from": "student.student_name",
@@ -144,23 +145,24 @@
    "fieldname": "next_steps",
    "fieldtype": "Small Text",
    "label": "Next Steps",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.type===\"Individual Session\";"
   },
   {
    "depends_on": "eval:doc.type===\"Individual Session\";",
    "fieldname": "case_management",
    "fieldtype": "Small Text",
    "label": "Case Management",
-   "reqd": 1
+   "mandatory_depends_on": "eval:doc.type===\"Individual Session\";"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-25 14:46:50.617792",
+ "modified": "2025-07-25 16:29:25.357635",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Session",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
