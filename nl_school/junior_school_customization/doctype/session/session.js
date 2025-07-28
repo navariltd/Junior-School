@@ -10,10 +10,7 @@ frappe.ui.form.on("Session", {
       },
       callback: function (response) {
         if (response && response.message) {
-          console.log(response);
-
           const subtopics = response.message.map((item) => item.topic_name);
-          console.log(subtopics);
 
           frm.set_df_property("sub_topic", "options", subtopics.join("\n"));
 
