@@ -12,6 +12,7 @@
   "column_break_ituu",
   "year",
   "term",
+  "date",
   "cohort",
   "session_type_section",
   "type",
@@ -153,12 +154,17 @@
    "fieldtype": "Small Text",
    "label": "Case Management",
    "mandatory_depends_on": "eval:doc.type===\"Individual Session\";"
+  },
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "label": "Date"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-25 16:29:25.357635",
+ "modified": "2025-07-28 16:52:13.948376",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Session",
