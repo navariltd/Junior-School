@@ -56,8 +56,9 @@
   },
   {
    "fieldname": "avg_score",
-   "fieldtype": "Int",
+   "fieldtype": "Float",
    "label": "AVG Score",
+   "precision": "1",
    "read_only": 1
   },
   {
@@ -92,7 +93,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-29 18:18:54.987160",
+ "modified": "2025-07-30 18:34:18.392404",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Satisfaction",
