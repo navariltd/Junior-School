@@ -30,6 +30,7 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": "Satisfaction",
             "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
         },
         {
             "fieldname": "party",
@@ -37,12 +38,14 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": party_type_options,
             "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
         },
         {
             "fieldname": "party_name",
             "label": "Party Name",
             "fieldtype": "Data",
             "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
         },
         {
             "fieldname": "term_1_score",
