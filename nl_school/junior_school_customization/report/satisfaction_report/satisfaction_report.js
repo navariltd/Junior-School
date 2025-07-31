@@ -14,7 +14,7 @@ frappe.query_reports["Satisfaction Report"] = {
       fieldname: "party_type",
       label: "Party Type",
       fieldtype: "Select",
-      options: ["Student", "Guardian", "Teacher"],
+      options: ["", "Student", "Guardian", "Teacher"],
       reqd: 0,
     },
     {
