@@ -9,6 +9,7 @@
   "school",
   "party_type",
   "party",
+  "party_name",
   "column_break_uqec",
   "year",
   "grade",
@@ -88,12 +89,18 @@
    "label": "Satisfaction Scores",
    "options": "Satisfaction Scores",
    "reqd": 1
+  },
+  {
+   "fieldname": "party_name",
+   "fieldtype": "Data",
+   "label": "Party Name",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-30 18:34:18.392404",
+ "modified": "2025-07-31 15:46:50.703298",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Satisfaction",
