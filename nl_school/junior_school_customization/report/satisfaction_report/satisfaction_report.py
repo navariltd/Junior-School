@@ -74,12 +74,40 @@ def get_columns(filters):
 def get_data(filters):
     SD = DocType("Satisfaction")
 
-    party_type = get_party_type(filters)
+    parent_names_to_fetch = []
+    if filters.get("academic_term"):
+        academic_term_scores = frappe.get_all(
+            "Satisfaction Scores",
+            filters={"academic_term": filters.get("academic_term")},
+            fields=["parent"],
+            distinct=True,
+        )
+        parent_names_to_fetch = [d.parent for d in academic_term_scores]
+
+        if not parent_names_to_fetch:
+            return []
 
     base_query = frappe.qb.from_(SD).select(SD.name, SD.party, SD.avg_score)
 
+    parent_conditions = []
+    if filters.get("company"):
+        parent_conditions.append(SD.school == filters.get("company"))
+    if filters.get("academic_year"):
+        parent_conditions.append(SD.year == filters.get("academic_year"))
+    if filters.get("program"):
+        parent_conditions.append(SD.grade == filters.get("program"))
+    if filters.get("student_group"):
+        parent_conditions.append(SD.stream == filters.get("student_group"))
+
+    party_type = get_party_type(filters)
     if party_type:
-        base_query = base_query.where(SD.party_type == party_type)
+        parent_conditions.append(SD.party_type == party_type)
+
+    for condition in parent_conditions:
+        base_query = base_query.where(condition)
+
+    if parent_names_to_fetch:
+        base_query = base_query.where(SD.name.isin(parent_names_to_fetch))
 
     satisfaction_records = base_query.run(as_dict=True)
 
