@@ -7,7 +7,6 @@ from frappe.query_builder import DocType
 
 def execute(filters=None):
     columns, data = get_columns(filters), get_data(filters)
-    print("data", data)
     return columns, data
 
 
@@ -31,6 +30,7 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": "Satisfaction",
             "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
         },
         {
             "fieldname": "party",
@@ -38,6 +38,14 @@ def get_columns(filters):
             "fieldtype": "Link",
             "options": party_type_options,
             "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
+        },
+        {
+            "fieldname": "party_name",
+            "label": "Party Name",
+            "fieldtype": "Data",
+            "width": 200,
+            "hidden": 1 if filters.get("party_type") == "Teacher" else 0,
         },
         {
             "fieldname": "term_1_score",
@@ -87,7 +95,9 @@ def get_data(filters):
         if not parent_names_to_fetch:
             return []
 
-    base_query = frappe.qb.from_(SD).select(SD.name, SD.party, SD.avg_score)
+    base_query = frappe.qb.from_(SD).select(
+        SD.name, SD.party, SD.party_name, SD.avg_score
+    )
 
     parent_conditions = []
     if filters.get("company"):
@@ -137,6 +147,7 @@ def get_data(filters):
         row = {
             "name": record.name,
             "party": record.party,
+            "party_name": record.party_name,
             "term_1_score": term_scores["term_1_score"],
             "term_2_score": term_scores["term_2_score"],
             "term_3_score": term_scores["term_3_score"],
