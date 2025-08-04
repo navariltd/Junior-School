@@ -264,3 +264,8 @@ def get_subtopics(topic):
     return frappe.db.get_all(
         "Course Topic", filters={"parent": topic}, fields=["name", "topic_name"]
     )
+
+
+@frappe.whitelist()
+def get_student_guardian(student):
+    return frappe.db.get_value("Student Guardian", {"parent": student}, "guardian")

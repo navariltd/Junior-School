@@ -9,6 +9,7 @@
   "student",
   "student_name",
   "parent1",
+  "parent_name",
   "column_break_moed",
   "year",
   "engagement_type_section",
@@ -87,12 +88,19 @@
    "label": "Year",
    "options": "Academic Year",
    "reqd": 1
+  },
+  {
+   "fetch_from": "parent1.guardian_name",
+   "fieldname": "parent_name",
+   "fieldtype": "Data",
+   "label": "Parent Name",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-04 08:51:26.575107",
+ "modified": "2025-08-04 09:28:10.838240",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Parental Engagement",
