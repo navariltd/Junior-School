@@ -63,13 +63,8 @@ def get_columns():
     return columns
 
 
-def map_types(filters=None):
-    if filters:
-        if filters.get("engagement_type"):
-            stripped = filters.get("engagement_type")
-            stripped.lower().replace(" ", "_")
-
-            return stripped
+def map_types(type):
+    return type.lower().replace(" ", "_")
 
 
 def get_data(filters):
@@ -88,11 +83,11 @@ def get_data(filters):
 
     conditions = []
     if filters.get("company"):
-        conditions.append(PE.year == filters.get("company"))
+        conditions.append(PE.school == filters.get("company"))
     if filters.get("year"):
         conditions.append(PE.year == filters.get("year"))
-    if filters.get("Engagement Type"):
-        field_name = map_types(filters)
+    if filters.get("engagement_type"):
+        field_name = map_types(filters.get("engagement_type"))
         if field_name:
             conditions.append(getattr(PE, field_name) == 1)
 

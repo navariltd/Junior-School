@@ -8,20 +8,21 @@ frappe.query_reports["Parental Engagement"] = {
       label: __("School"),
       fieldtype: "Link",
       options: "Company",
-      reqd: 0,
+      reqd: 1,
     },
     {
       fieldname: "year",
       label: "Academic Year",
       fieldtype: "Link",
       options: "Academic Year",
-      reqd: 0,
+      reqd: 1,
     },
     {
       fieldname: "engagement_type",
       label: __("Engagement Type"),
       fieldtype: "Select",
       options: [
+        "",
         "Discussed School Topics",
         "Helped with Homework",
         "Encouraged Education",
