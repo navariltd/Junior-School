@@ -98,6 +98,5 @@ def get_data(filters):
 
     for condition in conditions:
         query = query.where(condition)
-    print(query.run())
 
     return query.run()

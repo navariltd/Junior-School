@@ -29,4 +29,22 @@ frappe.query_reports["Parental Engagement"] = {
       reqd: 0,
     },
   ],
+
+  formatter: function (value, row, column, data, default_formatter) {
+    const engagement_fields = [
+      "discussed_school_topics",
+      "helped_with_homework",
+      "encouraged_education",
+    ];
+
+    if (engagement_fields.includes(column.fieldname)) {
+      if (value && value !== "No") {
+        return `<span style="color: green; font-weight: bold;"> Engaged </span>`;
+      } else {
+        return `<span style="color: red; font-weight: bold;"> - </span>`;
+      }
+    }
+
+    return default_formatter(value, row, column, data);
+  },
 };
