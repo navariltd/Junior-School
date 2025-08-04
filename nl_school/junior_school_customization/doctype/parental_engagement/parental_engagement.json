@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-04 07:45:12.732257",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "student",
+  "student_name",
+  "parent1",
+  "engagement_type_section",
+  "discussed_school_topics",
+  "helped_with_homework",
+  "encouraged_education",
+  "column_break_xcsh",
+  "frequency"
+ ],
+ "fields": [
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student",
+   "options": "Student",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "student.custom_student_id_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "parent1",
+   "fieldtype": "Link",
+   "label": "Parent",
+   "options": "Guardian",
+   "read_only": 1
+  },
+  {
+   "fieldname": "engagement_type_section",
+   "fieldtype": "Section Break",
+   "label": "Engagement Type"
+  },
+  {
+   "default": "0",
+   "fieldname": "discussed_school_topics",
+   "fieldtype": "Check",
+   "label": "Discussed School Topics"
+  },
+  {
+   "default": "0",
+   "fieldname": "helped_with_homework",
+   "fieldtype": "Check",
+   "label": "Helped with Homework"
+  },
+  {
+   "default": "0",
+   "fieldname": "encouraged_education",
+   "fieldtype": "Check",
+   "label": "Encouraged Education"
+  },
+  {
+   "fieldname": "column_break_xcsh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "label": "Frequency",
+   "options": "\nDaily\nWeekly\nMonthly\nRarely",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-04 08:10:36.023776",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Parental Engagement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
