@@ -18,6 +18,13 @@ frappe.query_reports["Parental Engagement"] = {
       reqd: 1,
     },
     {
+      fieldname: "stream",
+      label: "Stream",
+      fieldtype: "Link",
+      options: "Student Group",
+      reqd: 0,
+    },
+    {
       fieldname: "engagement_type",
       label: __("Engagement Type"),
       fieldtype: "Select",

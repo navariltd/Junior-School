@@ -17,26 +17,26 @@ def get_columns():
             "label": "Student",
             "fieldtype": "Link",
             "options": "Student",
-            "width": 200,
+            "width": 150,
         },
         {
             "fieldname": "student_name",
             "label": "Student Name",
             "fieldtype": "Data",
-            "width": 200,
+            "width": 150,
         },
         {
             "fieldname": "parent1",
             "label": "Parent",
             "fieldtype": "Link",
             "options": "Guardian",
-            "width": 200,
+            "width": 150,
         },
         {
             "fieldname": "parent",
             "label": "Parent Name",
             "fieldtype": "Data",
-            "width": 200,
+            "width": 150,
         },
         {
             "fieldname": "discussed_school_topics",
@@ -70,6 +70,16 @@ def map_types(type):
 def get_data(filters):
     PE = DocType("Parental Engagement")
 
+    students = []
+    if filters.get("stream"):
+        stream = filters.get("stream")
+        students = frappe.get_all(
+            "Student Group Student", filters={"parent": stream}, fields=["student"]
+        )
+        students = [student.student for student in students]
+        if not students:
+            return []
+
     query = frappe.qb.from_(PE).select(
         PE.student,
         PE.student_name,
@@ -93,5 +103,8 @@ def get_data(filters):
 
     for condition in conditions:
         query = query.where(condition)
+
+    if students:
+        query = query.where(PE.student.isin(students))
 
     return query.run()
