@@ -6,11 +6,11 @@ from frappe.query_builder import DocType
 
 
 def execute(filters=None):
-    columns, data = get_columns(), get_data(filters)
+    columns, data = get_columns(filters), get_data(filters)
     return columns, data
 
 
-def get_columns():
+def get_columns(filters):
     columns = [
         {
             "fieldname": "student",
@@ -59,6 +59,12 @@ def get_columns():
             "fieldtype": "Data",
             "width": 200,
         },
+        {
+            "fieldname": "session_count",
+            "label": "Sessions",
+            "fieldtype": "Int",
+            "hidden": 0 if filters.get("session_count") else 1,
+        },
     ]
     return columns
 
@@ -89,6 +95,7 @@ def get_data(filters):
         PE.helped_with_homework,
         PE.encouraged_education,
         PE.frequency,
+        (PE.attended_meetings).as_("session_count"),
     )
 
     conditions = []
