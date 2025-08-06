@@ -13,6 +13,7 @@
   "parent_name",
   "column_break_moed",
   "year",
+  "attended_meetings",
   "engagement_type_section",
   "discussed_school_topics",
   "helped_with_homework",
@@ -103,12 +104,18 @@
    "label": "School",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "attended_meetings",
+   "fieldtype": "Int",
+   "label": "Attended Meetings",
+   "non_negative": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-04 10:29:39.302099",
+ "modified": "2025-08-06 16:44:36.700169",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Parental Engagement",
