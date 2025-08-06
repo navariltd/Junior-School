@@ -36,6 +36,12 @@ frappe.query_reports["Parental Engagement"] = {
       ],
       reqd: 0,
     },
+    {
+      fieldname: "session_count",
+      label: "Show Session Count",
+      fieldtype: "Check",
+      value: 0,
+    },
   ],
 
   formatter: function (value, row, column, data, default_formatter) {
