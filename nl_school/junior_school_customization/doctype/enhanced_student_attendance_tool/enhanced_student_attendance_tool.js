@@ -10,7 +10,7 @@ frappe.ui.form.on("Enhanced Student Attendance Tool", {
     );
   },
   onload: function (frm) {
-    frm.set_query("student_group", function () {
+    today = frm.set_query("student_group", function () {
       return {
         filters: {
           group_based_on: frm.doc.group_based_on,
@@ -18,11 +18,41 @@ frappe.ui.form.on("Enhanced Student Attendance Tool", {
         },
       };
     });
+    frm.set_value("based_on", "Student Group");
+
+    frappe.call({
+      method: "frappe.client.get_value",
+      args: {
+        doctype: "Employee",
+        filters: { user_id: frappe.session.user },
+        fieldname: "company",
+      },
+      callback: function (r) {
+        if (r.message && r.message.company) {
+          frm.set_value("company", r.message.company);
+        } else {
+          frappe.call({
+            method: "frappe.client.get_value",
+            args: {
+              doctype: "Company",
+              filters: { is_group: 1 },
+              fieldname: "name",
+            },
+            callback: function (res) {
+              if (res.message && res.message.name) {
+                frm.set_value("company", res.message.name);
+              }
+            },
+          });
+        }
+      },
+    });
+
+    frm.set_value("date", frappe.datetime.get_today());
   },
 
   refresh: function (frm) {
     if (frappe.route_options) {
-      frm.set_value("based_on", frappe.route_options.based_on);
       frm.set_value("student_group", frappe.route_options.student_group);
       frm.set_value("course_schedule", frappe.route_options.course_schedule);
       frappe.route_options = null;
