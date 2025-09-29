@@ -3,8 +3,9 @@
 
 import frappe
 from frappe import _, msgprint
-from frappe.utils import formatdate, getdate, add_days
+from frappe.utils import getdate, add_days
 from erpnext.setup.doctype.holiday_list.holiday_list import is_holiday
+from frappe.query_builder import DocType
 from education.education.doctype.student_attendance.student_attendance import (
     get_holiday_list,
 )
@@ -36,6 +37,7 @@ def execute(filters=None):
             continue
 
         absent_students = get_absent_students(current_date, company, stream)
+
         leave_applicants = get_leave_applications(current_date)
 
         for student in absent_students:
@@ -45,7 +47,7 @@ def execute(filters=None):
                     student.student_name,
                     student.student_group,
                     student.custom_shift or "",
-                    formatdate(current_date),
+                    student.date,
                 ]
 
                 stud_details = frappe.db.get_value(
@@ -78,37 +80,42 @@ def get_columns():
 
 
 def get_absent_students(date, company, stream=None):
-    conditions = "AND company = %(company)s"
-    if stream:
-        conditions += " AND student_group = %(stream)s"
-
-    return frappe.db.sql(
-        f"""
-		SELECT student, student_name, student_group, custom_shift
-		FROM `tabStudent Attendance`
-		WHERE
-			status = 'Absent'
-			AND docstatus = 1
-			AND date = %(date)s
-			{conditions}
-		ORDER BY student_group, student_name
-		""",
-        {"date": date, "company": company, "stream": stream},
-        as_dict=True,
+    StudentAttendance = DocType("Student Attendance")
+    query = (
+        frappe.qb.from_(StudentAttendance)
+        .select(
+            StudentAttendance.student,
+            StudentAttendance.student_name,
+            StudentAttendance.student_group,
+            StudentAttendance.custom_shift,
+            StudentAttendance.date,
+        )
+        .where(
+            (StudentAttendance.status == "Absent")
+            & (StudentAttendance.docstatus == 1)
+            & (StudentAttendance.date >= date)
+            & (StudentAttendance.company == company)
+        )
     )
+    if stream:
+        query = query.where(StudentAttendance.student_group == stream)
+    query = query.orderby(StudentAttendance.student_group).orderby(
+        StudentAttendance.student_name
+    )
+    return query.run(as_dict=True)
 
 
 def get_leave_applications(date):
-    result = frappe.db.sql(
-        """
-		SELECT student
-		FROM `tabStudent Leave Application`
-		WHERE docstatus = 1
-			AND mark_as_present = 1
-			AND from_date <= %s
-			AND to_date >= %s
-		""",
-        (date, date),
-        as_list=True,
+    StudentLeaveApplication = DocType("Student Leave Application")
+    query = (
+        frappe.qb.from_(StudentLeaveApplication)
+        .select(StudentLeaveApplication.student)
+        .where(
+            (StudentLeaveApplication.docstatus == 1)
+            & (StudentLeaveApplication.mark_as_present == 1)
+            & (StudentLeaveApplication.from_date <= date)
+            & (StudentLeaveApplication.to_date >= date)
+        )
     )
+    result = query.run(as_list=True)
     return {row[0] for row in result}
