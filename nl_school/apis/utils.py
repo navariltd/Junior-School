@@ -8,6 +8,7 @@ from frappe.utils.password import update_password
 import re
 
 
+
 @frappe.whitelist()
 def mark_attendance(
     students_present,
