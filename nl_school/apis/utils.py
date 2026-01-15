@@ -7,6 +7,8 @@ from frappe.model.document import Document
 from frappe.utils.password import update_password
 import re
 
+from education.education.doctype.student.student import Student
+from education.education.doctype.student_attendance.student_attendance import StudentAttendance
 
 @frappe.whitelist()
 def mark_attendance(
@@ -131,7 +133,7 @@ def make_attendance_records(
     return True  # Attendance successfully created
 
 
-class ModifiedStudentAttendance(Document):
+class ModifiedStudentAttendance(StudentAttendance):
     def validate_duplication(self):
         """Check if the Attendance Record is Unique"""
         attendance_record = None
@@ -170,7 +172,7 @@ class ModifiedStudentAttendance(Document):
             )
 
 
-class ModifiedStudent(Document):
+class ModifiedStudent(Student):
     def validate(self):
         """Create a website user for student creation if not already exists"""
 
