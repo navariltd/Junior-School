@@ -38,7 +38,7 @@ fixtures = [
                     "Company-custom_rubber_stamp",
                     "Assessment Plan-custom_status",
                     "Education Settings-custom_autocreate_academic_year",
-                    "Education Settings-custom_auto_enroll_students_yearly"
+                    "Education Settings-custom_auto_enroll_students_yearly",
                 ),
             ]
         ],
@@ -207,7 +207,7 @@ scheduler_events = {
             "nl_school.junior_school_customization.utils.create_academic_year"
         ],
         "0 1 1 2 *": [
-            "nl_school.junior_school_customization.utils.update_enrolment_tool"
+            "nl_school.junior_school_customization.utils.update_enrollment_tool"
         ],
     },
     "Weekly": [
