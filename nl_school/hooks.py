@@ -44,6 +44,8 @@ fixtures = [
         ],
     }
 ]
+
+before_tests = "junior_school_customization.setup.utils.before_tests"
 # Includes in <head>
 # ------------------
 
