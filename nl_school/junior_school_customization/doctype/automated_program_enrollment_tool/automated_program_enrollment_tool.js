@@ -27,6 +27,8 @@ frappe.ui.form.on("Automated Program Enrollment Tool", {
       frm.doc.academic_term ? "term_start_date" : "year_start_date",
       "enrollment_date",
     );
+
+    frm.trigger("set_stream_filters");
   },
   company: function (frm) {
     if (frm.doc.company) {
@@ -58,6 +60,11 @@ frappe.ui.form.on("Automated Program Enrollment Tool", {
         };
       });
     }
+
+    frm.clear_table("promotion_rules_engine");
+    frm.refresh_field("promotion_rules_engine");
+
+    frm.trigger("set_stream_filters");
   },
 
   get_students_from: function (frm) {
@@ -98,33 +105,23 @@ frappe.ui.form.on("Automated Program Enrollment Tool", {
     frm.refresh();
   },
 
-  onload: function (frm) {
-    set_stream_filters(frm);
+  set_stream_filters(frm) {
+    if (frm.doc.company) {
+      frm.set_query("current_stream", "promotion_rules_engine", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+
+      frm.set_query("new_stream", "promotion_rules_engine", function () {
+        return {
+          filters: {
+            company: frm.doc.company,
+          },
+        };
+      });
+    }
   },
 });
-
-function set_stream_filters(frm) {
-  const company = frm.doc.company;
-
-  if (!company) return;
-
-  frm.fields_dict["promotion_rules_engine"].grid.get_field(
-    "current_stream",
-  ).get_query = function (doc, cdt, cdn) {
-    return {
-      filters: {
-        company: company,
-      },
-    };
-  };
-
-  frm.fields_dict["promotion_rules_engine"].grid.get_field(
-    "new_stream",
-  ).get_query = function (doc, cdt, cdn) {
-    return {
-      filters: {
-        company: company,
-      },
-    };
-  };
-}

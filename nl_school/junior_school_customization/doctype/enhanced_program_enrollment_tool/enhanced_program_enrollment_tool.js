@@ -94,6 +94,8 @@ frappe.ui.form.on("Enhanced Program Enrollment Tool", {
     frappe.call({
       method: "enroll_students",
       doc: frm.doc,
+      freeze: true,
+      freeze_message: __("Enrolling Students..."),
       callback: function (r) {
         frm.set_value("students", []);
         frappe.hide_msgprint(true);
