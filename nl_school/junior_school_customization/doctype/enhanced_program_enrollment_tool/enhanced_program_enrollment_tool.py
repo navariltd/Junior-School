@@ -14,6 +14,25 @@ class EnhancedProgramEnrollmentTool(Document):
         )
         self.set_onload("academic_term_reqd", academic_term_reqd)
 
+    def before_save(self):
+        if not self.promotion_rules_engine:
+            frappe.throw(_("Please add promotion rules"))
+
+        for rule in self.promotion_rules_engine:
+            if rule.current_class == rule.new_class:
+                frappe.throw(
+                    _(
+                        "In Promotion Rules Engine, Current Class cannot be the same as New Class"
+                    )
+                )
+
+            if rule.current_stream == rule.new_stream:
+                frappe.throw(
+                    _(
+                        "In Promotion Rules Engine, Current Stream cannot be the same as New Stream"
+                    )
+                )
+
     @frappe.whitelist()
     def get_students(self):
         students = []
