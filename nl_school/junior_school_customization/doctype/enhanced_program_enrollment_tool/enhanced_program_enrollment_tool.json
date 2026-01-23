@@ -80,6 +80,7 @@
    "label": "Enrollment Date"
   },
   {
+   "depends_on": "eval: doc.get_students_from==\"Student Applicant\"",
    "fieldname": "section_break_5",
    "fieldtype": "Section Break"
   },
@@ -183,7 +184,7 @@
  "hide_toolbar": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-05-15 16:49:12.827084",
+ "modified": "2026-01-22 18:50:05.368872",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Enhanced Program Enrollment Tool",

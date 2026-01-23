@@ -121,6 +121,7 @@
    "fieldname": "promotion_rules_engine",
    "fieldtype": "Table",
    "label": "Promotion Rules Engine",
+   "mandatory_depends_on": "eval:doc.get_students_from===\"Program Enrollment\";",
    "options": "Promotion Rules Engine"
   },
   {
@@ -178,13 +179,14 @@
   {
    "fieldname": "enroll_students",
    "fieldtype": "Button",
+   "hidden": 1,
    "label": "Enroll Students"
   }
  ],
  "grid_page_length": 50,
  "hide_toolbar": 1,
  "links": [],
- "modified": "2025-05-15 16:48:03.570740",
+ "modified": "2026-01-22 17:19:24.150414",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Automated Program Enrollment Tool",

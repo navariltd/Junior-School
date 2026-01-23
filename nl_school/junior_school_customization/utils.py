@@ -1,6 +1,172 @@
 import frappe
 from frappe import _
-from frappe.utils import getdate
+from frappe.utils import (
+    getdate,
+    get_year_start,
+    get_year_ending,
+    get_first_day,
+    get_last_day,
+)
+
+
+# TODO: Refactor this into smaller functions
+def promote_students_based_on_rules(promotion_rules, new_academic_year=None):
+    """
+    Promote students based on defined promotion rules and update streams with the new academic year before adding students.
+    Handles duplicate roll numbers by auto-incrementing them.
+    """
+    if not promotion_rules:
+        frappe.throw(_("No promotion rules defined"))
+
+    sorted_rules = sorted(
+        promotion_rules, key=lambda x: (x["current_class"], x["current_stream"])
+    )
+
+    moved_students = set()
+    total_moved = 0
+
+    for rule in sorted_rules:
+        try:
+            current_stream = frappe.get_doc("Student Group", rule["current_stream"])
+
+            if not current_stream:
+                frappe.log_error(
+                    "Student Group Not Found",
+                    f"Group not found: {rule['current_stream']}",
+                )
+                continue
+
+            students_to_move = [
+                s for s in current_stream.students if s.student not in moved_students
+            ]
+
+            if not students_to_move:
+                continue
+
+            current_students_to_keep = [
+                s
+                for s in current_stream.students
+                if s.student not in [sm.student for sm in students_to_move]
+            ]
+            current_stream.students = current_students_to_keep
+            current_stream.save(ignore_permissions=True)
+            frappe.db.commit()
+
+            new_stream = frappe.get_doc("Student Group", rule["new_stream"])
+            if not new_stream:
+                frappe.log_error(
+                    "Student Group Not Found",
+                    f"Group not found: {rule['new_stream']}",
+                )
+                continue
+
+            if new_academic_year and new_stream.academic_year != new_academic_year:
+                new_stream.academic_year = new_academic_year
+
+            existing_students = {s.student for s in new_stream.students}
+            students_added = False
+
+            for student in students_to_move:
+                if student.student not in existing_students:
+                    new_stream.append(
+                        "students",
+                        {
+                            "student": student.student,
+                            "student_name": student.student_name,
+                            "active": student.active,
+                        },
+                    )
+                    moved_students.add(student.student)
+                    total_moved += 1
+                    students_added = True
+
+            if students_added:
+                new_stream.save(ignore_permissions=True)
+                frappe.db.commit()
+
+        except Exception as e:
+            frappe.db.rollback()
+            frappe.log_error(
+                "Promotion Process Error", f"Error processing rule {rule}: {str(e)}"
+            )
+            continue
+
+    return total_moved
+
+
+@frappe.whitelist()
+def process_promotions(doc):
+    if not doc.promotion_rules_engine:
+        frappe.throw(_("Please define promotion rules first"))
+
+    promotion_rules = []
+    academic_year = doc.new_academic_year if doc.new_academic_year else None
+    for rule in doc.promotion_rules_engine:
+        promotion_rules.append(
+            {
+                "current_class": rule.get("current_class"),
+                "current_stream": rule.get("current_stream"),
+                "new_class": rule.get("new_class"),
+                "new_stream": rule.get("new_stream"),
+            }
+        )
+    promote_students_based_on_rules(promotion_rules, academic_year)
+
+    frappe.msgprint(_("Student promotion started in background"))
+
+
+def enroll_students_based_on_promotion(
+    students,
+    promotion_rules,
+    academic_year=None,
+    academic_term=None,
+    enrollment_date=getdate(),
+):
+    """
+    Enroll students based on promotion rules into a new program.
+    """
+    if not promotion_rules:
+        frappe.throw(_("No promotion rules defined for enrollment."))
+
+    created_enrollments = 0
+
+    promotion_map = {rule.current_class: rule.new_class for rule in promotion_rules}
+    new_stream_map = {rule.current_stream: rule.new_stream for rule in promotion_rules}
+
+    for student in students:
+        try:
+            current_program = student.program
+
+            new_program = promotion_map.get(current_program)
+            new_stream = new_stream_map.get(student.custom_stream)
+            if not new_program:
+                continue
+            if not new_stream:
+                continue
+
+            # Create new Program Enrollment
+            new_enrollment = frappe.new_doc("Program Enrollment")
+            new_enrollment.student = student.student
+            new_enrollment.student_name = student.student_name
+            new_enrollment.student_category = student.student_category
+            new_enrollment.program = new_program
+            new_enrollment.custom_stream = new_stream
+            new_enrollment.academic_year = academic_year
+            new_enrollment.academic_term = academic_term
+            new_enrollment.student_batch_name = student.student_batch_name
+            new_enrollment.enrollment_date = enrollment_date
+            new_enrollment.save()
+            new_enrollment.submit()
+            created_enrollments += 1
+
+        except Exception as e:
+            frappe.log_error(
+                title="Error in enroll_students_based_on_promotion",
+                message=f"Error: {str(e)}",
+            )
+            continue
+
+    return created_enrollments
 
 
 def create_academic_year():
@@ -8,7 +174,7 @@ def create_academic_year():
     if not settings.custom_autocreate_academic_year:
         return
     """Automatically creates an academic year at the start of each new year."""
-    current_year = "2029"
+    current_year = getdate().year
     academic_year_name = f"{current_year} Academic Year"
 
     if not frappe.db.exists("Academic Year", academic_year_name):
@@ -16,13 +182,12 @@ def create_academic_year():
             {
                 "doctype": "Academic Year",
                 "academic_year_name": academic_year_name,
-                "year_start_date": f"{current_year}-01-01",
-                "year_end_date": f"{current_year}-12-31",
+                "year_start_date": get_year_start(getdate()),
+                "year_end_date": get_year_ending(getdate()),
             }
         )
         academic_year.insert(ignore_permissions=True)
         frappe.db.commit()
-        frappe.msgprint(f"Created: {academic_year_name}")
 
 
 # TODO: Just incase you decide to go with this doctype for automatic enrolment, then uncomment the code, but i created teh other one for multi-schools purpose
@@ -64,38 +229,48 @@ def create_academic_year():
 #         frappe.msgprint(_("No students found to enroll."))
 
 
-def update_enrolment_tool():
+def update_enrollment_tool():
     settings = get_education_settings()
     if not settings.custom_auto_enroll_students_yearly:
         return
+
+    year_start = get_year_start(getdate())
+    month_last_day = get_last_day(year_start)
+    year_end = get_year_ending(getdate())
+    month_first_day = get_first_day(year_end)
+
     for auto_enrollments in frappe.get_all(
         "Automated Program Enrollment Tool", fields=["name"]
     ):
-        enrolment_doc = frappe.get_doc(
+        enrollment_doc = frappe.get_doc(
             "Automated Program Enrollment Tool", auto_enrollments.name
         )
-        if not enrolment_doc:
+        if not enrollment_doc:
             continue
 
-        latest_academic_year = frappe.get_all(
+        # TODO: Change this academic year fetching logic to check if there is an academic year that starts in January and ends in Dec of the current year
+        academic_year = frappe.get_all(
             "Academic Year",
             fields=["name"],
-            order_by="year_end_date desc",
-            limit=1,
+            filters={
+                "year_start_date": ["between", [year_start, month_last_day]],
+                "year_end_date": ["between", [month_first_day, year_end]],
+            },
         )
 
-        if not latest_academic_year:
+        if not academic_year:
             frappe.throw(_("No Academic Year found."))
 
-        enrolment_doc.new_academic_year = latest_academic_year[0].name
+        enrollment_doc.new_academic_year = academic_year[0].name
 
-        students = enrolment_doc.get_students()
+        # Get students from Automated Program Enrollment
+        students = enrollment_doc.get_students()
 
         if students:
-            enrolment_doc.students = []
+            enrollment_doc.students = []
 
             for student in students:
-                enrolment_doc.append(
+                enrollment_doc.append(
                     "students",
                     {
                         "student": student.get("student"),
@@ -105,9 +280,9 @@ def update_enrolment_tool():
                     },
                 )
 
-            enrolment_doc.save()
+            enrollment_doc.save()
 
-            enrolment_doc.enroll_students()
+            enrollment_doc.enroll_students()
         else:
             frappe.msgprint(_("No students found to enroll."))
 
