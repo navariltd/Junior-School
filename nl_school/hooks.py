@@ -8,7 +8,7 @@ app_license = "agpl-3.0"
 # Apps
 # ------------------
 
-required_apps = ["education"]
+required_apps = ["education", "changemakers"]
 
 # Each item in the list will be shown as an app in the apps page
 # add_to_apps_screen = [
@@ -25,24 +25,10 @@ fixtures = [
     {
         "doctype": "Custom Field",
         "filters": [
-            [
-                "name",
-                "in",
-                (
-                    "Student Attendance-custom_end_time",
-                    "Student Attendance-custom_start_time",
-                    "Student Attendance-custom_shift",
-                    "Student-custom_reason_for_exiting",
-                    "Student-custom_status",
-                    "Student Report Generation Tool-custom_teachers_comment",
-                    "Company-custom_rubber_stamp",
-                    "Assessment Plan-custom_status",
-                    "Education Settings-custom_autocreate_academic_year",
-                    "Education Settings-custom_auto_enroll_students_yearly",
-                ),
-            ]
+            ["is_system_generated", "=", 0],
+            ["module", "=", "Junior School Customization"],
         ],
-    }
+    },
 ]
 # Includes in <head>
 # ------------------
@@ -80,6 +66,7 @@ doctype_js = {
     "Program Enrollment": "public/js/program_enrollment.js",
     "Student Attendance": "public/js/student_attendance.js",
     "Assessment Result Tool": "public/js/assessment_result_tool.js",
+    "Beneficiary": "public/js/beneficiary.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -121,7 +108,7 @@ doctype_js = {
 # ------------
 
 # before_install = "nl_school.install.before_install"
-# after_install = "nl_school.install.after_install"
+after_install = "nl_school.install.after_install"
 
 # Uninstallation
 # ------------
@@ -208,6 +195,9 @@ scheduler_events = {
         ],
         "0 1 1 2 *": [
             "nl_school.junior_school_customization.utils.update_enrollment_tool"
+        ],
+        "0 2 1 1 *": [
+            "nl_school.scheduler.scholarship_promotion_rule.auto_promote_students"
         ],
     },
     "Weekly": [
