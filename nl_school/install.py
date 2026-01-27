@@ -19,6 +19,7 @@ def create_beneficiary_status():
         "Inactive - Dropped out of school",
         "Inactive - Other",
         "Inactive - Withdrew from scholarship",
+        "Alumni",
     ]
 
     for status in status_list:

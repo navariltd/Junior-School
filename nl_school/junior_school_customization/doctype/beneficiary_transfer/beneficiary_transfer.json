@@ -1,28 +1,28 @@
 {
  "actions": [],
- "allow_rename": 1,
- "autoname": "format:{SPL}-{YYYY}-{#####}",
- "creation": "2026-01-27 08:51:10.467099",
+ "autoname": "format:{BST}-{YYYY}-{#####}",
+ "creation": "2026-01-27 15:22:14.495136",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "beneficiary",
   "student_name",
-  "column_break_vmjo",
-  "promotion_rule",
-  "status",
-  "progression_details_section",
+  "column_break_jcyp",
+  "transfer_date",
+  "section_break_ewgd",
+  "from_school",
   "from_class",
+  "column_break_qdkh",
+  "to_school",
   "to_class",
-  "column_break_oqwp",
-  "promotion_date",
-  "promotion_type",
-  "section_break_o99n",
+  "section_break_tiof",
+  "transfer_reason",
+  "section_break_jyi1",
   "amended_from"
  ],
  "fields": [
   {
-   "fieldname": "section_break_o99n",
+   "fieldname": "section_break_jyi1",
    "fieldtype": "Section Break"
   },
   {
@@ -30,7 +30,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Beneficiary Progression Log",
+   "options": "Beneficiary Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -39,9 +39,7 @@
    "fieldname": "beneficiary",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Beneficiary",
-   "link_filters": "[[\"Beneficiary\",\"is_scholar\",\"=\",\"Yes\"]]",
    "options": "Beneficiary",
    "reqd": 1
   },
@@ -49,32 +47,47 @@
    "fetch_from": "beneficiary.student_name",
    "fieldname": "student_name",
    "fieldtype": "Data",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Student Name"
   },
   {
-   "fieldname": "column_break_vmjo",
+   "fieldname": "column_break_jcyp",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "promotion_rule",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Promotion Rule",
-   "options": "Scholarship Promotion Rule",
+   "default": "Today",
+   "fieldname": "transfer_date",
+   "fieldtype": "Date",
+   "label": "Transfer Date",
    "reqd": 1
   },
   {
-   "fieldname": "progression_details_section",
-   "fieldtype": "Section Break",
-   "label": "Progression Details"
+   "fieldname": "section_break_ewgd",
+   "fieldtype": "Section Break"
   },
   {
+   "fetch_from": "beneficiary.official_school_name",
+   "fieldname": "from_school",
+   "fieldtype": "Link",
+   "label": "From School",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "beneficiary.current_class",
    "fieldname": "from_class",
    "fieldtype": "Data",
    "label": "From Class",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qdkh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_school",
+   "fieldtype": "Link",
+   "label": "To School",
+   "options": "Supplier",
    "reqd": 1
   },
   {
@@ -84,41 +97,23 @@
    "reqd": 1
   },
   {
-   "fieldname": "column_break_oqwp",
-   "fieldtype": "Column Break"
+   "fieldname": "section_break_tiof",
+   "fieldtype": "Section Break"
   },
   {
-   "default": "Today",
-   "fieldname": "promotion_date",
-   "fieldtype": "Date",
-   "label": "Promotion Date",
-   "reqd": 1
-  },
-  {
-   "default": "Automatic",
-   "fieldname": "promotion_type",
-   "fieldtype": "Select",
-   "label": "Promotion Type",
-   "options": "Automatic\nManual\nConverted to Alumni"
-  },
-  {
-   "fieldname": "status",
-   "fieldtype": "Data",
-   "in_standard_filter": 1,
-   "label": "Status at Promotion",
-   "read_only": 1,
-   "reqd": 1
+   "fieldname": "transfer_reason",
+   "fieldtype": "Small Text",
+   "label": "Transfer Reason"
   }
  ],
  "grid_page_length": 50,
- "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-01-27 17:14:38.151460",
+ "modified": "2026-01-27 16:02:53.076498",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Beneficiary Progression Log",
+ "name": "Beneficiary Transfer",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -131,7 +126,6 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
-   "select": 1,
    "share": 1,
    "submit": 1,
    "write": 1
@@ -155,6 +149,5 @@
  "rows_threshold_for_grid_search": 20,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "track_changes": 1
+ "states": []
 }
