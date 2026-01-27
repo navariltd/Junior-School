@@ -4,7 +4,7 @@ app_publisher = "Navari"
 app_description = "Junior primary school customization"
 app_email = "mania@navari.co.ke"
 app_license = "agpl-3.0"
-app_logo_url = "/assets/nl_school/junior-school.svg"
+app_logo_url = "/assets/nl_school/images/junior-school.svg"
 app_home = "/desk/junior-school"
 
 # Apps
@@ -16,8 +16,8 @@ required_apps = ["education"]
 # Each item in the list will be shown as an app in the apps page
 add_to_apps_screen = [
     {
-        "name": app_name,
-        "logo": "/assets/nl_school/junior-school.svg",
+        "name": "Junior School",
+        "logo": "/assets/nl_school/images/junior-school.svg",
         "title": app_title,
         "route": app_home,
         "has_permission": "nl_school.check_app_permission",
