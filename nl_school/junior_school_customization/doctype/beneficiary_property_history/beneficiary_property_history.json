@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-28 17:57:09.831146",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "property",
+  "current",
+  "new",
+  "field_name"
+ ],
+ "fields": [
+  {
+   "fieldname": "property",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Property",
+   "read_only": 1
+  },
+  {
+   "fieldname": "current",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Current",
+   "read_only": 1
+  },
+  {
+   "fieldname": "new",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "New",
+   "read_only": 1
+  },
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Field Name",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-28 17:59:02.262689",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Beneficiary Property History",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

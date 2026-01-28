@@ -10,24 +10,13 @@ class BeneficiaryTransfer(Document):
         if self.from_school == self.to_school:
             frappe.throw("From School and To School cannot be the same.")
 
-    def on_submit(self):
-        self.update_beneficiary_record()
+    # def before_submit(self):
+    #     if getdate(self.transfer_date) > getdate():
+    #         frappe.throw(_("Beneficiary Transfer cannot be submitted before Transer Date."), frappe.DocstatusTransitionError,)
 
-    def on_cancel(self):
-        self.reverse_beneficiary_update()
+    # def on_submit(self):
+    #     beneficiary = frappe.get_doc("Beneficiary", self.beneficiary)
 
-    def update_beneficiary_record(self):
-        beneficiary = frappe.get_doc("Beneficiary", self.beneficiary)
-        old_school = beneficiary.official_school_name
-
-        beneficiary.official_school_name = self.to_school
-        beneficiary.previous_school_name = old_school
-        beneficiary.current_class = self.to_class
-        beneficiary.save(ignore_permissions=True)
-
-    def reverse_beneficiary_update(self):
-        beneficiary = frappe.get_doc("Beneficiary", self.beneficiary)
-        beneficiary.official_school_name = beneficiary.previous_school_name
-        beneficiary.current_class = self.from_class
-        beneficiary.previous_school_name = None
-        beneficiary.save(ignore_permissions=True)
+    # def update_beneficiary_history(self):
+    #     if not self.transfer_details:
+    #         return self.beneficiary
