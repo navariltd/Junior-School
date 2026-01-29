@@ -444,3 +444,82 @@ def get_subtopics(topic):
 @frappe.whitelist()
 def get_student_guardian(student):
     return frappe.db.get_value("Student Guardian", {"parent": student}, "guardian")
+
+
+@frappe.whitelist()
+def get_students(
+    academic_year,
+    group_based_on,
+    company,
+    student_group,
+    academic_term=None,
+    program=None,
+    batch=None,
+    student_category=None,
+    course=None,
+):
+    enrolled_students = get_program_enrollment(
+        academic_year,
+        company,
+        student_group,
+        academic_term,
+        program,
+        batch,
+        student_category,
+        course,
+    )
+
+    if enrolled_students:
+        student_list = []
+        for s in enrolled_students:
+            if frappe.db.get_value("Student", s.student, "enabled"):
+                s.update({"active": 1})
+            else:
+                s.update({"active": 0})
+            student_list.append(s)
+        return student_list
+    else:
+        frappe.msgprint(_("No students found"))
+        return []
+
+
+def get_program_enrollment(
+    academic_year,
+    company,
+    student_group,
+    academic_term=None,
+    program=None,
+    batch=None,
+    student_category=None,
+    course=None,
+):
+    PE = frappe.qb.DocType("Program Enrollment")
+
+    query = (
+        frappe.qb.from_(PE)
+        .select(PE.student, PE.student_name)
+        .where(
+            (PE.academic_year == academic_year)
+            & (PE.company == company)
+            & (PE.docstatus == 1)
+            & (PE.custom_stream == student_group)
+        )
+        .orderby(PE.student_name)
+    )
+
+    if academic_term:
+        query = query.where(PE.academic_term == academic_term)
+    if program:
+        query = query.where(PE.program == program)
+    if batch:
+        query = query.where(PE.student_batch_name == batch)
+    if student_category:
+        query = query.where(PE.student_category == student_category)
+
+    if course:
+        PEC = frappe.qb.DocType("Program Enrollment Course")
+        query = (
+            query.left_join(PEC).on(PE.name == PEC.parent).where(PEC.course == course)
+        )
+
+    return query.run(as_dict=True)

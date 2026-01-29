@@ -80,6 +80,7 @@ doctype_js = {
     "Program Enrollment": "public/js/program_enrollment.js",
     "Student Attendance": "public/js/student_attendance.js",
     "Assessment Result Tool": "public/js/assessment_result_tool.js",
+    "Student Group": "public/js/student_group.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
