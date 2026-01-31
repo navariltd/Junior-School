@@ -15,8 +15,6 @@
   "to_school",
   "section_break_cmge",
   "transfer_details",
-  "section_break_tiof",
-  "transfer_reason",
   "section_break_jyi1",
   "amended_from"
  ],
@@ -30,7 +28,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Beneficiary Transfer",
+   "options": "Student Beneficiary Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -69,8 +67,7 @@
    "fieldname": "from_school",
    "fieldtype": "Link",
    "label": "From School",
-   "options": "Supplier",
-   "reqd": 1
+   "options": "Supplier"
   },
   {
    "fieldname": "column_break_qdkh",
@@ -80,17 +77,7 @@
    "fieldname": "to_school",
    "fieldtype": "Link",
    "label": "To School",
-   "options": "Supplier",
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_tiof",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "transfer_reason",
-   "fieldtype": "Small Text",
-   "label": "Transfer Reason"
+   "options": "Supplier"
   },
   {
    "fieldname": "section_break_cmge",
@@ -108,10 +95,10 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-01-28 18:47:44.407857",
+ "modified": "2026-01-31 09:51:26.389248",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Beneficiary Transfer",
+ "name": "Student Beneficiary Transfer",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

@@ -1,17 +1,8 @@
 // Copyright (c) 2026, Navari and contributors
 // For license information, please see license.txt
 
-frappe.ui.form.on("Beneficiary Transfer", {
-  setup: function (frm) {
-    frm.set_query("beneficiary", function () {
-      return {
-        filters: {
-          is_scholar: "Yes",
-          status: ["!=", "Alumni"],
-        },
-      };
-    });
-  },
+frappe.ui.form.on("Student Beneficiary Transfer", {
+  setup: function (frm) {},
 
   onload: function (frm) {
     if (frm.doc.__islocal && !frm.doc.amended_from) {
@@ -46,20 +37,31 @@ frappe.ui.form.on("Beneficiary Transfer", {
         }
 
         const allowed_fields = [];
-
-        const fields_to_consider = [
-          "current_class",
-          // "special_circumstance_of_residence",
+        const exclude_fields = [
+          "first_name",
+          "last_name",
+          "full_name",
+          "student_name",
+          "date_of_birth",
+          "age",
+          "student",
+          "cost_center",
+          "gender",
+          "languages_known",
+          "is_scholar",
+          "county_abbreviation",
+          "county",
+          "sub_county",
+          "ward",
+          "class_at_onboarding",
+          "enrolled_at_onboarding",
           "promotion_rule",
-          "official_school_name",
-          "county_of_school",
-          "day_or_boarding",
-          "recommender",
-          "reason_for_recommending",
-          "guardian_name",
-          "guardian_contact",
-          "relationship_to_student",
-          "status",
+          "previous_school_name",
+          "public_or_private",
+          "replaced_by",
+          "activation_date",
+          "archive_date",
+          "archive_reason",
         ];
 
         const exclude_field_types = [
@@ -70,6 +72,7 @@ frappe.ui.form.on("Beneficiary Transfer", {
           "Read Only",
           "Tab Break",
           "Table",
+          "Table MultiSelect",
         ];
 
         frappe.model.with_doctype("Beneficiary", () => {
@@ -79,7 +82,7 @@ frappe.ui.form.on("Beneficiary Transfer", {
               __(d.label, null, d.parent) + ` (${d.fieldname})`;
 
             if (
-              fields_to_consider.includes(d.fieldname) &&
+              !exclude_fields.includes(d.fieldname) &&
               !exclude_field_types.includes(d.fieldtype) &&
               !d.hidden &&
               !d.read_only
@@ -99,7 +102,6 @@ frappe.ui.form.on("Beneficiary Transfer", {
 });
 
 var show_dialog = function (frm, table, field_labels) {
-  console.log(field_labels);
   var d = new frappe.ui.Dialog({
     title: "Update Property",
     fields: [
@@ -140,7 +142,6 @@ var show_dialog = function (frm, table, field_labels) {
       method: "nl_school.utils.get_beneficiary_field_property",
       args: { beneficiary: frm.doc.beneficiary, fieldname: property },
       callback: function (r) {
-        console.log("RESPONSE", r);
         if (r.message) {
           d.data.current = r.message.value;
           d.data.property = r.message.label;
