@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "format:{BST}-{YYYY}-{#####}",
+ "autoname": "format:{BT}-{YYYY}-{#####}",
  "creation": "2026-01-27 15:22:14.495136",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -11,12 +11,10 @@
   "transfer_date",
   "section_break_ewgd",
   "from_school",
-  "from_class",
   "column_break_qdkh",
   "to_school",
-  "to_class",
-  "section_break_tiof",
-  "transfer_reason",
+  "section_break_cmge",
+  "transfer_details",
   "section_break_jyi1",
   "amended_from"
  ],
@@ -30,7 +28,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Beneficiary Transfer",
+   "options": "Student Beneficiary Transfer",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -69,15 +67,7 @@
    "fieldname": "from_school",
    "fieldtype": "Link",
    "label": "From School",
-   "options": "Supplier",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "beneficiary.current_class",
-   "fieldname": "from_class",
-   "fieldtype": "Data",
-   "label": "From Class",
-   "reqd": 1
+   "options": "Supplier"
   },
   {
    "fieldname": "column_break_qdkh",
@@ -87,33 +77,28 @@
    "fieldname": "to_school",
    "fieldtype": "Link",
    "label": "To School",
-   "options": "Supplier",
-   "reqd": 1
+   "options": "Supplier"
   },
   {
-   "fieldname": "to_class",
-   "fieldtype": "Data",
-   "label": "To Class",
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_tiof",
+   "fieldname": "section_break_cmge",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "transfer_reason",
-   "fieldtype": "Small Text",
-   "label": "Transfer Reason"
+   "fieldname": "transfer_details",
+   "fieldtype": "Table",
+   "label": "Beneficiary Transfer Detail",
+   "options": "Beneficiary Property History",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-01-27 16:02:53.076498",
+ "modified": "2026-01-31 09:51:26.389248",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Beneficiary Transfer",
+ "name": "Student Beneficiary Transfer",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
