@@ -12,11 +12,20 @@ frappe.ui.form.on("Student Beneficiary Scholarship Allocation", {
     frm.trigger("set_filters");
   },
 
-  set_filters(frm) {
+  async set_filters(frm) {
+    let settings = await frappe.db.get_doc(
+      "Junior School Settings",
+      "Junior School Settings",
+    );
+
+    const eligible_statuses =
+      settings.eligible_statuses.map((status) => status.status) || [];
+
     frm.set_query("beneficiary", function () {
       return {
         filters: {
           company: frm.doc.company,
+          status: ["in", eligible_statuses],
         },
       };
     });

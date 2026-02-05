@@ -41,6 +41,8 @@
   "payments_section",
   "payment_records",
   "payment_status",
+  "section_break_xpzn",
+  "purchase_invoice",
   "section_break_ucfn",
   "amended_from"
  ],
@@ -268,13 +270,25 @@
   {
    "fieldname": "column_break_tpgq",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xpzn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "label": "Purchase Invoice",
+   "options": "Purchase Invoice",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-04 17:56:02.912847",
+ "modified": "2026-02-04 23:46:38.658006",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Student Beneficiary Scholarship Allocation",

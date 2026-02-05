@@ -184,6 +184,9 @@ doc_events = {
     "Student": {
         "before_save": "nl_school.junior_school_customization.utils.before_save",
     },
+    "Payment Entry": {
+        "before_submit": "nl_school.junior_school_customization.overrides.payment_entry.before_submit"
+    },
 }
 # Scheduled Tasks
 # ---------------
