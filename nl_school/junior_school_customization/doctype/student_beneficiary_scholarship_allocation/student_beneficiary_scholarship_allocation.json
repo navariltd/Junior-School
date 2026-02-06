@@ -1,0 +1,343 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:BSA-{YYYY}-{#####}",
+ "creation": "2026-02-02 22:44:54.472333",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "beneficiary_information_section",
+  "company",
+  "beneficiary",
+  "public_or_private",
+  "current_class",
+  "column_break_twaq",
+  "official_school_name",
+  "student_name",
+  "day_or_boarding",
+  "bank_information_section",
+  "bank_account_name",
+  "bank_code",
+  "column_break_eflu",
+  "bank_account_number",
+  "section_break_dubb",
+  "academic_year",
+  "posting_date",
+  "column_break_ipab",
+  "academic_term",
+  "fee_details_section",
+  "fee_balance",
+  "column_break_ujbc",
+  "fee_amount",
+  "column_break_hotj",
+  "other_fees",
+  "totals_section",
+  "allocated_amount",
+  "column_break_rfrp",
+  "outstanding_amount",
+  "column_break_tpgq",
+  "total_amount_paid",
+  "payments_tab",
+  "payments_section",
+  "payment_records",
+  "payment_status",
+  "section_break_xpzn",
+  "purchase_invoice",
+  "section_break_ucfn",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_ucfn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Student Beneficiary Scholarship Allocation",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "beneficiary.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Beneficiary Name"
+  },
+  {
+   "fieldname": "official_school_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Official School Name",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ipab",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Academic Year ",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fee_details_section",
+   "fieldtype": "Section Break",
+   "label": "Fee Details"
+  },
+  {
+   "fieldname": "fee_balance",
+   "fieldtype": "Currency",
+   "label": "Fee Balance",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "column_break_ujbc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fee_amount",
+   "fieldtype": "Currency",
+   "label": "Fee Amount",
+   "non_negative": 1,
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "payment_status",
+   "fieldtype": "Select",
+   "label": "Payment Status",
+   "options": "Unpaid\nPartially Paid\nPaid",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_hotj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "other_fees",
+   "fieldtype": "Currency",
+   "label": "Other Fees",
+   "non_negative": 1,
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "payments_section",
+   "fieldtype": "Section Break",
+   "label": "Payments"
+  },
+  {
+   "fieldname": "payment_records",
+   "fieldtype": "Table",
+   "label": "Payment Records",
+   "options": "Scholarship Payment Record",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "payments_tab",
+   "fieldtype": "Tab Break",
+   "label": "Payments"
+  },
+  {
+   "fieldname": "total_amount_paid",
+   "fieldtype": "Currency",
+   "label": "Total Amount Paid",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "beneficiary_information_section",
+   "fieldtype": "Section Break",
+   "label": "Beneficiary Information"
+  },
+  {
+   "fieldname": "section_break_dubb",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_twaq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "beneficiary",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Beneficiary",
+   "options": "Beneficiary",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "beneficiary.current_class",
+   "fieldname": "current_class",
+   "fieldtype": "Data",
+   "label": "Current Class"
+  },
+  {
+   "fetch_from": "beneficiary.day_or_boarding",
+   "fieldname": "day_or_boarding",
+   "fieldtype": "Data",
+   "label": "Day/Boarding"
+  },
+  {
+   "fetch_from": "beneficiary.public_or_private",
+   "fieldname": "public_or_private",
+   "fieldtype": "Data",
+   "label": "Public/Private"
+  },
+  {
+   "fieldname": "bank_information_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Information"
+  },
+  {
+   "fetch_from": "beneficiary.bank_account_name",
+   "fieldname": "bank_account_name",
+   "fieldtype": "Data",
+   "label": "Bank Account Name"
+  },
+  {
+   "fieldname": "column_break_eflu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "beneficiary.bank_account_number",
+   "fieldname": "bank_account_number",
+   "fieldtype": "Data",
+   "label": "Bank Account Number"
+  },
+  {
+   "fetch_from": "beneficiary.bank_code",
+   "fieldname": "bank_code",
+   "fieldtype": "Data",
+   "label": "Bank Code"
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Outstanding Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "allocated_amount",
+   "fieldtype": "Currency",
+   "label": "Allocated Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "column_break_rfrp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_tpgq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xpzn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "purchase_invoice",
+   "fieldtype": "Link",
+   "label": "Purchase Invoice",
+   "options": "Purchase Invoice",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-02-04 23:46:38.658006",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Student Beneficiary Scholarship Allocation",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Scholarship Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Academics User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
