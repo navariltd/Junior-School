@@ -7,42 +7,39 @@
  "engine": "InnoDB",
  "field_order": [
   "beneficiary_information_section",
-  "company",
   "beneficiary",
+  "allocation_type",
+  "company",
   "public_or_private",
   "current_class",
   "column_break_twaq",
   "official_school_name",
   "student_name",
   "day_or_boarding",
+  "section_break_dgdd",
+  "source_warehouse",
   "bank_information_section",
   "bank_account_name",
   "bank_code",
   "column_break_eflu",
   "bank_account_number",
+  "items_section",
+  "allocation_items",
   "section_break_dubb",
   "academic_year",
   "posting_date",
   "column_break_ipab",
   "academic_term",
-  "fee_details_section",
-  "fee_balance",
-  "column_break_ujbc",
-  "fee_amount",
-  "column_break_hotj",
-  "other_fees",
   "totals_section",
-  "allocated_amount",
+  "grand_total",
   "column_break_rfrp",
   "outstanding_amount",
   "column_break_tpgq",
-  "total_amount_paid",
-  "payments_tab",
+  "amount_paid",
+  "more_info_tab",
   "payments_section",
   "payment_records",
   "payment_status",
-  "section_break_xpzn",
-  "purchase_invoice",
   "section_break_ucfn",
   "amended_from"
  ],
@@ -68,6 +65,7 @@
    "label": "Beneficiary Name"
   },
   {
+   "fetch_from": "beneficiary.official_school_name",
    "fieldname": "official_school_name",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -99,29 +97,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "fee_details_section",
-   "fieldtype": "Section Break",
-   "label": "Fee Details"
-  },
-  {
-   "fieldname": "fee_balance",
-   "fieldtype": "Currency",
-   "label": "Fee Balance",
-   "options": "Company:company:default_currency"
-  },
-  {
-   "fieldname": "column_break_ujbc",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "fee_amount",
-   "fieldtype": "Currency",
-   "label": "Fee Amount",
-   "non_negative": 1,
-   "options": "Company:company:default_currency",
-   "reqd": 1
-  },
-  {
    "fieldname": "payment_status",
    "fieldtype": "Select",
    "label": "Payment Status",
@@ -129,17 +104,7 @@
    "read_only": 1
   },
   {
-   "fieldname": "column_break_hotj",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "other_fees",
-   "fieldtype": "Currency",
-   "label": "Other Fees",
-   "non_negative": 1,
-   "options": "Company:company:default_currency"
-  },
-  {
+   "depends_on": "eval:doc.allocation_type===\"Cash\"",
    "fieldname": "payments_section",
    "fieldtype": "Section Break",
    "label": "Payments"
@@ -157,18 +122,6 @@
    "fieldtype": "Date",
    "label": "Posting Date",
    "reqd": 1
-  },
-  {
-   "fieldname": "payments_tab",
-   "fieldtype": "Tab Break",
-   "label": "Payments"
-  },
-  {
-   "fieldname": "total_amount_paid",
-   "fieldtype": "Currency",
-   "label": "Total Amount Paid",
-   "options": "Company:company:default_currency",
-   "read_only": 1
   },
   {
    "fieldname": "beneficiary_information_section",
@@ -218,6 +171,8 @@
    "label": "Public/Private"
   },
   {
+   "collapsible": 1,
+   "depends_on": "eval:doc.allocation_type===\"Cash\"",
    "fieldname": "bank_information_section",
    "fieldtype": "Section Break",
    "label": "Bank Information"
@@ -245,16 +200,10 @@
    "label": "Bank Code"
   },
   {
+   "depends_on": "eval:doc.allocation_type===\"Cash\"",
    "fieldname": "outstanding_amount",
    "fieldtype": "Currency",
    "label": "Outstanding Amount",
-   "options": "Company:company:default_currency",
-   "read_only": 1
-  },
-  {
-   "fieldname": "allocated_amount",
-   "fieldtype": "Currency",
-   "label": "Allocated Amount",
    "options": "Company:company:default_currency",
    "read_only": 1
   },
@@ -272,23 +221,74 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "section_break_xpzn",
+   "fieldname": "allocation_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Allocation Type",
+   "options": "Cash\nItems",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "allocation_items",
+   "fieldtype": "Table",
+   "label": "Allocation Items",
+   "options": "Student Beneficiary Scholarship Allocation Item",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.allocation_type===\"Items\";",
+   "fieldname": "section_break_dgdd",
    "fieldtype": "Section Break"
   },
   {
-   "allow_on_submit": 1,
-   "fieldname": "purchase_invoice",
+   "depends_on": "eval:doc.allocation_type===\"Items\";",
+   "fieldname": "source_warehouse",
    "fieldtype": "Link",
-   "label": "Purchase Invoice",
-   "options": "Purchase Invoice",
+   "label": "Source Warehouse",
+   "mandatory_depends_on": "eval:doc.allocation_type===\"Items\";",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "more_info_tab",
+   "fieldtype": "Tab Break",
+   "label": "More Info"
+  },
+  {
+   "fieldname": "grand_total",
+   "fieldtype": "Currency",
+   "label": "Grand Total",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval:doc.allocation_type===\"Cash\";",
+   "fieldname": "amount_paid",
+   "fieldtype": "Currency",
+   "label": "Amount Paid",
+   "options": "Company:company:default_currency",
    "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2026-02-04 23:46:38.658006",
+ "links": [
+  {
+   "link_doctype": "Purchase Invoice",
+   "link_fieldname": "student_beneficiary_scholarship_allocation"
+  },
+  {
+   "link_doctype": "Stock Entry",
+   "link_fieldname": "student_beneficiary_scholarship_allocation"
+  }
+ ],
+ "modified": "2026-02-11 07:42:05.368700",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Student Beneficiary Scholarship Allocation",

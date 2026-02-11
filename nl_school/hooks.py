@@ -185,7 +185,9 @@ doc_events = {
         "before_save": "nl_school.junior_school_customization.utils.before_save",
     },
     "Payment Entry": {
-        "before_submit": "nl_school.junior_school_customization.overrides.payment_entry.before_submit"
+        "before_submit": "nl_school.junior_school_customization.overrides.payment_entry.before_submit",
+        "on_submit": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_submit",
+        "on_cancel": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_cancel",
     },
 }
 # Scheduled Tasks

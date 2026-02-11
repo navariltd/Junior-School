@@ -1,44 +1,23 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:company",
  "creation": "2026-02-04 22:18:17.026634",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "defaults_section",
-  "school_fee_item",
-  "column_break_wilx",
-  "mode_of_payment",
+  "section_break_gjlq",
+  "company",
+  "default_expense_account",
+  "column_break_xlec",
+  "section_break_pmtb",
+  "school_fees_items",
+  "column_break_msps",
+  "distribution_items",
   "section_break_shii",
   "eligible_statuses"
  ],
  "fields": [
-  {
-   "fieldname": "defaults_section",
-   "fieldtype": "Section Break",
-   "label": "Defaults"
-  },
-  {
-   "fieldname": "school_fee_item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "School Fee Item",
-   "link_filters": "[[\"Item\",\"is_stock_item\",\"=\",0]]",
-   "options": "Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_wilx",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "mode_of_payment",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Mode of Payment",
-   "options": "Mode of Payment",
-   "reqd": 1
-  },
   {
    "fieldname": "section_break_shii",
    "fieldtype": "Section Break"
@@ -49,16 +28,61 @@
    "label": "Eligible Statuses",
    "options": "Promotion Rule Status",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_pmtb",
+   "fieldtype": "Section Break",
+   "label": "Beneficiary Allocation Items"
+  },
+  {
+   "fieldname": "school_fees_items",
+   "fieldtype": "Table",
+   "label": "School Fees Items",
+   "options": "Scholarship Allocation Item"
+  },
+  {
+   "fieldname": "column_break_msps",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "distribution_items",
+   "fieldtype": "Table",
+   "label": "Distribution Items",
+   "options": "Scholarship Allocation Item"
+  },
+  {
+   "fieldname": "section_break_gjlq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "default_expense_account",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Default Expense Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_xlec",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "issingle": 1,
  "links": [],
- "modified": "2026-02-04 22:29:15.815127",
+ "modified": "2026-02-11 00:16:39.752791",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Junior School Settings",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
