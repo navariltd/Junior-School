@@ -1,0 +1,102 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"wrr8Q_sxsD\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Scholarship</span>\",\"col\":12}},{\"id\":\"KalY4HCoTh\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Junior School Settings\",\"col\":3}},{\"id\":\"-_OF3Htl34\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Beneficiary\",\"col\":3}},{\"id\":\"Uiz2gmg7-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Beneficiary Transfer\",\"col\":3}},{\"id\":\"N3eSKog0r3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scholarship Promotion Rule\",\"col\":3}},{\"id\":\"MiHZUhBvV1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Student Beneficiary Scholarship Allocation\",\"col\":3}},{\"id\":\"YKESmEuhb7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Scholarship Cohort\",\"col\":3}},{\"id\":\"G5E8nUZ9wc\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":3}},{\"id\":\"YcI4FsIS3I\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Academic Year\",\"col\":3}},{\"id\":\"fRkPR5YQOP\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Academic Term\",\"col\":3}}]",
+ "creation": "2026-02-11 01:55:56.726699",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "clipboard",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Scholarship",
+ "links": [],
+ "modified": "2026-02-11 02:02:17.825862",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Scholarship",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 44.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Junior School Settings",
+   "link_to": "Junior School Settings",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Beneficiary",
+   "link_to": "Beneficiary",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Student Beneficiary Transfer",
+   "link_to": "Student Beneficiary Transfer",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Scholarship Promotion Rule",
+   "link_to": "Scholarship Promotion Rule",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Student Beneficiary Scholarship Allocation",
+   "link_to": "Student Beneficiary Scholarship Allocation",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Scholarship Cohort",
+   "link_to": "Scholarship Cohort",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Supplier",
+   "link_to": "Supplier",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Academic Year",
+   "link_to": "Academic Year",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Academic Term",
+   "link_to": "Academic Term",
+   "stats_filter": "[]",
+   "type": "DocType"
+  }
+ ],
+ "title": "Scholarship"
+}

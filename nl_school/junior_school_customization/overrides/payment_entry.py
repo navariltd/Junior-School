@@ -62,49 +62,66 @@ def add_purchase_invoice_reference_before_submit(payment_entry, pi_dict):
     if not payment_entry.paid_to:
         payment_entry.paid_to = pi_dict.credit_to
 
-    try:
-        scholarship_allocation = frappe.get_doc(
-            "Student Beneficiary Scholarship Allocation",
-            {"purchase_invoice": pi_dict.name},
+
+def on_payment_submit(doc, method=None):
+    update_allocation_from_payment_entry(doc, is_cancel=False)
+
+
+def on_payment_cancel(doc, method=None):
+    update_allocation_from_payment_entry(doc, is_cancel=True)
+
+
+def update_allocation_from_payment_entry(payment_entry, is_cancel=False):
+    for ref in payment_entry.references:
+        if ref.reference_doctype != "Purchase Invoice":
+            continue
+
+        pi = frappe.get_doc("Purchase Invoice", ref.reference_name)
+
+        allocation_name = pi.get("student_beneficiary_scholarship_allocation")
+        if not allocation_name:
+            continue
+
+        allocation = frappe.get_doc(
+            "Student Beneficiary Scholarship Allocation", allocation_name
         )
 
-        if scholarship_allocation:
-            scholarship_allocation.flags.ignore_validate_update_after_submit = True
+        allocation.flags.ignore_validate_update_after_submit = True
 
-            if any(
-                record.payment_entry == payment_entry.name
-                for record in scholarship_allocation.get("payment_records", [])
-            ):
-                return
-
-            scholarship_allocation.append(
+        if is_cancel:
+            allocation.set(
                 "payment_records",
-                {
-                    "payment_entry": payment_entry.name,
-                    "amount_paid": allocated_amount,
-                    "payment_date": payment_entry.posting_date,
-                },
-            )
-
-            total_paid = sum(
                 [
-                    record.amount_paid
-                    for record in scholarship_allocation.get("payment_records")
-                ]
+                    row
+                    for row in allocation.payment_records
+                    if row.payment_entry != payment_entry.name
+                ],
             )
-            outstanding_amount = scholarship_allocation.allocated_amount - total_paid
+        else:
+            exists = any(
+                row.payment_entry == payment_entry.name
+                for row in allocation.payment_records
+            )
 
-            if outstanding_amount <= 0:
-                scholarship_allocation.payment_status = "Paid"
-            else:
-                scholarship_allocation.payment_status = "Partially Paid"
+            if not exists:
+                allocation.append(
+                    "payment_records",
+                    {
+                        "payment_entry": payment_entry.name,
+                        "amount_paid": ref.allocated_amount,
+                        "payment_date": payment_entry.posting_date,
+                    },
+                )
 
-            scholarship_allocation.total_amount_paid = total_paid
-            scholarship_allocation.outstanding_amount = outstanding_amount
-            scholarship_allocation.save(ignore_permissions=True)
+        # recalculate totals
+        total_paid = sum(flt(r.amount_paid) for r in allocation.payment_records)
+        allocation.amount_paid = total_paid
+        allocation.outstanding_amount = flt(allocation.grand_total) - total_paid
+        if allocation.outstanding_amount <= 0:
+            allocation.payment_status = "Paid"
+        elif total_paid > 0:
+            allocation.payment_status = "Partially Paid"
+        else:
+            allocation.payment_status = "Unpaid"
 
-    except Exception as e:
-        frappe.log_error(
-            f"Error updating scholarship allocation for Payment Entry {payment_entry.name}: {str(e)}",
-            "Scholarship Allocation Update Error",
-        )
+        allocation.save(ignore_permissions=True)

@@ -9,29 +9,45 @@ from frappe import _
 
 class StudentBeneficiaryScholarshipAllocation(Document):
     def before_save(self):
-        if (
-            not self.bank_account_name
-            or not self.bank_account_number
-            or not self.bank_code
-        ):
-            frappe.throw(
-                _("Bank Account Name, Bank Account Number, and Bank Code are required.")
-            )
+        total = 0
+        for row in self.allocation_items:
+            total += row.amount
+        self.grand_total = total
 
-        allocated_amount = self.fee_balance + self.fee_amount + self.other_fees
-        self.outstanding_amount = allocated_amount
-        self.allocated_amount = allocated_amount
+        if self.allocation_type == "Cash":
+            self.outstanding_amount = total
 
     def on_submit(self):
-        self.create_purchase_invoice()
+        if self.allocation_type == "Cash":
+            self.create_purchase_invoice()
+        else:
+            self.create_stock_entry()
 
     def create_purchase_invoice(self):
-        school_fee_item = frappe.get_single_value(
-            "Junior School Settings", "school_fee_item"
+        expense_account = frappe.db.get_value(
+            "Junior School Settings", self.company, "default_expense_account"
         )
-        if not school_fee_item:
-            frappe.throw(_("Please set the School Fee Item in Junior School Settings."))
 
+        if not expense_account:
+            frappe.throw(
+                _(
+                    "Please set the Default Expense Account in Junior School Settings for the company {0}"
+                ).format(self.company)
+            )
+
+        items = [
+            {
+                "item_name": item.item_code,
+                "qty": item.qty,
+                "rate": item.rate,
+                "amount": item.amount,
+                "beneficiary": self.beneficiary,
+                "academic_year": self.academic_year,
+                "academic_term": self.academic_term,
+                "expense_account": expense_account,
+            }
+            for item in self.allocation_items
+        ]
         pi = frappe.get_doc(
             {
                 "doctype": "Purchase Invoice",
@@ -42,23 +58,43 @@ class StudentBeneficiaryScholarshipAllocation(Document):
                 "beneficiary": self.beneficiary,
                 "academic_year": self.academic_year,
                 "academic_term": self.academic_term,
-                "items": [
-                    {
-                        "item_name": school_fee_item,
-                        "qty": 1,
-                        "rate": self.allocated_amount,
-                        "amount": self.allocated_amount,
-                        "beneficiary": self.beneficiary,
-                        "academic_year": self.academic_year,
-                        "academic_term": self.academic_term,
-                        "expense_account": "5111 - Cost of Goods Sold - SHOFCO",
-                    }
-                ],
-                "total": self.allocated_amount,
-                "grand_total": self.allocated_amount,
+                "items": items,
             }
         )
-        pi.insert()
+        pi.insert(ignore_permissions=True)
         pi.submit()
-        self.purchase_invoice = pi.name
-        self.save()
+        pi.db_set("student_beneficiary_scholarship_allocation", self.name)
+
+    def create_stock_entry(self):
+        items = [
+            {
+                "item_code": item.item_code,
+                "qty": item.qty,
+                "uom": item.uom,
+                "basic_rate": item.rate,
+                "amount": item.amount,
+                "s_warehouse": self.source_warehouse,
+                "beneficiary": self.beneficiary,
+                "academic_year": self.academic_year,
+                "academic_term": self.academic_term,
+            }
+            for item in self.allocation_items
+        ]
+
+        se = frappe.get_doc(
+            {
+                "doctype": "Stock Entry",
+                "stock_entry_type": "Material Issue",
+                "from_warehouse": self.source_warehouse,
+                "company": self.company,
+                "posting_date": frappe.utils.nowdate(),
+                "beneficiary": self.beneficiary,
+                "academic_year": self.academic_year,
+                "academic_term": self.academic_term,
+                "items": items,
+            }
+        )
+
+        se.insert(ignore_permissions=True)
+        se.submit()
+        se.db_set("student_beneficiary_scholarship_allocation", self.name)
