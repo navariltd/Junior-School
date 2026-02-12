@@ -67,6 +67,7 @@ doctype_js = {
     "Student Attendance": "public/js/student_attendance.js",
     "Assessment Result Tool": "public/js/assessment_result_tool.js",
     "Beneficiary": "public/js/beneficiary.js",
+    "Item": "public/js/item.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -186,8 +187,8 @@ doc_events = {
     },
     "Payment Entry": {
         "before_submit": "nl_school.junior_school_customization.overrides.payment_entry.before_submit",
-        "on_submit": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_submit",
-        "on_cancel": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_cancel",
+        # "on_submit": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_submit",
+        # "on_cancel": "nl_school.junior_school_customization.overrides.payment_entry.on_payment_cancel",
     },
 }
 # Scheduled Tasks

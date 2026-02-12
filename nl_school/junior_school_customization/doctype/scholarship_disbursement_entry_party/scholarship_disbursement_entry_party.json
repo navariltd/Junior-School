@@ -1,0 +1,349 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-12 07:17:01.556172",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "personal_information_section",
+  "beneficiary",
+  "cohort",
+  "scholar_status",
+  "column_break_wgnb",
+  "student_name",
+  "special_circumstance_of_residence",
+  "status",
+  "column_break_bdlz",
+  "company",
+  "donor",
+  "education_details_section",
+  "class_at_onboarding",
+  "current_class",
+  "enrolled_at_onboarding",
+  "promotion_rule",
+  "column_break_dldt",
+  "official_school_name",
+  "county_of_school",
+  "day_or_boarding",
+  "public_or_private",
+  "bank_details_section",
+  "bank_name",
+  "column_break_mpsl",
+  "bank_account_number",
+  "disbursment_details_section",
+  "item_code",
+  "qty",
+  "uom",
+  "column_break_vpbc",
+  "rate",
+  "amount",
+  "recommendation_details_section",
+  "recommender_name",
+  "recommender_contact",
+  "column_break_lvty",
+  "recommender_department",
+  "reason_for_recommending",
+  "student_address_section",
+  "county",
+  "county_abbreviation",
+  "column_break_jeas",
+  "sub_county",
+  "ward",
+  "guardian_information_section",
+  "guardian_name",
+  "column_break_xcvn",
+  "guardian_contact",
+  "column_break_lcxe",
+  "relationship_to_student"
+ ],
+ "fields": [
+  {
+   "fieldname": "beneficiary",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Beneficiary",
+   "options": "Beneficiary"
+  },
+  {
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "personal_information_section",
+   "fieldtype": "Section Break",
+   "label": "Personal Information"
+  },
+  {
+   "fieldname": "column_break_wgnb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "special_circumstance_of_residence",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Special Circumstance of Residence",
+   "options": "Special Circumstance of Residence"
+  },
+  {
+   "fieldname": "scholar_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Scholar Status",
+   "options": "On Scholarship\nNot on Scholarship"
+  },
+  {
+   "fieldname": "column_break_bdlz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "recommendation_details_section",
+   "fieldtype": "Section Break",
+   "label": "Recommendation Details"
+  },
+  {
+   "fieldname": "recommender_name",
+   "fieldtype": "Data",
+   "label": "Recommender Name"
+  },
+  {
+   "fieldname": "recommender_contact",
+   "fieldtype": "Data",
+   "label": "Recommender Contact"
+  },
+  {
+   "fieldname": "column_break_lvty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "recommender_department",
+   "fieldtype": "Data",
+   "label": "Recommender Department"
+  },
+  {
+   "fieldname": "reason_for_recommending",
+   "fieldtype": "Link",
+   "label": "Reason for Recommending",
+   "options": "Award Category"
+  },
+  {
+   "fieldname": "student_address_section",
+   "fieldtype": "Section Break",
+   "label": "Student Address"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fetch_from": "county.county_abbreviation",
+   "fieldname": "county_abbreviation",
+   "fieldtype": "Data",
+   "label": "County Abbreviation"
+  },
+  {
+   "fieldname": "column_break_jeas",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sub_county",
+   "fieldtype": "Link",
+   "label": "Sub County",
+   "options": "Sub County"
+  },
+  {
+   "fieldname": "ward",
+   "fieldtype": "Link",
+   "label": "Ward",
+   "options": "Ward"
+  },
+  {
+   "fieldname": "guardian_information_section",
+   "fieldtype": "Section Break",
+   "label": "Guardian Information"
+  },
+  {
+   "fieldname": "guardian_name",
+   "fieldtype": "Data",
+   "label": "Guardian Name"
+  },
+  {
+   "fieldname": "column_break_xcvn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guardian_contact",
+   "fieldtype": "Data",
+   "label": "Guardian Contact"
+  },
+  {
+   "fieldname": "column_break_lcxe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "relationship_to_student",
+   "fieldtype": "Data",
+   "label": "Relationship to Student"
+  },
+  {
+   "fieldname": "donor",
+   "fieldtype": "Link",
+   "label": "Donor",
+   "options": "Donor"
+  },
+  {
+   "fieldname": "education_details_section",
+   "fieldtype": "Section Break",
+   "label": "Education Details"
+  },
+  {
+   "fieldname": "class_at_onboarding",
+   "fieldtype": "Data",
+   "label": "Class at Onboarding"
+  },
+  {
+   "fieldname": "current_class",
+   "fieldtype": "Data",
+   "label": "Current Class"
+  },
+  {
+   "fieldname": "enrolled_at_onboarding",
+   "fieldtype": "Select",
+   "label": "Enrolled at Onboarding"
+  },
+  {
+   "fieldname": "promotion_rule",
+   "fieldtype": "Link",
+   "label": "Promotion Rule",
+   "options": "Scholarship Promotion Rule"
+  },
+  {
+   "fieldname": "column_break_dldt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "official_school_name",
+   "fieldtype": "Link",
+   "label": "Official School Name",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "county_of_school",
+   "fieldtype": "Link",
+   "label": "County of School",
+   "options": "County"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "disbursment_details_section",
+   "fieldtype": "Section Break",
+   "label": "Disbursment Details"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "column_break_vpbc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "Qty"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate",
+   "options": "Company:company:default_currency"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "UoM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "day_or_boarding",
+   "fieldtype": "Select",
+   "label": "Day/Boarding",
+   "options": "Day\nBoarding"
+  },
+  {
+   "fieldname": "public_or_private",
+   "fieldtype": "Select",
+   "label": "Public/Private",
+   "options": "Public\nPrivate"
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cohort",
+   "options": "Scholarship Cohort"
+  },
+  {
+   "fieldname": "column_break_mpsl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bank_account_number",
+   "fieldtype": "Data",
+   "label": "Bank Account Number"
+  },
+  {
+   "fieldname": "bank_details_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Details"
+  },
+  {
+   "fieldname": "bank_name",
+   "fieldtype": "Link",
+   "label": "Bank Name",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Link",
+   "label": "Status",
+   "options": "Beneficiary Status"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-02-12 12:35:25.468830",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Scholarship Disbursement Entry Party",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
