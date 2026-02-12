@@ -48,7 +48,7 @@ frappe.ui.form.on("Student Beneficiary Transfer", {
           "cost_center",
           "gender",
           "languages_known",
-          "is_scholar",
+          "scholar_status",
           "county_abbreviation",
           "county",
           "sub_county",

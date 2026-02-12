@@ -3,7 +3,10 @@ frappe.ui.form.on("Beneficiary", {
     frm.trigger("set_sub_county_filters");
     frm.trigger("set_ward_filters");
 
-    if (frm.doc.is_scholar === "Yes" && frm.doc.official_school_name) {
+    if (
+      frm.doc.scholar_status === "On Scholarship" &&
+      frm.doc.official_school_name
+    ) {
       frm.set_df_property("official_school_name", "read_only", 1);
     }
   },

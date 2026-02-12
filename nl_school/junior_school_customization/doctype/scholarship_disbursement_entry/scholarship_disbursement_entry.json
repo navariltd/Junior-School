@@ -1,0 +1,217 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SDE-{YYYY}-{####}",
+ "creation": "2026-02-11 23:37:40.063362",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_n0jv",
+  "amended_from",
+  "section_break_zyud",
+  "allocation_type",
+  "academic_year",
+  "column_break_krkv",
+  "posting_date",
+  "academic_term",
+  "column_break_ljbh",
+  "company",
+  "section_break_wiyl",
+  "source_warehouse",
+  "items_section",
+  "items",
+  "beneficiaries_tab",
+  "filters_section",
+  "county",
+  "column_break_kjkr",
+  "cohort",
+  "column_break_qiba",
+  "official_school_name",
+  "section_break_kbmz",
+  "filter_list",
+  "saved_filters",
+  "beneficiaries_section",
+  "beneficiaries"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_n0jv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Scholarship Disbursement Entry",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "section_break_zyud",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Cash",
+   "fieldname": "allocation_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Allocation Type",
+   "options": "Cash\nItems",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_krkv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Posting Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_ljbh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Scholarship Disbursment Entry Item"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "beneficiaries_tab",
+   "fieldtype": "Tab Break",
+   "label": "Beneficiaries"
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters"
+  },
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "label": "County",
+   "options": "County"
+  },
+  {
+   "fieldname": "column_break_qiba",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_kbmz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "filter_list",
+   "fieldtype": "HTML",
+   "label": "Filter List"
+  },
+  {
+   "fieldname": "saved_filters",
+   "fieldtype": "JSON",
+   "hidden": 1,
+   "label": "Saved Filters"
+  },
+  {
+   "fieldname": "section_break_wiyl",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.allocation_type===\"Items\";",
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "Source Warehouse",
+   "mandatory_depends_on": "eval:doc.allocation_type===\"Items\";",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "beneficiaries_section",
+   "fieldtype": "Section Break",
+   "label": "Beneficiaries"
+  },
+  {
+   "fieldname": "beneficiaries",
+   "fieldtype": "Table",
+   "label": "Beneficiaries",
+   "options": "Scholarship Disbursement Entry Party"
+  },
+  {
+   "fieldname": "official_school_name",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "column_break_kjkr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "label": "Cohort",
+   "options": "Scholarship Cohort"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-02-12 13:05:04.254428",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Scholarship Disbursement Entry",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
