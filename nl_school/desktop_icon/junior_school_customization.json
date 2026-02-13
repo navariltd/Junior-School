@@ -1,0 +1,19 @@
+{
+  "app": "nl_school",
+  "creation": "2026-02-13 14:33:54.045289",
+  "docstatus": 0,
+  "doctype": "Desktop Icon",
+  "hidden": 1,
+  "icon_type": "App",
+  "idx": 100,
+  "label": "Junior School Customization",
+  "link": "/app/home",
+  "link_type": "External",
+  "logo_url": "/assets/nl_school/images/junior-school.svg",
+  "modified": "2026-02-13 15:46:03.243222",
+  "modified_by": "Administrator",
+  "name": "Junior School Customization",
+  "owner": "Administrator",
+  "roles": [],
+  "standard": 1
+}
