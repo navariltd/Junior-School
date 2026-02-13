@@ -3,12 +3,14 @@ from frappe.utils import getdate
 from frappe.utils import get_link_to_form
 import json
 from frappe import _
-from frappe.model.document import Document
 from frappe.utils.password import update_password
 import re
 
 from education.education.doctype.student.student import Student
-from education.education.doctype.student_attendance.student_attendance import StudentAttendance
+from education.education.doctype.student_attendance.student_attendance import (
+    StudentAttendance,
+)
+
 
 @frappe.whitelist()
 def mark_attendance(

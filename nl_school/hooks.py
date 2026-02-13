@@ -4,22 +4,23 @@ app_publisher = "Navari"
 app_description = "Junior primary school customization"
 app_email = "mania@navari.co.ke"
 app_license = "agpl-3.0"
+app_logo_url = "/assets/nl_school/images/junior-school.svg"
+app_home = "/desk"
 
 # Apps
 # ------------------
 
 required_apps = ["education", "changemakers"]
 
-# Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "nl_school",
-# 		"logo": "/assets/nl_school/logo.png",
-# 		"title": "Junior School Customization",
-# 		"route": "/nl_school",
-# 		"has_permission": "nl_school.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+    {
+        "name": app_name,
+        "logo": "/assets/nl_school/images/junior-school.svg",
+        "title": app_title,
+        "route": app_home,
+        "has_permission": "nl_school.check_app_permission",
+    }
+]
 
 fixtures = [
     {
@@ -68,6 +69,7 @@ doctype_js = {
     "Assessment Result Tool": "public/js/assessment_result_tool.js",
     "Beneficiary": "public/js/beneficiary.js",
     "Item": "public/js/item.js",
+    "Student Group": "public/js/student_group.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
