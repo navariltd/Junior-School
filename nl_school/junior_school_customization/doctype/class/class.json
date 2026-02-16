@@ -2,50 +2,57 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "prompt",
- "creation": "2026-02-04 22:18:17.026634",
+ "creation": "2026-02-14 16:06:53.211400",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_shii",
-  "eligible_statuses"
+  "description"
  ],
  "fields": [
   {
-   "fieldname": "section_break_shii",
-   "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "eligible_statuses",
-   "fieldtype": "Table",
-   "label": "Eligible Statuses",
-   "options": "Eligible Status",
-   "reqd": 1
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "issingle": 1,
  "links": [],
- "modified": "2026-02-15 12:47:43.764564",
+ "modified": "2026-02-14 16:20:40.046507",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Junior School Settings",
+ "name": "Class",
+ "naming_rule": "Set by user",
  "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Scholarship Manager",
    "share": 1,
    "write": 1
   }
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
- "sort_field": "modified",
+ "sort_field": "creation",
  "sort_order": "DESC",
  "states": []
 }

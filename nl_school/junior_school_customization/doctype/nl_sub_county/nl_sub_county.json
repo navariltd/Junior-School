@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2026-02-14 16:13:34.268528",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "county",
+  "connections_tab"
+ ],
+ "fields": [
+  {
+   "fieldname": "county",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "County",
+   "options": "NL County",
+   "reqd": 1
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "NL Ward",
+   "link_fieldname": "sub_county"
+  }
+ ],
+ "modified": "2026-02-14 17:04:28.075637",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "NL Sub County",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Scholarship Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

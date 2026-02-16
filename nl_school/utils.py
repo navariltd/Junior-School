@@ -8,15 +8,15 @@ from openpyxl import load_workbook
 
 
 @frappe.whitelist()
-def get_beneficiary_field_property(beneficiary, fieldname):
-    if not (beneficiary and fieldname):
+def get_scholar_field_property(scholar, fieldname):
+    if not (scholar and fieldname):
         return
 
-    field = frappe.get_meta("Beneficiary").get_field(fieldname)
+    field = frappe.get_meta("Scholar").get_field(fieldname)
     if not field:
         return
 
-    value = frappe.db.get_value("Beneficiary", beneficiary, fieldname)
+    value = frappe.db.get_value("Scholar", scholar, fieldname)
 
     if field.fieldtype == "Date":
         value = formatdate(value)

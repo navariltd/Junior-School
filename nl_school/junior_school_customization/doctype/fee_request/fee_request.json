@@ -1,0 +1,170 @@
+{
+ "actions": [],
+ "autoname": "FR-.YYYY.-.####",
+ "creation": "2026-02-15 18:17:05.045747",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "scholar",
+  "academic_year",
+  "fee_structure_template",
+  "column_break_qnvw",
+  "company",
+  "academic_term",
+  "section_break_zuti",
+  "official_school_name",
+  "day_or_boarding",
+  "column_break_gdbr",
+  "current_class",
+  "public_or_private",
+  "fee_components_section",
+  "fee_components",
+  "section_break_swwz",
+  "total_amount",
+  "section_break_u37y",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_u37y",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Fee Request",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "scholar",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Scholar",
+   "options": "Scholar",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "scholar.official_school_name",
+   "fieldname": "official_school_name",
+   "fieldtype": "Link",
+   "label": "Official School Name",
+   "options": "Supplier"
+  },
+  {
+   "fetch_from": "scholar.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fetch_from": "scholar.current_class",
+   "fieldname": "current_class",
+   "fieldtype": "Link",
+   "label": "Current Class",
+   "options": "Class"
+  },
+  {
+   "fetch_from": "scholar.day_or_boarding",
+   "fieldname": "day_or_boarding",
+   "fieldtype": "Data",
+   "label": "Day/Boarding"
+  },
+  {
+   "fetch_from": "scholar.public_or_private",
+   "fieldname": "public_or_private",
+   "fieldtype": "Data",
+   "label": "Public/Private"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "label": "Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_qnvw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_zuti",
+   "fieldtype": "Section Break",
+   "label": "Scholar Details"
+  },
+  {
+   "fieldname": "column_break_gdbr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fee_structure_template",
+   "fieldtype": "Link",
+   "label": "Fee Structure Template",
+   "options": "Fee Structure Template"
+  },
+  {
+   "fieldname": "fee_components_section",
+   "fieldtype": "Section Break",
+   "label": "Fee Components"
+  },
+  {
+   "fieldname": "fee_components",
+   "fieldtype": "Table",
+   "label": "Fee Components",
+   "options": "Fee Request Item"
+  },
+  {
+   "fieldname": "section_break_swwz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-02-15 20:50:41.097851",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Fee Request",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
