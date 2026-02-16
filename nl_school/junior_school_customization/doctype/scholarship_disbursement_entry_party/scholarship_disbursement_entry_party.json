@@ -85,7 +85,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Special Circumstance of Residence",
-   "options": "Special Circumstance of Residence"
+   "options": "Circumstance of Residence"
   },
   {
    "fieldname": "scholar_status",
@@ -335,7 +335,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-12 12:35:25.468830",
+ "modified": "2026-02-14 17:12:46.028050",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Scholarship Disbursement Entry Party",

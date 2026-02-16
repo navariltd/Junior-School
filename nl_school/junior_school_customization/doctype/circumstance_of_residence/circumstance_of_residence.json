@@ -1,43 +1,37 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "prompt",
- "creation": "2026-02-04 22:18:17.026634",
+ "autoname": "Prompt",
+ "creation": "2026-01-14 15:36:09.912883",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_shii",
-  "eligible_statuses"
+  "section_break_e12x"
  ],
  "fields": [
   {
-   "fieldname": "section_break_shii",
+   "fieldname": "section_break_e12x",
    "fieldtype": "Section Break"
-  },
-  {
-   "fieldname": "eligible_statuses",
-   "fieldtype": "Table",
-   "label": "Eligible Statuses",
-   "options": "Eligible Status",
-   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "issingle": 1,
  "links": [],
- "modified": "2026-02-15 12:47:43.764564",
+ "modified": "2026-01-14 15:40:32.560159",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
- "name": "Junior School Settings",
+ "name": "Circumstance of Residence",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
    "create": 1,
    "delete": 1,
    "email": 1,
+   "export": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "System Manager",
    "share": 1,
    "write": 1

@@ -1,0 +1,162 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "SPL-.YYYY.-.#####",
+ "creation": "2026-01-27 08:51:10.467099",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "scholar",
+  "student_name",
+  "column_break_vmjo",
+  "promotion_rule",
+  "status",
+  "progression_details_section",
+  "from_class",
+  "to_class",
+  "column_break_oqwp",
+  "promotion_date",
+  "promotion_type",
+  "section_break_o99n",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_o99n",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Scholar Progression Log",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fetch_from": "scholar.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "column_break_vmjo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "promotion_rule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Promotion Rule",
+   "options": "Scholarship Promotion Rule",
+   "reqd": 1
+  },
+  {
+   "fieldname": "progression_details_section",
+   "fieldtype": "Section Break",
+   "label": "Progression Details"
+  },
+  {
+   "fieldname": "from_class",
+   "fieldtype": "Link",
+   "label": "From Class",
+   "options": "Class",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_class",
+   "fieldtype": "Link",
+   "label": "To Class",
+   "options": "Class",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_oqwp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "promotion_date",
+   "fieldtype": "Date",
+   "label": "Promotion Date",
+   "reqd": 1
+  },
+  {
+   "default": "Automatic",
+   "fieldname": "promotion_type",
+   "fieldtype": "Select",
+   "label": "Promotion Type",
+   "options": "Automatic\nManual\nConverted to Alumni"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Status at Promotion",
+   "options": "Scholar Status",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "scholar",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Scholar",
+   "options": "Scholar",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2026-02-16 08:55:41.080352",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Scholar Progression Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Scholarship Manager",
+   "select": 1,
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
