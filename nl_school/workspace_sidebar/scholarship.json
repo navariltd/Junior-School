@@ -45,8 +45,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Scholarship Disbursement Entry",
-   "link_to": "Scholarship Disbursement Entry",
+   "label": "Fee Request",
+   "link_to": "Fee Request",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -56,8 +56,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Student Beneficiary Transfer",
-   "link_to": "Student Beneficiary Transfer",
+   "label": "Scholar Transfer",
+   "link_to": "Scholar Transfer",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -67,8 +67,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Beneficiary",
-   "link_to": "Beneficiary",
+   "label": "Scholar",
+   "link_to": "Scholar",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -100,7 +100,7 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Supplier",
+   "label": "Official School Name",
    "link_to": "Supplier",
    "link_type": "DocType",
    "show_arrow": 0,
@@ -129,7 +129,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-02-13 16:22:54.738159",
+ "modified": "2026-02-16 10:38:59.504410",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Scholarship",
