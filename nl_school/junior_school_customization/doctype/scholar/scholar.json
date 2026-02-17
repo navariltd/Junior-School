@@ -54,8 +54,6 @@
   {
    "fieldname": "company",
    "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Company",
    "options": "Company",
    "reqd": 1
@@ -63,6 +61,7 @@
   {
    "fieldname": "student_name",
    "fieldtype": "Data",
+   "in_preview": 1,
    "label": "Student Name",
    "reqd": 1
   },
@@ -81,7 +80,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Status",
+   "label": "Scholarship Status",
    "options": "Scholar Status",
    "reqd": 1
   },
@@ -328,9 +327,13 @@
   {
    "link_doctype": "Scholar Transfer",
    "link_fieldname": "scholar"
+  },
+  {
+   "link_doctype": "Scholar Result",
+   "link_fieldname": "scholar"
   }
  ],
- "modified": "2026-02-16 10:32:06.102409",
+ "modified": "2026-02-17 01:10:11.141413",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Scholar",
@@ -364,8 +367,10 @@
  ],
  "row_format": "Dynamic",
  "rows_threshold_for_grid_search": 20,
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
  "states": [],
+ "title_field": "student_name",
  "track_changes": 1
 }

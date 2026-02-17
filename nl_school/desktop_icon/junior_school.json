@@ -12,11 +12,11 @@
  "link_to": "Junior School",
  "link_type": "Workspace Sidebar",
  "logo_url": "/assets/nl_school/images/junior-school.png",
- "modified": "2026-02-13 16:26:01.570652",
+ "modified": "2026-02-17 07:24:40.988179",
  "modified_by": "Administrator",
  "name": "Junior School",
  "owner": "Administrator",
- "parent_icon": "Junior School Customization",
+ "parent_icon": "",
  "restrict_removal": 0,
  "roles": [],
  "standard": 1
