@@ -2,6 +2,9 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on("Fee Request", {
+  refresh(frm) {
+    frm.trigger("set_filters");
+  },
   fee_structure_template: function (frm) {
     if (frm.doc.fee_structure_template) {
       frm.clear_table("fee_request_items");
@@ -38,6 +41,29 @@ frappe.ui.form.on("Fee Request", {
         };
       });
     }
+  },
+
+  company: function (frm) {
+    frm.trigger("set_filters");
+  },
+
+  async set_filters(frm) {
+    let settings = await frappe.db.get_doc(
+      "Junior School Settings",
+      "Junior School Settings",
+    );
+
+    const eligible_statuses =
+      settings.eligible_statuses.map((status) => status.status) || [];
+
+    frm.set_query("scholar", function () {
+      return {
+        filters: {
+          company: frm.doc.company,
+          status: ["in", eligible_statuses],
+        },
+      };
+    });
   },
 });
 

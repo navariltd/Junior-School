@@ -7,10 +7,12 @@
  "field_order": [
   "scholar",
   "academic_year",
-  "fee_structure_template",
   "column_break_qnvw",
-  "company",
+  "student_name",
   "academic_term",
+  "column_break_tajj",
+  "company",
+  "fee_structure_template",
   "section_break_zuti",
   "official_school_name",
   "day_or_boarding",
@@ -135,13 +137,23 @@
    "label": "Total Amount",
    "options": "Company:company:default_currency",
    "read_only": 1
+  },
+  {
+   "fetch_from": "scholar.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "label": "Student Name"
+  },
+  {
+   "fieldname": "column_break_tajj",
+   "fieldtype": "Column Break"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-15 20:50:41.097851",
+ "modified": "2026-02-17 07:31:47.155786",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Fee Request",

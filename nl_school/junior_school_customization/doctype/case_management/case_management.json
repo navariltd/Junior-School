@@ -1,0 +1,189 @@
+{
+ "actions": [],
+ "autoname": "CM-.YYYY.-.#####",
+ "creation": "2026-02-17 07:27:47.639722",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "scholar",
+  "cohort",
+  "primary_caregiver_name",
+  "case_report_date",
+  "column_break_wmxr",
+  "student_name",
+  "class",
+  "primary_caregiver_contact",
+  "case_closure_date",
+  "column_break_andn",
+  "company",
+  "official_school_name",
+  "case_reported_by",
+  "case_status",
+  "case_details_section",
+  "case_manager",
+  "case_plan",
+  "column_break_onrn",
+  "nature_of_case",
+  "case_outcome"
+ ],
+ "fields": [
+  {
+   "fieldname": "scholar",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Scholar",
+   "options": "Scholar",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "scholar.student_name",
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student Name"
+  },
+  {
+   "fetch_from": "scholar.cohort",
+   "fieldname": "cohort",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cohort",
+   "options": "Scholarship Cohort"
+  },
+  {
+   "fetch_from": "scholar.official_school_name",
+   "fieldname": "official_school_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Official School Name",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "column_break_wmxr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "scholar.current_class",
+   "fieldname": "class",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Class",
+   "options": "Class"
+  },
+  {
+   "fieldname": "column_break_andn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "scholar.company",
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Primary Details"
+  },
+  {
+   "default": "Today",
+   "fieldname": "case_report_date",
+   "fieldtype": "Date",
+   "label": "Case Report Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "case_closure_date",
+   "fieldtype": "Date",
+   "label": "Case Closure Date"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "case_status",
+   "fieldtype": "Select",
+   "label": "Case Status",
+   "options": "Pending\nOngoing\nClosed"
+  },
+  {
+   "fieldname": "primary_caregiver_name",
+   "fieldtype": "Data",
+   "label": "Primary Caregiver Name"
+  },
+  {
+   "fieldname": "primary_caregiver_contact",
+   "fieldtype": "Data",
+   "label": "Primary Caregiver Contact"
+  },
+  {
+   "fieldname": "case_reported_by",
+   "fieldtype": "Data",
+   "label": "Case Reported By"
+  },
+  {
+   "fieldname": "case_details_section",
+   "fieldtype": "Section Break",
+   "label": "Case Details"
+  },
+  {
+   "fieldname": "case_manager",
+   "fieldtype": "Link",
+   "label": "Case Manager",
+   "options": "Case Manager"
+  },
+  {
+   "fieldname": "case_plan",
+   "fieldtype": "Small Text",
+   "label": "Case Plan"
+  },
+  {
+   "fieldname": "column_break_onrn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "nature_of_case",
+   "fieldtype": "Link",
+   "label": "Nature of Case",
+   "options": "Case Nature"
+  },
+  {
+   "fieldname": "case_outcome",
+   "fieldtype": "Small Text",
+   "label": "Case Outcome"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-17 07:59:33.195551",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Case Management",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

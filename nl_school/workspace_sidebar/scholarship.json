@@ -34,8 +34,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Junior School Settings",
-   "link_to": "Junior School Settings",
+   "label": "Scholar",
+   "link_to": "Scholar",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -67,8 +67,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Scholar",
-   "link_to": "Scholar",
+   "label": "Scholarship Cohort",
+   "link_to": "Scholarship Cohort",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -89,8 +89,8 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Scholarship Cohort",
-   "link_to": "Scholarship Cohort",
+   "label": "Official School Name",
+   "link_to": "Supplier",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -100,8 +100,30 @@
    "collapsible": 1,
    "indent": 0,
    "keep_closed": 0,
-   "label": "Official School Name",
-   "link_to": "Supplier",
+   "label": "Scholar Result",
+   "link_to": "Scholar Result",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Class",
+   "link_to": "Class",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Award Category",
+   "link_to": "Award Category",
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
@@ -127,9 +149,31 @@
    "link_type": "DocType",
    "show_arrow": 0,
    "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Case Manager",
+   "link_to": "Case Manager",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Case Management",
+   "link_to": "Case Management",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-02-16 10:38:59.504410",
+ "modified": "2026-02-17 08:40:58.330335",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Scholarship",
