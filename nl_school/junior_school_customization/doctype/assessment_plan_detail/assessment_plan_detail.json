@@ -9,8 +9,9 @@
   "program",
   "student_group",
   "course",
-  "column_break_dunt",
   "room",
+  "column_break_dunt",
+  "assessment_name",
   "examiner",
   "supervisor",
   "section_break_xeoj",
@@ -118,13 +119,18 @@
    "label": "Assessment Group",
    "options": "Assessment Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "assessment_name",
+   "fieldtype": "Data",
+   "label": "Assessment Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-02-19 11:07:10.560196",
+ "modified": "2026-02-19 17:07:25.379682",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Assessment Plan Detail",

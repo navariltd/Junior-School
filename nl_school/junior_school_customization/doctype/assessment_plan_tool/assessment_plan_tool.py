@@ -72,8 +72,6 @@ def create_assessment_plans(doc_name):
     if not doc.assessment_plan_details:
         frappe.throw(_("No assessment plan details to process"))
 
-    doc.validate()
-
     created_plans = []
     failed_plans = []
 
@@ -86,7 +84,7 @@ def create_assessment_plans(doc_name):
                     "course": row.course,
                     "academic_year": doc.academic_year,
                     "academic_term": doc.academic_term,
-                    "custom_exam_type": doc.exam_type,
+                    "assessment_group": row.assessment_group,
                 },
             )
 
@@ -126,6 +124,7 @@ def create_assessment_plans(doc_name):
                     "supervisor": row.supervisor,
                     "assessment_criteria": assessment_criteria,
                     "assessment_group": row.assessment_group,
+                    "assessment_name": row.assessment_name,
                 }
             )
 
@@ -154,6 +153,31 @@ def create_assessment_plans(doc_name):
         title="Bulk Creation Complete",
         indicator="green" if created_plans else "red",
     )
+
+    if len(failed_plans) > 0:
+        error_message = "<h4>Failed Assessment Plans</h4><ul>"
+        for idx, plan in enumerate(failed_plans):
+            if idx + 1 < 10:
+                error_message += f"<li><b>Student Group:</b> {plan['student_group']}, <b>Course:</b> {plan['course']}, <b>Reason:</b> {plan['reason']}</li>"
+                error_message += "</ul>"
+
+        frappe.msgprint(
+            error_message,
+            title="Failed Assessment Plans",
+            indicator="red",
+        )
+        return {"created": created_plans, "failed": failed_plans}
+
+    doc.company = None
+    doc.academic_year = None
+    doc.academic_term = None
+    doc.exam_type = None
+    doc.schedule_date = None
+    doc.set("assessment_plan_details", [])
+
+    doc.flags.ignore_mandatory = True
+    doc.flags.ignore_validate = True
+    doc.save(ignore_permissions=True)
 
     return {"created": created_plans, "failed": failed_plans}
 
