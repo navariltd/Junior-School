@@ -3,7 +3,6 @@
 
 frappe.ui.form.on("Assessment Plan Tool", {
   refresh(frm) {
-    frm.disable_save();
     if (frm.doc.company) {
       frm.trigger("set_common_filters");
     }
@@ -34,27 +33,38 @@ frappe.ui.form.on("Assessment Plan Tool", {
       populate_from_student_groups(frm);
     });
 
-    frm
-      .add_custom_button(__("Create Assessment Plans"), function () {
-        frappe.confirm(
-          __(
-            "Are you sure you want to create assessment plans for all entries?",
-          ),
-          function () {
-            frappe.call({
-              method:
-                "nl_school.junior_school_customization.doctype.assessment_plan_tool.assessment_plan_tool.create_assessment_plans",
-              args: {
-                doc_name: frm.doc.name,
-              },
-              callback: function (r) {
-                frm.reload_doc();
-              },
-            });
-          },
-        );
-      })
-      .addClass("btn-primary");
+    if (
+      !frm.is_dirty() &&
+      frm.doc.company &&
+      frm.doc.academic_year &&
+      frm.doc.academic_term &&
+      frm.doc.schedule_date &&
+      frm.doc.assessment_plan_details
+    ) {
+      frm
+        .add_custom_button(__("Create Assessment Plans"), function () {
+          frappe.confirm(
+            __(
+              "Are you sure you want to create assessment plans for all entries?",
+            ),
+            function () {
+              frappe.call({
+                method:
+                  "nl_school.junior_school_customization.doctype.assessment_plan_tool.assessment_plan_tool.create_assessment_plans",
+                args: {
+                  doc_name: frm.doc.name,
+                },
+                callback: function (r) {
+                  frm.reload_doc();
+                },
+                freeze: true,
+                freeze_message: __("Creating assessment plans..."),
+              });
+            },
+          );
+        })
+        .addClass("btn-primary");
+    }
   },
 
   academic_year(frm) {
