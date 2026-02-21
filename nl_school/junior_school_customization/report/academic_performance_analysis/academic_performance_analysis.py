@@ -1,12 +1,14 @@
 # Copyright (c) 2026, Navari and contributors
 # For license information, please see license.txt
 from typing import TypedDict
+from collections import defaultdict
+import re
 
 
 import frappe
 
 from frappe import _
-from frappe.utils import slug, flt
+from frappe.utils import flt
 
 from frappe.query_builder import DocType
 
@@ -14,6 +16,7 @@ from education.education.api import get_grade
 
 
 class AcademicPerformanceAnalysisFilters(TypedDict):
+    company: str | None
     academic_year: str | None
     academic_term: str | None
     group_by: str | None
@@ -58,15 +61,16 @@ class AcademicPerformanceAnalysisReport:
     def get_columns(self):
         if self.filters.group_by == "Student Group":
             self.get_student_group_columns()
-        if self.filters.group_by == "Program":
-            self.get_program_columns()
+        if self.filters.group_by == "Company":
+            self.get_company_columns()
         pass
 
     def get_data(self):
-        if self.filters.get("group_by") == "Student Group":
-            self.get_student_group_data()
-        if self.filters.get("group_by") == "Program":
-            self.get_program_data()
+        self.get_raw_data()
+        # if self.filters.get("group_by") == "Student Group":
+        #     self.get_student_group_data()
+        # if self.filters.get("group_by") == "Program":
+        #     self.get_program_data()
 
     def get_student_group_columns(self):
         columns = [
@@ -93,20 +97,20 @@ class AcademicPerformanceAnalysisReport:
         ]
 
         courses = self.get_courses()
-        print("Courses:", courses)
+
         if courses:
             self.course_length = len(courses)
             for course in courses:
                 columns_to_append = [
                     {
                         "label": _(course) + _(" - Score"),
-                        "fieldname": f"{slug(course).replace('-', '_')}_score",
+                        "fieldname": f"{slugify(course)}_score",
                         "fieldtype": "Float",
                         "width": 150,
                     },
                     {
                         "label": _(course) + _(" - Grade"),
-                        "fieldname": f"{slug(course).replace('-', '_')}_grade",
+                        "fieldname": f"{slugify(course)}_grade",
                         "fieldtype": "Data",
                         "width": 150,
                     },
@@ -138,13 +142,13 @@ class AcademicPerformanceAnalysisReport:
 
         self.columns = columns
 
-    def get_program_columns(self):
+    def get_company_columns(self):
         columns = [
             {
-                "label": _("Program"),
-                "fieldname": "program",
+                "label": _("Student Group"),
+                "fieldname": "student_group",
                 "fieldtype": "Link",
-                "options": "Program",
+                "options": "Student Group",
                 "width": 150,
             }
         ]
@@ -153,29 +157,16 @@ class AcademicPerformanceAnalysisReport:
         if courses:
             self.course_length = len(courses)
             for course in courses:
-                columns_to_append = [
+                columns.append(
                     {
-                        "label": _("Score"),
-                        "fieldname": f"{slug(course).replace('-', '_')}_score",
+                        "label": _(course),
+                        "fieldname": f"{slugify(course)}_score",
                         "fieldtype": "Float",
                         "width": 150,
                     },
-                    {
-                        "label": _(course) + " - Grade",
-                        "fieldname": f"{slug(course).replace('-', '_')}_grade",
-                        "fieldtype": "Data",
-                        "width": 150,
-                    },
-                ]
-                columns.extend(columns_to_append)
+                )
 
         avg_cols = [
-            {
-                "fieldname": "total_score",
-                "label": _("Total Score"),
-                "fieldtype": "Float",
-                "width": 150,
-            },
             {
                 "fieldname": "mean_score",
                 "label": _("Mean Score"),
@@ -196,6 +187,12 @@ class AcademicPerformanceAnalysisReport:
 
     def get_courses(self):
         filters = {}
+        if self.filters.get("company"):
+            filters["company"] = self.filters.company
+        if self.filters.get("academic_year"):
+            filters["academic_year"] = self.filters.academic_year
+        if self.filters.get("academic_term"):
+            filters["academic_term"] = self.filters.academic_term
         if self.filters.get("student_group"):
             filters["student_group"] = self.filters.student_group
         if self.filters.get("program"):
@@ -211,13 +208,19 @@ class AcademicPerformanceAnalysisReport:
 
         return list(set(course.course for course in courses))
 
-    def get_student_group_data(self):
+    def get_raw_data(self):
         AR = DocType("Assessment Result")
         ARD = DocType("Assessment Result Detail")
 
         query = frappe.qb.from_(AR).join(ARD).on(AR.name == ARD.parent)
 
-        # Apply filters
+        # Apply filters]
+        if self.filters.get("company"):
+            query = query.where(AR.company == self.filters.company)
+        if self.filters.get("academic_year"):
+            query = query.where(AR.academic_year == self.filters.academic_year)
+        if self.filters.get("academic_term"):
+            query = query.where(AR.academic_term == self.filters.academic_term)
         if self.filters.get("student_group"):
             query = query.where(AR.student_group == self.filters.student_group)
         if self.filters.get("program"):
@@ -245,7 +248,12 @@ class AcademicPerformanceAnalysisReport:
         if not data:
             return
 
-        self.data = self.build_student_group_data(data)
+        if self.filters.get("group_by") == "Student Group":
+            self.data = self.build_student_group_data(data)
+        if self.filters.get("group_by") == "Program":
+            self.data = self.build_program_data(data)
+        if self.filters.get("group_by") == "Company":
+            self.data = self.build_company_data(data)
 
     def build_student_group_data(self, data):
         result = {}
@@ -273,17 +281,15 @@ class AcademicPerformanceAnalysisReport:
                     "maximum_score": row.maximum_score,
                 }
 
-            result[student][f"{slug(course).replace('-', '_')}_score"] = score
-            result[student][f"{slug(course).replace('-', '_')}_grade"] = grade
+            result[student][f"{slugify(course)}_score"] = score
+            result[student][f"{slugify(course)}_grade"] = grade
             result[student]["total_score"] = result[student].get(
                 "total_score", 0
             ) + flt(score)
 
-            course_total = total_dict.get(slug(course).replace("-", "_") + "_score", 0)
-            total_dict[slug(course).replace("-", "_") + "_score"] = course_total + flt(
-                score
-            )
-            total_dict[slug(course).replace("-", "_") + "_grade"] = ""
+            course_total = total_dict.get(slugify(course) + "_score", 0)
+            total_dict[slugify(course) + "_score"] = course_total + flt(score)
+            total_dict[slugify(course) + "_grade"] = ""
             total_dict["grading_scale"] = (
                 self.filters.get("grading_scale") or row.grading_scale
             )
@@ -353,3 +359,111 @@ class AcademicPerformanceAnalysisReport:
         result.extend(total_row)
 
         return result
+
+    def build_program_data(self, data):
+        # We'll take totals per class(program)
+        pass
+
+    def build_company_data(self, data):
+        grouped = defaultdict(
+            lambda: {
+                "course": None,
+                "student_group": None,
+                "score": 0,
+                "maximum_score": 0,
+                "grading_scale": None,
+                "program": None,
+                "student_count": 0,
+            }
+        )
+
+        for item in data:
+            key = (item["course"], item["student_group"])
+
+            grouped[key]["score"] += item["score"]
+
+            grouped[key]["maximum_score"] = max(
+                grouped[key]["maximum_score"], item["maximum_score"]
+            )
+
+            if grouped[key]["course"] is None:
+                grouped[key]["course"] = item["course"]
+            if grouped[key]["student_group"] is None:
+                grouped[key]["student_group"] = item["student_group"]
+
+            if grouped[key]["grading_scale"] is None:
+                grouped[key]["grading_scale"] = item["grading_scale"]
+                grouped[key]["program"] = item["program"]
+
+            grouped[key]["student_count"] += 1
+
+        result = self.combine_by_student_group(list(grouped.values()))
+
+        for row in result:
+            mean_score = 0
+            total = sum(
+                flt(v)
+                for k, v in row.items()
+                if k.endswith("_score") and flt(v) > 0 and k != "maximum_score"
+            )
+            print("TOTAL", total)
+            if total:
+                mean_score = total / self.course_length if self.course_length else 0
+            row["mean_score"] = mean_score
+            row["final_grade"] = get_grade(row.get("grading_scale"), mean_score)
+
+        print("RESULT", result)
+        return result
+
+    def combine_by_student_group(self, data):
+        grouped = defaultdict(
+            lambda: {
+                "subjects": {},
+                "grading_scale": None,
+                "program": None,
+                "maximum_score": 0,
+            }
+        )
+
+        for item in data:
+            group_key = item["student_group"]
+
+            course_slug = f"{slugify(item['course'])}_score"
+
+            avg_score = (
+                item["score"] / item["student_count"]
+                if item["student_count"] > 0
+                else 0
+            )
+
+            grouped[group_key]["subjects"][course_slug] = avg_score
+
+            if grouped[group_key]["grading_scale"] is None:
+                grouped[group_key]["grading_scale"] = item["grading_scale"]
+
+            grouped[group_key]["maximum_score"] = max(
+                grouped[group_key]["maximum_score"], item["maximum_score"]
+            )
+
+        result = []
+        for student_group, values in grouped.items():
+            row = {
+                "student_group": student_group,
+                "program": values["program"],
+                "grading_scale": values["grading_scale"],
+                "maximum_score": values["maximum_score"],
+            }
+
+            row.update(values["subjects"])
+
+            result.append(row)
+
+        # print("RESULT", result)
+        return result
+
+
+def slugify(text):
+    slug = re.sub(r"[^a-z0-9]+", "_", text.lower())
+
+    slug = slug.strip("_")
+    return slug
