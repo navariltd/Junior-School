@@ -29,7 +29,7 @@ frappe.query_reports["Academic Performance Analysis"] = {
       fieldname: "group_by",
       label: __("Group By"),
       fieldtype: "Select",
-      options: "\nStudent Group\nProgram\nSubject",
+      options: "\nStudent Group\nProgram\nCompany",
       default: "Student Group",
       reqd: 1,
     },
