@@ -22,15 +22,7 @@ add_to_apps_screen = [
     }
 ]
 
-fixtures = [
-    {
-        "doctype": "Custom Field",
-        "filters": [
-            ["is_system_generated", "=", 0],
-            ["module", "=", "Junior School Customization"],
-        ],
-    },
-]
+
 # Includes in <head>
 # ------------------
 
