@@ -196,9 +196,6 @@ scheduler_events = {
         "0 1 1 2 *": [
             "nl_school.junior_school_customization.utils.update_enrollment_tool"
         ],
-        "0 2 1 1 *": [
-            "nl_school.scheduler.scholarship_promotion_rule.auto_promote_students"
-        ],
     },
     "Weekly": [
         "nl_school.junior_school_customization.utils.update_academic_term",
