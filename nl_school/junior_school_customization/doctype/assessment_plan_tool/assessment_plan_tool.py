@@ -25,6 +25,21 @@ class AssessmentPlanTool(Document):
         if not self.assessment_plan_details:
             frappe.throw(_("Please add at least one assessment plan detail"))
 
+        if not self.maximum_assessment_score:
+            frappe.throw(_("Maximum Assessment Score is required"))
+
+        if not self.assessment_criteria:
+            frappe.throw(_("Assessment Criteria is required"))
+
+        if not self.grading_scale:
+            frappe.throw(_("Grading Scale is required"))
+
+        if not self.assessment_group:
+            frappe.throw(_("Assessment Group is required"))
+
+        if not self.default_duration:
+            frappe.throw(_("Default Duration is required"))
+
     def validate_required_child_fields(self):
         required_fields = self.get_required_child_fields(
             "Assessment Plan Tool", "assessment_plan_details"
@@ -116,7 +131,7 @@ def create_assessment_plans(doc_name):
                     "custom_exam_type": doc.exam_type,
                     "grading_scale": row.grading_scale,
                     "maximum_assessment_score": row.maximum_assessment_score,
-                    "schedule_date": doc.schedule_date,
+                    "schedule_date": row.schedule_date,
                     "from_time": row.from_time,
                     "to_time": row.to_time,
                     "room": row.room,
@@ -172,7 +187,11 @@ def create_assessment_plans(doc_name):
     doc.academic_year = None
     doc.academic_term = None
     doc.exam_type = None
-    doc.schedule_date = None
+    doc.default_duration = None
+    doc.maximum_assessment_score = None
+    doc.grading_scale = None
+    doc.assessment_group = None
+    doc.assessment_criteria = None
     doc.set("assessment_plan_details", [])
 
     doc.flags.ignore_mandatory = True
