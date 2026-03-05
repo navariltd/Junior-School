@@ -19,7 +19,13 @@
   "from_time",
   "column_break_huha",
   "duration",
-  "to_time"
+  "to_time",
+  "section_break_aleq",
+  "maximum_assessment_score",
+  "assessment_criteria",
+  "column_break_ybpt",
+  "grading_scale",
+  "assessment_group"
  ],
  "fields": [
   {
@@ -107,13 +113,52 @@
    "fieldtype": "Duration",
    "label": "Duration",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_aleq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ybpt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grading_scale",
+   "fieldtype": "Link",
+   "label": "Grading Scale",
+   "options": "Grading Scale",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "maximum_assessment_score",
+   "fieldtype": "Float",
+   "label": "Maximum Assessment Score",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_group",
+   "fieldtype": "Link",
+   "label": "Assessment Group",
+   "options": "Assessment Group",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_criteria",
+   "fieldtype": "Link",
+   "label": "Assessment Criteria",
+   "options": "Assessment Criteria",
+   "read_only": 1,
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-03-05 04:22:01.585364",
+ "modified": "2026-03-05 06:15:05.992275",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Assessment Plan Detail",

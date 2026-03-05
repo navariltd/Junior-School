@@ -14,11 +14,11 @@
   "academic_term",
   "default_duration",
   "section_break_xrwm",
-  "maximum_assesment_score",
-  "assesment_creteria",
+  "maximum_assessment_score",
+  "assessment_criteria",
   "column_break_fbra",
   "grading_scale",
-  "assesment_group",
+  "assessment_group",
   "assessment_plan_details_section",
   "assessment_plan_details"
  ],
@@ -80,19 +80,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "maximum_assesment_score",
-   "fieldtype": "Float",
-   "label": "Maximum Assesment Score",
-   "reqd": 1
-  },
-  {
-   "fieldname": "assesment_creteria",
-   "fieldtype": "Link",
-   "label": "Assesment Creteria",
-   "options": "Assessment Criteria",
-   "reqd": 1
-  },
-  {
    "fieldname": "column_break_fbra",
    "fieldtype": "Column Break"
   },
@@ -104,16 +91,30 @@
    "reqd": 1
   },
   {
-   "fieldname": "assesment_group",
+   "fieldname": "default_duration",
+   "fieldtype": "Duration",
+   "label": "Default Duration",
+   "reqd": 1
+  },
+  {
+   "default": "100",
+   "fieldname": "maximum_assessment_score",
+   "fieldtype": "Float",
+   "label": "Maximum Assessment Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_group",
    "fieldtype": "Link",
-   "label": "Assesment Group",
+   "label": "Assessment Group",
    "options": "Assessment Group",
    "reqd": 1
   },
   {
-   "fieldname": "default_duration",
-   "fieldtype": "Duration",
-   "label": "Default Duration",
+   "fieldname": "assessment_criteria",
+   "fieldtype": "Link",
+   "label": "Assessment Criteria",
+   "options": "Assessment Criteria",
    "reqd": 1
   }
  ],
@@ -121,7 +122,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-03-05 04:23:49.356796",
+ "modified": "2026-03-05 06:45:13.283820",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Assessment Plan Tool",
