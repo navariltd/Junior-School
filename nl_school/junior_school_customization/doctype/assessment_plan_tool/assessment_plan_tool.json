@@ -11,8 +11,14 @@
   "academic_year",
   "exam_type",
   "column_break_cdgo",
-  "schedule_date",
   "academic_term",
+  "default_duration",
+  "section_break_xrwm",
+  "maximum_assesment_score",
+  "assesment_creteria",
+  "column_break_fbra",
+  "grading_scale",
+  "assesment_group",
   "assessment_plan_details_section",
   "assessment_plan_details"
  ],
@@ -23,14 +29,6 @@
    "in_list_view": 1,
    "label": "Academic Year",
    "options": "Academic Year",
-   "reqd": 1
-  },
-  {
-   "default": "Today",
-   "fieldname": "schedule_date",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Schedule Date",
    "reqd": 1
   },
   {
@@ -76,13 +74,54 @@
    "label": "School",
    "options": "Company",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_xrwm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "maximum_assesment_score",
+   "fieldtype": "Float",
+   "label": "Maximum Assesment Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assesment_creteria",
+   "fieldtype": "Link",
+   "label": "Assesment Creteria",
+   "options": "Assessment Criteria",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_fbra",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grading_scale",
+   "fieldtype": "Link",
+   "label": "Grading Scale",
+   "options": "Grading Scale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assesment_group",
+   "fieldtype": "Link",
+   "label": "Assesment Group",
+   "options": "Assessment Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_duration",
+   "fieldtype": "Duration",
+   "label": "Default Duration",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2026-02-19 10:59:21.431037",
+ "modified": "2026-03-05 04:23:49.356796",
  "modified_by": "Administrator",
  "module": "Junior School Customization",
  "name": "Assessment Plan Tool",
