@@ -7,13 +7,13 @@ frappe.ui.form.on("Assessment Plan Tool", {
       frm.trigger("set_common_filters");
     }
 
-    frm.set_query("grading_scale", "assessment_plan_details", function () {
+    frm.set_query("grading_scale", function () {
       return {
         filters: { docstatus: 1 },
       };
     });
 
-    frm.set_query("assessment_group", "assessment_plan_details", function () {
+    frm.set_query("assessment_group", function () {
       return {
         filters: { is_group: 0 },
       };
@@ -38,7 +38,6 @@ frappe.ui.form.on("Assessment Plan Tool", {
       frm.doc.company &&
       frm.doc.academic_year &&
       frm.doc.academic_term &&
-      frm.doc.schedule_date &&
       frm.doc.assessment_plan_details
     ) {
       frm
@@ -88,9 +87,23 @@ frappe.ui.form.on("Assessment Plan Tool", {
   },
 
   assessment_plan_details_add(frm, cdt, cdn) {
+    console.log("Adding new row to assessment_plan_details");
     if (frm.doc.schedule_date) {
       frappe.model.set_value(cdt, cdn, "schedule_date", frm.doc.schedule_date);
     }
+  },
+
+  maximum_assessment_score(frm) {
+    frm.events.update_plan_details(frm, "maximum_assessment_score");
+  },
+  grading_scale(frm) {
+    frm.events.update_plan_details(frm, "grading_scale");
+  },
+  assessment_group(frm) {
+    frm.events.update_plan_details(frm, "assessment_group");
+  },
+  assessment_criteria(frm) {
+    frm.events.update_plan_details(frm, "assessment_criteria");
   },
 
   set_common_filters(frm) {
@@ -106,9 +119,46 @@ frappe.ui.form.on("Assessment Plan Tool", {
       });
     });
   },
+
+  update_plan_details(frm, field) {
+    (frm.doc.assessment_plan_details || []).forEach((row) => {
+      frappe.model.set_value(row.doctype, row.name, field, frm.doc[field]);
+    });
+    frm.refresh_field("assessment_plan_details");
+  },
 });
 
 frappe.ui.form.on("Assessment Plan Detail", {
+  from_time(frm, cdt, cdn) {
+    const row = locals[cdt][cdn];
+
+    if (row.duration && row.from_time) {
+      const fromDateTime = moment(row.from_time, "HH:mm:ss");
+      const toDateTime = fromDateTime.clone().add(row.duration, "seconds");
+      frappe.model.set_value(
+        cdt,
+        cdn,
+        "to_time",
+        toDateTime.format("HH:mm:ss"),
+      );
+    }
+  },
+
+  duration(frm, cdt, cdn) {
+    const row = locals[cdt][cdn];
+
+    if (row.duration && row.from_time) {
+      const fromDateTime = moment(row.from_time, "HH:mm:ss");
+      const toDateTime = fromDateTime.clone().add(row.duration, "seconds");
+      frappe.model.set_value(
+        cdt,
+        cdn,
+        "to_time",
+        toDateTime.format("HH:mm:ss"),
+      );
+    }
+  },
+
   course(frm, cdt, cdn) {
     const row = locals[cdt][cdn];
 
@@ -144,10 +194,17 @@ frappe.ui.form.on("Assessment Plan Detail", {
 });
 
 function populate_from_student_groups(frm) {
-  if (!frm.doc.academic_year || !frm.doc.academic_term || !frm.doc.company) {
-    frappe.msgprint(
-      __("Please select Academic Year, Academic Term and Company first"),
-    );
+  if (
+    !frm.doc.academic_year ||
+    !frm.doc.academic_term ||
+    !frm.doc.company ||
+    !frm.doc.default_duration ||
+    !frm.doc.maximum_assessment_score ||
+    !frm.doc.grading_scale ||
+    !frm.doc.assessment_group ||
+    !frm.doc.assessment_criteria
+  ) {
+    frappe.msgprint(__("Please select all required fields first"));
     return;
   }
 
@@ -204,6 +261,11 @@ function show_student_group_selection_dialog(frm, student_groups) {
               row.program = course_data.program;
               row.student_group = course_data.student_group;
               row.course = course_data.course;
+              row.duration = frm.doc.default_duration;
+              row.maximum_assessment_score = frm.doc.maximum_assessment_score;
+              row.grading_scale = frm.doc.grading_scale;
+              row.assessment_group = frm.doc.assessment_group;
+              row.assessment_criteria = frm.doc.assessment_criteria;
             });
             frm.refresh_field("assessment_plan_details");
           }
