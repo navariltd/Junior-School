@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-19 06:32:14.073700",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "program",
+  "student_group",
+  "course",
+  "room",
+  "column_break_dunt",
+  "assessment_name",
+  "examiner",
+  "supervisor",
+  "section_break_xeoj",
+  "schedule_date",
+  "from_time",
+  "column_break_huha",
+  "duration",
+  "to_time",
+  "section_break_aleq",
+  "maximum_assessment_score",
+  "assessment_criteria",
+  "column_break_ybpt",
+  "grading_scale",
+  "assessment_group"
+ ],
+ "fields": [
+  {
+   "fieldname": "program",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Program",
+   "options": "Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "student_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Group",
+   "options": "Student Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Course",
+   "options": "Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "room",
+   "fieldtype": "Link",
+   "label": "Room",
+   "options": "Room"
+  },
+  {
+   "fieldname": "examiner",
+   "fieldtype": "Link",
+   "label": "Examiner",
+   "options": "Instructor"
+  },
+  {
+   "fieldname": "supervisor",
+   "fieldtype": "Link",
+   "label": "Supervisor",
+   "options": "Instructor"
+  },
+  {
+   "fieldname": "column_break_dunt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_xeoj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_huha",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "From Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "label": "To Time",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_name",
+   "fieldtype": "Data",
+   "label": "Assessment Name"
+  },
+  {
+   "fieldname": "schedule_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Schedule Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Duration",
+   "label": "Duration",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_aleq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ybpt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grading_scale",
+   "fieldtype": "Link",
+   "label": "Grading Scale",
+   "options": "Grading Scale",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "maximum_assessment_score",
+   "fieldtype": "Float",
+   "label": "Maximum Assessment Score",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_group",
+   "fieldtype": "Link",
+   "label": "Assessment Group",
+   "options": "Assessment Group",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_criteria",
+   "fieldtype": "Link",
+   "label": "Assessment Criteria",
+   "options": "Assessment Criteria",
+   "read_only": 1,
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-03-05 06:15:05.992275",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Assessment Plan Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,147 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-02-19 06:24:07.144455",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "details",
+  "column_break_phps",
+  "company",
+  "academic_year",
+  "exam_type",
+  "column_break_cdgo",
+  "academic_term",
+  "default_duration",
+  "section_break_xrwm",
+  "maximum_assessment_score",
+  "assessment_criteria",
+  "column_break_fbra",
+  "grading_scale",
+  "assessment_group",
+  "assessment_plan_details_section",
+  "assessment_plan_details"
+ ],
+ "fields": [
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Academic Year",
+   "options": "Academic Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_cdgo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "academic_term",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Academic Term",
+   "options": "Academic Term",
+   "reqd": 1
+  },
+  {
+   "fieldname": "exam_type",
+   "fieldtype": "Link",
+   "label": "Exam Type",
+   "options": "Exam Type"
+  },
+  {
+   "fieldname": "assessment_plan_details_section",
+   "fieldtype": "Section Break",
+   "label": "Assessment Plan Details"
+  },
+  {
+   "fieldname": "assessment_plan_details",
+   "fieldtype": "Table",
+   "label": "Assessment Plan Details",
+   "options": "Assessment Plan Detail"
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_phps",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "School",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_xrwm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_fbra",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "grading_scale",
+   "fieldtype": "Link",
+   "label": "Grading Scale",
+   "options": "Grading Scale",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_duration",
+   "fieldtype": "Duration",
+   "label": "Default Duration",
+   "reqd": 1
+  },
+  {
+   "default": "100",
+   "fieldname": "maximum_assessment_score",
+   "fieldtype": "Float",
+   "label": "Maximum Assessment Score",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_group",
+   "fieldtype": "Link",
+   "label": "Assessment Group",
+   "options": "Assessment Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "assessment_criteria",
+   "fieldtype": "Link",
+   "label": "Assessment Criteria",
+   "options": "Assessment Criteria",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-03-05 06:45:13.283820",
+ "modified_by": "Administrator",
+ "module": "Junior School Customization",
+ "name": "Assessment Plan Tool",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
