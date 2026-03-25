@@ -22,15 +22,7 @@ add_to_apps_screen = [
     }
 ]
 
-fixtures = [
-    {
-        "doctype": "Custom Field",
-        "filters": [
-            ["is_system_generated", "=", 0],
-            ["module", "=", "Junior School Customization"],
-        ],
-    },
-]
+
 # Includes in <head>
 # ------------------
 
@@ -203,9 +195,6 @@ scheduler_events = {
         ],
         "0 1 1 2 *": [
             "nl_school.junior_school_customization.utils.update_enrollment_tool"
-        ],
-        "0 2 1 1 *": [
-            "nl_school.scheduler.scholarship_promotion_rule.auto_promote_students"
         ],
     },
     "Weekly": [

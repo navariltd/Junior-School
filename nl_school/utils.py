@@ -1,34 +1,10 @@
 import frappe
-from frappe.utils import formatdate, format_datetime
+
 from frappe.utils.file_manager import get_file
 
 import csv
 import io
 from openpyxl import load_workbook
-
-
-@frappe.whitelist()
-def get_scholar_field_property(scholar, fieldname):
-    if not (scholar and fieldname):
-        return
-
-    field = frappe.get_meta("Scholar").get_field(fieldname)
-    if not field:
-        return
-
-    value = frappe.db.get_value("Scholar", scholar, fieldname)
-
-    if field.fieldtype == "Date":
-        value = formatdate(value)
-    elif field.fieldtype == "Datetime":
-        value = format_datetime(value)
-
-    return {
-        "value": value,
-        "datatype": field.fieldtype,
-        "label": field.label,
-        "options": field.options,
-    }
 
 
 def extract_data_from_file(file_url):
