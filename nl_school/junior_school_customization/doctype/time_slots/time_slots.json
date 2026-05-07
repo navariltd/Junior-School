@@ -37,6 +37,7 @@
    "fieldtype": "Time",
    "in_list_view": 1,
    "label": "End Time",
+   "read_only": 1,
    "reqd": 1
   },
   {

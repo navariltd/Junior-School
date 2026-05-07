@@ -22,11 +22,13 @@
    "reqd": 1
   },
   {
+   "fetch_enabled": 1,
    "fetch_from": "break_name.start_time",
    "fieldname": "start_time",
    "fieldtype": "Time",
    "in_list_view": 1,
    "label": "Start Time",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -34,18 +36,21 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_enabled": 1,
    "fetch_from": "break_name.end_time",
    "fieldname": "end_time",
    "fieldtype": "Time",
    "in_list_view": 1,
    "label": "End Time",
+   "read_only": 1,
    "reqd": 1
   },
   {
    "fieldname": "duration",
    "fieldtype": "Duration",
    "in_list_view": 1,
-   "label": "Duration"
+   "label": "Duration",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
