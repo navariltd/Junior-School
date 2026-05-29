@@ -1,282 +1,293 @@
 frappe.pages["school-timetable"].on_page_load = function (wrapper) {
-  var page = frappe.ui.make_app_page({
+  const page = frappe.ui.make_app_page({
     parent: wrapper,
-    title: "School Timetable",
+    title: __("School Timetable"),
     single_column: true,
   });
 
-  $(page.body).append(`
-        <div style="position: absolute; top: 10px; right: 20px;">
-            <button class="btn btn-success" id="btn-print">Print</button>
-        </div>
+  let calendar = null;
+  let streamColorMap = {};
+  let allTerms = [];
 
-        <div class="text-center p-3";">
-            <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
-                <div class="form-group mr-2" style="min-width: 150px;">
-                    <select id="level-dropdown" class="form-control">
-                        <option value="">All Levels</option>
-                        <option value="pre-primary">Pre-Primary</option>
-                        <option value="primary">Primary</option>
-                    </select>
-                </div>
+  // Color palette for streams — light background, colored border
+  const STREAM_COLORS = [
+    { bg: "#EFF6FF", border: "#3B82F6", text: "#1D4ED8" },
+    { bg: "#F0FDF4", border: "#16A34A", text: "#14532D" },
+    { bg: "#FFF7ED", border: "#EA580C", text: "#9A3412" },
+    { bg: "#FDF4FF", border: "#9333EA", text: "#6B21A8" },
+    { bg: "#FFF1F2", border: "#E11D48", text: "#9F1239" },
+    { bg: "#ECFDF5", border: "#0D9488", text: "#134E4A" },
+    { bg: "#EEF2FF", border: "#4F46E5", text: "#312E81" },
+    { bg: "#FFFBEB", border: "#D97706", text: "#78350F" },
+    { bg: "#F0F9FF", border: "#0284C7", text: "#0C4A6E" },
+    { bg: "#FDF2F8", border: "#DB2777", text: "#831843" },
+    { bg: "#F7FEE7", border: "#65A30D", text: "#365314" },
+    { bg: "#FFF5F5", border: "#DC2626", text: "#7F1D1D" },
+  ];
 
-                <div class="form-group mr-2" style="min-width: 150px;">
-                    <select id="teacher-dropdown" class="form-control">
-                        <option value="">All Teachers</option>
-                    </select>
-                </div>
+  function pickStreamColor(stream) {
+    if (!streamColorMap[stream]) {
+      const idx = Object.keys(streamColorMap).length % STREAM_COLORS.length;
+      streamColorMap[stream] = STREAM_COLORS[idx];
+    }
+    return streamColorMap[stream];
+  }
 
-                <div class="form-group mr-2" style="min-width: 150px;">
-                    <select id="stream-dropdown" class="form-control">
-                        <option value="">All Streams</option>
-                    </select>
-                </div>
+  function fmtTime(timeStr) {
+    if (!timeStr) return "";
+    const parts = String(timeStr).split(":");
+    let h = parseInt(parts[0]);
+    const m = (parts[1] || "00").substring(0, 2);
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  }
 
-                <div>
-                    <button class="btn btn-primary" id="btn-reset">Clear Filters</button>
-                </div>
-            </div>
-        </div>
+  /**
+   * Convert a JS Date to a "YYYY-MM-DD" string using LOCAL date components.
+   */
+  function toLocalDateStr(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
 
-        <div id="calendar"></div>
-        <div id="printable-timetable" class="d-none"></div>
+  function fmtTimeTo24(val) {
+    if (!val) return "00:00:00";
+    const parts = String(val).split(":");
+    return parts
+      .slice(0, 3)
+      .map((p) => p.padStart(2, "0"))
+      .join(":");
+  }
 
-        <!-- Edit/Create Schedule Modal -->
-        <div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog" aria-labelledby="scheduleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="scheduleModalLabel">Schedule</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                      <form id="schedule-form">
-                        <input type="hidden" id="schedule-id">
+  $(page.body).html(`
+		<div id="tt-page-wrap">
+			<!-- Filter bar -->
+			<div id="tt-filters" class="d-flex flex-wrap align-items-center gap-3 p-3"
+				style="border-bottom:1px solid var(--border-color); background:var(--card-bg);">
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="edit-course">Course</label>
-                                <select class="form-control" id="edit-course"></select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="edit-instructor">Instructor</label>
-                                <select class="form-control" id="edit-instructor"></select>
-                            </div>
-                        </div>
+				<div class="d-flex align-items-center gap-2">
+					<label class="control-label mb-0 text-nowrap">${__("Term")}:</label>
+					<select id="tt-term" class="form-control form-control-sm" style="min-width:200px;">
+						<option value="">${__("All Terms")}</option>
+					</select>
+				</div>
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="edit-student-group">Student Group</label>
-                                <select class="form-control" id="edit-student-group"></select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="edit-room">Room</label>
-                                <select class="form-control" id="edit-room"></select>
-                            </div>
-                        </div>
+				<div class="d-flex align-items-center gap-2">
+					<label class="control-label mb-0 text-nowrap">${__("Class")}:</label>
+					<select id="tt-stream" class="form-control form-control-sm" style="min-width:180px;">
+						<option value="">${__("All Classes")}</option>
+					</select>
+				</div>
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="edit-from-time">From Time</label>
-                                <input type="time" class="form-control" id="edit-from-time">
-                            </div>
+				<div class="d-flex align-items-center gap-2">
+					<label class="control-label mb-0 text-nowrap">${__("Teacher")}:</label>
+					<select id="tt-teacher" class="form-control form-control-sm" style="min-width:180px;">
+						<option value="">${__("All Teachers")}</option>
+					</select>
+				</div>
 
-                             <div class="form-group col-md-6">
-                                <label for="edit-to-time">To Time</label>
-                                <input type="time" class="form-control" id="edit-to-time">
-                            </div>
-                        </div>
+				<div class="d-flex gap-2 ml-auto">
+					<button id="tt-clear" class="btn btn-sm btn-default">${__("Clear")}</button>
+					<button id="tt-print" class="btn btn-sm btn-primary">${__("Print")}</button>
+				</div>
+			</div>
 
-                        <div class="form-row">
-                        <div class="form-group col-md-6">
-                                <label for="edit-date">Date</label>
-                                <input type="date" class="form-control" id="edit-date">
-                            </div>
-                        </div>
-                    </form>
+			<!-- Calendar -->
+			<div id="tt-calendar" style="padding:16px;"></div>
+		</div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="save-schedule">Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `);
+		<style>
+			#tt-calendar .fc { font-family: inherit; font-size: 13px; }
+			#tt-calendar .fc-toolbar-title {
+				font-size: 16px; font-weight: 600; color: var(--text-color);
+			}
+			#tt-calendar .fc-button {
+				background: var(--btn-default-bg, #f0f0f0);
+				border: 1px solid var(--border-color);
+				color: var(--text-color);
+				box-shadow: none !important;
+				padding: 4px 12px;
+				font-size: 12px;
+				border-radius: var(--border-radius, 4px);
+			}
+			#tt-calendar .fc-button:hover { background: var(--control-bg); }
+			#tt-calendar .fc-button-primary:not(:disabled).fc-button-active,
+			#tt-calendar .fc-button-primary:not(:disabled):active {
+				background: var(--primary) !important;
+				border-color: var(--primary) !important;
+				color: #fff !important;
+			}
+			#tt-calendar .fc-col-header-cell-cushion,
+			#tt-calendar .fc-daygrid-day-number { color: var(--text-color); text-decoration: none; }
+			#tt-calendar .fc-timegrid-slot { height: 48px; }
+			#tt-calendar .fc-timegrid-slot-label { font-size: 11px; color: var(--text-muted); }
+			#tt-calendar .fc-event {
+				border-radius: 4px; border-width: 2px; cursor: pointer; padding: 2px 4px;
+			}
+			#tt-calendar .fc-event:hover { filter: brightness(0.94); }
+			#tt-calendar .fc-day-today { background: rgba(249,200,0,0.07) !important; }
+			#tt-calendar .fc-col-header { background: #374151; }
+			#tt-calendar .fc-col-header-cell-cushion {
+				color: #fff !important; font-size: 12px; font-weight: 600; padding: 6px 8px;
+			}
+			#tt-calendar .fc-list-event:hover td { background: var(--control-bg); }
+		</style>
+	`);
 
-  let css_link = document.createElement("link");
-  css_link.rel = "stylesheet";
-  css_link.href =
-    "https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css";
-  document.head.appendChild(css_link);
-
-  let script = document.createElement("script");
-  script.src = "https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js";
-  script.onload = render_calendar;
-  document.head.appendChild(script);
-
-  let calendar;
-  let selectedFilter = null;
-  let selectedValue = "";
-  let selectedLevel = "";
-  let allTeachers = [];
-  let allStreams = [];
-  let allRooms = [];
-  let isNewSchedule = false;
-
-  let customStyles = document.createElement("style");
-  customStyles.innerHTML = `
-        /* Increase time row height */
-        .fc-timegrid-slot {
-            height: 60px !important; /* Adjust this value to your preference */
-        }
-    `;
-  document.head.appendChild(customStyles);
-
-  // Fetch teachers and populate dropdown
+  // Load dropdown data
   frappe.call({
     method:
-      "nl_school.junior_school_customization.page.school_timetable.timetable.get_teachers",
-    callback: function (response) {
-      allTeachers = response.message;
-      let teacherDropdown = $("#teacher-dropdown");
-      let editInstructorDropdown = $("#edit-instructor");
-
-      response.message.forEach((teacher) => {
-        teacherDropdown.append(
-          `<option value="${teacher.value}">${teacher.label}</option>`,
-        );
-        editInstructorDropdown.append(
-          `<option value="${teacher.value}">${teacher.label}</option>`,
-        );
-      });
+      "nl_school.junior_school_customization.page.school_timetable.timetable.get_academic_terms",
+    callback(r) {
+      allTerms = r.message || [];
+      const sel = $("#tt-term");
+      allTerms.forEach((t) =>
+        sel.append(`<option value="${t.value}">${t.label}</option>`),
+      );
     },
   });
 
-  // Fetch streams and populate dropdown
   frappe.call({
     method:
       "nl_school.junior_school_customization.page.school_timetable.timetable.get_streams",
-    callback: function (response) {
-      allStreams = response.message;
-      let streamDropdown = $("#stream-dropdown");
-      let editStudentGroupDropdown = $("#edit-student-group");
-
-      response.message.forEach((stream) => {
-        streamDropdown.append(
-          `<option value="${stream.value}">${stream.label}</option>`,
-        );
-        editStudentGroupDropdown.append(
-          `<option value="${stream.value}">${stream.label}</option>`,
-        );
-      });
+    callback(r) {
+      const sel = $("#tt-stream");
+      (r.message || []).forEach((s) =>
+        sel.append(`<option value="${s.value}">${s.label}</option>`),
+      );
     },
   });
 
   frappe.call({
     method:
-      "nl_school.junior_school_customization.page.school_timetable.timetable.get_rooms",
-    callback: function (response) {
-      allRooms = response.message;
-      let allRoomsDropdown = $("#edit-room");
-      response.message.forEach((room) => {
-        allRoomsDropdown.append(
-          `<option value="${room.value}">${room.label}</option>`,
-        );
-      });
+      "nl_school.junior_school_customization.page.school_timetable.timetable.get_teachers",
+    callback(r) {
+      const sel = $("#tt-teacher");
+      (r.message || []).forEach((t) =>
+        sel.append(`<option value="${t.value}">${t.label}</option>`),
+      );
     },
   });
 
-  //fetch courses
-  frappe.call({
-    method:
-      "nl_school.junior_school_customization.page.school_timetable.timetable.get_courses",
-    callback: function (response) {
-      console.log("Here", response);
-
-      let allCoursesDropdown = $("#edit-course");
-      response.message.forEach((course) => {
-        allCoursesDropdown.append(
-          `<option value="${course.value}">${course.label}</option>`,
-        );
-      });
-    },
-  });
-
-  function render_calendar(filter_by = null, filter_value = "") {
-    let calendarEl = document.getElementById("calendar");
-
-    if (calendar) {
-      calendar.destroy();
+  // Load FullCalendar 6
+  function loadFullCalendar(cb) {
+    if (window.FullCalendar) {
+      cb();
+      return;
     }
 
-    calendar = new FullCalendar.Calendar(calendarEl, {
+    if (!document.getElementById("fc-css")) {
+      const link = document.createElement("link");
+      link.id = "fc-css";
+      link.rel = "stylesheet";
+      link.href =
+        "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css";
+      document.head.appendChild(link);
+    }
+    const script = document.createElement("script");
+    script.src =
+      "https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js";
+    script.onload = cb;
+    script.onerror = () =>
+      frappe.msgprint({
+        title: __("Load Error"),
+        message: __(
+          "Could not load the calendar library. Check your internet connection.",
+        ),
+        indicator: "red",
+      });
+    document.head.appendChild(script);
+  }
+
+  loadFullCalendar(initCalendar);
+
+  // Calendar initialization
+  function initCalendar() {
+    const calEl = document.getElementById("tt-calendar");
+    if (calendar) {
+      calendar.destroy();
+      calendar = null;
+    }
+
+    calendar = new FullCalendar.Calendar(calEl, {
       initialView: "timeGridWeek",
       headerToolbar: {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
+        right: "timeGridWeek,timeGridDay,listWeek",
       },
-      slotDuration: "00:45:00",
-      slotMinTime: "06:00:00",
+      buttonText: {
+        today: __("Today"),
+        week: __("Week"),
+        day: __("Day"),
+        list: __("Agenda"),
+      },
+      weekends: false, // school is Mon–Fri
+      slotMinTime: "07:00:00",
       slotMaxTime: "18:00:00",
+      slotDuration: "00:30:00",
+      slotLabelInterval: "01:00:00",
       allDaySlot: false,
       nowIndicator: true,
-      editable: true,
-      eventClick: function (info) {
-        openEditModal(info.event.id);
+      editable: false, // read-only
+      selectable: false,
+      eventClick(info) {
+        showEventDetail(info.event);
       },
-      dateClick: function (info) {
-        openCreateModal(info.date);
+      eventContent(arg) {
+        const ep = arg.event.extendedProps;
+        return {
+          html: `<div style="overflow:hidden; padding:2px 3px;">
+						<div style="font-size:10px; opacity:.75; white-space:nowrap;">${arg.timeText}</div>
+						<div style="font-weight:700; font-size:11px; line-height:1.3; white-space:normal;">${ep.course || arg.event.title}</div>
+						${ep.student_group ? `<div style="font-size:10px; opacity:.85;">${ep.student_group}</div>` : ""}
+						${ep.room ? `<div style="font-size:10px; opacity:.7;">${ep.room}</div>` : ""}
+					</div>`,
+        };
       },
-      eventDrop: function (info) {
-        updateEventTime(info.event);
-      },
-      eventResize: function (info) {
-        updateEventTime(info.event);
-      },
-      events: function (fetchInfo, successCallback, failureCallback) {
+      events(fetchInfo, successCb, failureCb) {
+        const instructor = $("#tt-teacher").val() || "";
+        const stream = $("#tt-stream").val() || "";
+        const startDate = fetchInfo.startStr.split("T")[0];
+        const endDate = fetchInfo.endStr.split("T")[0];
+
         frappe.call({
           method:
             "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
-          args: {},
-          callback: function (response) {
-            let events = response.message
-              .filter((event) => {
-                if (filter_by === "instructor" && filter_value) {
-                  return event.instructor
-                    .toLowerCase()
-                    .includes(filter_value.toLowerCase());
-                } else if (filter_by === "stream" && filter_value) {
-                  return event.student_group
-                    .toLowerCase()
-                    .includes(filter_value.toLowerCase());
-                }
-                return true;
-              })
-              .map((event) => ({
-                id: event.name,
-                title: `${event.course} - ${event.instructor}`,
-                start: `${event.schedule_date}T${event.from_time}`,
-                end: `${event.schedule_date}T${event.to_time}`,
-                backgroundColor:
-                  event.course.includes("Break") ||
-                  event.course.includes("Lunch")
-                    ? "#f8d7da"
-                    : "#007bff",
-                extendedProps: {
-                  course: event.course,
-                  instructor: event.instructor,
-                  student_group: event.student_group,
-                  room: event.room,
-                  program: event.program,
-                },
-              }));
-            successCallback(events);
+          args: {
+            instructor,
+            stream,
+            start_date: startDate,
+            end_date: endDate,
           },
+          callback(r) {
+            const events = (r.message || []).map((s) => {
+              const col = pickStreamColor(s.student_group);
+              return {
+                id: s.name,
+                title: s.course,
+                start: `${s.schedule_date}T${fmtTimeTo24(s.from_time)}`,
+                end: `${s.schedule_date}T${fmtTimeTo24(s.to_time)}`,
+                backgroundColor: col.bg,
+                borderColor: col.border,
+                textColor: col.text,
+                extendedProps: {
+                  course: s.course,
+                  instructor: s.instructor,
+                  student_group: s.student_group,
+                  room: s.room,
+                  schedule_date: s.schedule_date,
+                  from_time: s.from_time,
+                  to_time: s.to_time,
+                },
+              };
+            });
+            successCb(events);
+          },
+          error: failureCb,
         });
       },
     });
@@ -284,425 +295,206 @@ frappe.pages["school-timetable"].on_page_load = function (wrapper) {
     calendar.render();
   }
 
-  function openEditModal(scheduleId) {
-    isNewSchedule = false;
-
-    $("#scheduleModalLabel").text("Edit Schedule");
-
-    frappe.call({
-      method:
-        "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule_details",
-      args: { schedule_name: scheduleId },
-      callback: function (response) {
-        const schedule = response.message;
-        if (schedule) {
-          const formattedDate = schedule.schedule_date;
-
-          $("#schedule-id").val(schedule.name);
-          $("#edit-course").val(schedule.course);
-          $("#edit-instructor").val(schedule.instructor);
-          $("#edit-student-group").val(schedule.student_group);
-          $("#edit-room").val(schedule.room);
-          $("#edit-date").val(formattedDate);
-          $("#edit-from-time").val(schedule.from_time);
-          $("#edit-to-time").val(schedule.to_time);
-
-          $("#scheduleModal").modal("show");
-        } else {
-          frappe.throw(__("Failed to retrieve schedule details"));
-        }
-      },
+  // event detail popup
+  function showEventDetail(event) {
+    const ep = event.extendedProps;
+    const col = pickStreamColor(ep.student_group);
+    frappe.msgprint({
+      title: ep.course,
+      message: `
+				<table class="table table-bordered table-sm" style="margin:0;">
+					<tr><th style="width:110px;">${__("Date")}</th>
+					    <td>${ep.schedule_date || ""}</td></tr>
+					<tr><th>${__("Time")}</th>
+					    <td>${fmtTime(ep.from_time)} – ${fmtTime(ep.to_time)}</td></tr>
+					<tr><th>${__("Class")}</th>
+					    <td><span style="display:inline-block; padding:2px 8px; border-radius:3px;
+					        background:${col.bg}; border:1px solid ${col.border};
+					        color:${col.text}; font-weight:600;">${ep.student_group || "-"}
+					    </span></td></tr>
+					<tr><th>${__("Teacher")}</th><td>${ep.instructor || "-"}</td></tr>
+					<tr><th>${__("Room")}</th>  <td>${ep.room || "-"}</td></tr>
+				</table>`,
+      indicator: "blue",
     });
   }
 
-  function openCreateModal(date) {
-    isNewSchedule = true;
-
-    $("#scheduleModalLabel").text("Create New Schedule");
-
-    const formattedDate = date.toISOString().split("T")[0];
-
-    let hours = date.getHours().toString().padStart(2, "0");
-    let minutes = date.getMinutes().toString().padStart(2, "0");
-    const clickTime = `${hours}:${minutes}`;
-
-    const endDate = new Date(date);
-    endDate.setMinutes(endDate.getMinutes() + 45);
-    let endHours = endDate.getHours().toString().padStart(2, "0");
-    let endMinutes = endDate.getMinutes().toString().padStart(2, "0");
-    const endTime = `${endHours}:${endMinutes}`;
-
-    $("#schedule-id").val("");
-    $("#edit-course").val("");
-    $("#edit-instructor").val("");
-    $("#edit-student-group").val("");
-    $("#edit-room").val("");
-    $("#edit-date").val(formattedDate);
-    $("#edit-from-time").val(`${clickTime}:00`);
-    $("#edit-to-time").val(`${endTime}:00`);
-
-    $("#scheduleModal").modal("show");
+  // Filter
+  function refetch() {
+    if (calendar) calendar.refetchEvents();
   }
 
-  // Update event time after drag/resize
-  function updateEventTime(event) {
-    const startTime = event.start.toISOString().split("T")[1].substring(0, 8);
-    const endTime = event.end.toISOString().split("T")[1].substring(0, 8);
-    const scheduleDate = event.start.toISOString().split("T")[0];
-
-    frappe.call({
-      method:
-        "nl_school.junior_school_customization.page.school_timetable.timetable.update_course_schedule",
-      args: {
-        schedule_name: event.id,
-        schedule_date: scheduleDate,
-        from_time: startTime,
-        to_time: endTime,
-      },
-      callback: function (response) {
-        if (response.message === "success") {
-          frappe.show_alert(
-            {
-              message: __("Schedule updated successfully"),
-              indicator: "green",
-            },
-            3,
-          );
-        } else {
-          frappe.show_alert(
-            {
-              message: __("Failed to update schedule"),
-              indicator: "red",
-            },
-            3,
-          );
-          calendar.refetchEvents();
-        }
-      },
-    });
-  }
-
-  // Save schedule changes or create new
-  $("#save-schedule").on("click", function () {
-    const scheduleId = $("#schedule-id").val();
-    const course = $("#edit-course").val();
-    const instructor = $("#edit-instructor").val();
-    const studentGroup = $("#edit-student-group").val();
-    const room = $("#edit-room").val();
-    const scheduleDate = $("#edit-date").val();
-    const fromTime = $("#edit-from-time").val();
-    const toTime = $("#edit-to-time").val();
-
-    // Validate form
-    if (
-      !course ||
-      !instructor ||
-      !studentGroup ||
-      !scheduleDate ||
-      !fromTime ||
-      !toTime
-    ) {
-      frappe.msgprint(__("Please fill in all required fields"));
-      return;
-    }
-
-    if (isNewSchedule) {
-      // Create new schedule
-      frappe.call({
-        method:
-          "nl_school.junior_school_customization.page.school_timetable.timetable.create_course_schedule",
-        args: {
-          course: course,
-          instructor: instructor,
-          student_group: studentGroup,
-          room: room,
-          schedule_date: scheduleDate,
-          from_time: fromTime,
-          to_time: toTime,
-        },
-        callback: function (response) {
-          if (response.message && response.message !== "error") {
-            $("#scheduleModal").modal("hide");
-            frappe.show_alert(
-              {
-                message: __("Schedule created successfully"),
-                indicator: "green",
-              },
-              3,
-            );
-            // Refresh calendar events
-            calendar.refetchEvents();
-          } else {
-            frappe.show_alert(
-              {
-                message: __("Failed to create schedule"),
-                indicator: "red",
-              },
-              3,
-            );
-          }
-        },
-      });
-    } else {
-      // Update existing schedule
-      frappe.call({
-        method:
-          "nl_school.junior_school_customization.page.school_timetable.timetable.update_course_schedule_details",
-        args: {
-          schedule_name: scheduleId,
-          course: course,
-          instructor: instructor,
-          student_group: studentGroup,
-          room: room,
-          schedule_date: scheduleDate,
-          from_time: fromTime,
-          to_time: toTime,
-        },
-        callback: function (response) {
-          if (response.message === "success") {
-            $("#scheduleModal").modal("hide");
-            frappe.show_alert(
-              {
-                message: __("Schedule updated successfully"),
-                indicator: "green",
-              },
-              3,
-            );
-            // Refresh calendar events
-            calendar.refetchEvents();
-          } else {
-            frappe.show_alert(
-              {
-                message: __("Failed to update schedule"),
-                indicator: "red",
-              },
-              3,
-            );
-          }
-        },
-      });
-    }
+  $("#tt-term").on("change", function () {
+    const term = allTerms.find((t) => t.value === $(this).val());
+    if (term && term.start && calendar) calendar.gotoDate(term.start);
+    refetch();
   });
 
-  $("#btn-reset").on("click", function () {
-    $("#level-dropdown").val("");
-    $("#teacher-dropdown").val("");
-    $("#stream-dropdown").val("");
-    selectedLevel = "";
-    selectedFilter = null;
-    selectedValue = "";
-    render_calendar();
+  $("#tt-stream").on("change", refetch);
+  $("#tt-teacher").on("change", refetch);
+
+  $("#tt-clear").on("click", function () {
+    $("#tt-term, #tt-stream, #tt-teacher").val("");
+    streamColorMap = {};
+    refetch();
   });
 
-  $("#level-dropdown").on("change", function () {
-    selectedLevel = $(this).val();
-  });
+  // Print
+  $("#tt-print").on("click", function () {
+    if (!calendar) return;
 
-  $("#teacher-dropdown").on("change", function () {
-    let selectedTeacher = $(this).val();
-    if (selectedTeacher) {
-      selectedFilter = "instructor";
-      selectedValue = selectedTeacher;
-      $("#stream-dropdown").val("");
-    } else {
-      selectedFilter = null;
-      selectedValue = "";
-    }
-    render_calendar(selectedFilter, selectedValue);
-  });
+    const viewStart = new Date(calendar.view.currentStart);
+    const viewEndExcl = new Date(calendar.view.currentEnd);
+    viewEndExcl.setDate(viewEndExcl.getDate() - 1);
 
-  $("#stream-dropdown").on("change", function () {
-    let selectedStream = $(this).val();
-    if (selectedStream) {
-      selectedFilter = "stream";
-      selectedValue = selectedStream;
-      $("#teacher-dropdown").val("");
-    } else {
-      selectedFilter = null;
-      selectedValue = "";
-    }
-    render_calendar(selectedFilter, selectedValue);
-  });
+    const startDate = toLocalDateStr(viewStart);
+    const endDate = toLocalDateStr(viewEndExcl);
+    const instructor = $("#tt-teacher").val() || "";
+    const stream = $("#tt-stream").val() || "";
 
-  document.getElementById("btn-print").addEventListener("click", function () {
-    generatePrintableTimetable(selectedFilter, selectedValue);
-  });
-
-  function generatePrintableTimetable(filter_type, filter_value) {
     frappe.call({
       method:
         "nl_school.junior_school_customization.page.school_timetable.timetable.get_course_schedule",
-      args: { [filter_type]: filter_value },
-      callback: function (response) {
-        let schedules = response.message;
-
-        let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-        // Pre-Primary time slots
-        let prePrimaryTimeSlots = [
-          { start: "7:40 AM", end: "8:15 AM", label: "Breakfast" },
-          { start: "8:15 AM", end: "9:00 AM" },
-          { start: "9:00 AM", end: "9:45 AM" },
-          { start: "9:45 AM", end: "10:30 AM", label: "First Break" },
-          { start: "10:30 AM", end: "11:15 AM" },
-          { start: "11:15 AM", end: "11:30 AM" },
-          { start: "11:30 AM", end: "11:45 AM", label: "Second Break" },
-          { start: "11:45 AM", end: "12:30 PM" },
-          { start: "12:30 PM", end: "1:20 PM", label: "Lunch" },
-          { start: "1:20 PM", end: "2:15 PM" },
-          { start: "2:15 PM", end: "3:00 PM" },
-        ];
-
-        let primaryTimeSlots = [
-          { start: "6:45 AM", end: "7:40 AM" },
-          { start: "7:40 AM", end: "8:10 AM", label: "Breakfast" },
-          { start: "8:10 AM", end: "8:55 AM" },
-          { start: "8:55 AM", end: "9:40 AM" },
-          { start: "9:40 AM", end: "9:50 AM", label: "First Break" },
-          { start: "9:50 AM", end: "10:35 AM" },
-          { start: "10:35 AM", end: "11:20 AM" },
-          { start: "11:20 AM", end: "11:30 AM", label: "Second Break" },
-          { start: "11:30 AM", end: "12:15 PM" },
-          { start: "12:15 PM", end: "1:00 PM" },
-          { start: "1:00 PM", end: "1:45 PM", label: "Lunch" },
-          { start: "1:45 PM", end: "1:55 PM" },
-          { start: "1:55 PM", end: "2:40 PM" },
-          { start: "2:40 PM", end: "3:25 PM" },
-          { start: "3:25 PM", end: "4:10 PM" },
-        ];
-
-        let timeSlots =
-          selectedLevel === "pre-primary"
-            ? prePrimaryTimeSlots
-            : primaryTimeSlots;
-
-        let showInstructor = filter_type === "stream";
-        let showStudentGroup = filter_type === "instructor";
-
-        let title = filter_value
-          ? `${filter_value} Timetable`
-          : "School Timetable";
-        if (selectedLevel) {
-          title = `${selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1)} School ${title}`;
-        }
-
-        let tableHTML = `
-                <h3 class="text-center">${title}</h3>
-                <div style="display: flex; justify-content: center; overflow-x: auto;">
-                    <table class="table table-bordered" style="table-layout: fixed; width: auto; margin: auto;">
-                        <thead>
-                            <tr>
-                                <th style="width: 100px; text-align: center;">Day</th>
-                                ${timeSlots
-                                  .map(
-                                    (slot) => `
-                                    <th style="width: 150px; min-height: 80px; text-align: center; vertical-align: middle; font-size: 12px; font-weight: normal;">
-                                        ${slot.label ? `${removeAMPM(slot.start)} - ${removeAMPM(slot.end)}<br>(${slot.label})` : `${slot.start} - ${slot.end}`}
-                                    </th>`,
-                                  )
-                                  .join("")}
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-        weekdays.forEach((day) => {
-          tableHTML += `<tr><td>${day}</td>`;
-
-          timeSlots.forEach((slot) => {
-            // Check if this slot is a predefined break or meal time
-            if (slot.label) {
-              tableHTML += `<td class="text-center" style="background-color: #f8d7da; font-size: 12px;">${slot.label}</td>`;
-              return;
-            }
-
-            let matchedSchedule = schedules.find((schedule) => {
-              let scheduleDay = new Date(schedule.schedule_date)
-                .toLocaleDateString("en-US", { weekday: "long" })
-                .trim();
-              let scheduleTime = convertTo12HourFormat(schedule.from_time);
-
-              return scheduleDay === day && scheduleTime === slot.start;
-            });
-
-            if (matchedSchedule) {
-              let displayText = "";
-
-              if (showInstructor) {
-                displayText = `${matchedSchedule.course} - <span style="color: blue;">${matchedSchedule.instructor}</span>`;
-              } else if (showStudentGroup) {
-                displayText = `${matchedSchedule.course} - <span style="color: green;">${matchedSchedule.student_group}</span>`;
-              } else {
-                displayText = matchedSchedule.course;
-              }
-
-              tableHTML += `<td>${displayText}</td>`;
-            } else {
-              tableHTML += `<td></td>`;
-            }
-          });
-
-          tableHTML += `</tr>`;
-        });
-
-        tableHTML += `</tbody></table></div>`;
-
-        let printableDiv = document.getElementById("printable-timetable");
-        printableDiv.innerHTML = tableHTML;
-        printableDiv.classList.remove("d-none");
-        printTimetable();
+      args: {
+        instructor,
+        stream,
+        start_date: startDate,
+        end_date: endDate,
+      },
+      callback(r) {
+        printSchedule(
+          r.message || [],
+          stream || instructor || __("All"),
+          startDate,
+          endDate,
+        );
       },
     });
-  }
+  });
 
-  // Function to remove AM/PM from time labels
-  function removeAMPM(timeString) {
-    return timeString.replace(/\s?(AM|PM)/g, "");
-  }
+  function printSchedule(schedules, label, startDate, endDate) {
+    // Build the list of dates that are actually in the queried range
+    // (Mon–Fri only) so a day-view prints one day,
+    // a week-view prints Mon–Fri, etc.
+    const displayDates = [];
+    const cur = new Date(startDate + "T12:00:00");
+    const end = new Date(endDate + "T12:00:00");
+    while (cur <= end) {
+      const dow = cur.getDay();
+      if (dow >= 1 && dow <= 5) {
+        // Mon = 1 … Fri = 5
+        displayDates.push(cur.toISOString().split("T")[0]);
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
 
-  // Function to convert time to 12-hour format
-  function convertTo12HourFormat(timeString) {
-    let timeParts = timeString.split(":");
-    let hours = parseInt(timeParts[0], 10);
-    let minutes = timeParts.length > 1 ? timeParts[1] : "00";
+    // Group schedules by date
+    const byDate = {};
+    displayDates.forEach((d) => (byDate[d] = []));
+    schedules.forEach((s) => {
+      if (byDate[s.schedule_date]) byDate[s.schedule_date].push(s);
+    });
 
-    let period = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${hours}:${minutes} ${period}`;
-  }
+    // Unique sorted time slots from the returned data
+    const slotMap = {};
+    schedules.forEach((s) => {
+      const key = fmtTimeTo24(s.from_time);
+      slotMap[key] = { from: s.from_time, to: s.to_time };
+    });
+    const slots = Object.keys(slotMap)
+      .sort()
+      .map((k) => slotMap[k]);
 
-  // Print function
-  function printTimetable() {
-    let printContent = document.getElementById("printable-timetable").innerHTML;
-    let newWindow = window.open("", "", "width=1000,height=800");
-    newWindow.document.write(`
-            <html>
-            <head>
-                <title>School Timetable</title>
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-                <style>
-                    @media print {
-                        .table th, .table td {
-                            padding: 8px;
-                            border: 1px solid #ddd;
-                        }
-                        table {
-                            width: 100% !important;
-                            table-layout: fixed;
-                        }
-                        th, td {
-                            font-size: 10px;
-                            padding: 4px !important;
-                        }
-                    }
-                </style>
-            </head>
-            <body class="container-fluid mt-3">
-                ${printContent}
-            </body>
-            </html>
-        `);
-    newWindow.document.close();
-    newWindow.print();
+    if (!slots.length || !displayDates.length) {
+      frappe.msgprint({
+        title: __("Nothing to Print"),
+        message: __("No schedules found for the current view."),
+        indicator: "orange",
+      });
+      return;
+    }
+
+    const colHeaders = slots
+      .map(
+        (sl) =>
+          `<th style="text-align:center; font-size:10px; padding:4px 3px; background:#f0f0f0; white-space:nowrap;">
+						${fmtTime(sl.from)}<br><span style="opacity:.65;">– ${fmtTime(sl.to)}</span>
+					</th>`,
+      )
+      .join("");
+
+    const rows = displayDates
+      .map((dateStr) => {
+        // Header cell: "Mon\n19 May"
+        const d = new Date(dateStr + "T12:00:00");
+        const dayAbbr = d.toLocaleDateString("en-US", {
+          weekday: "short",
+        });
+        const dateFmt = d.toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "short",
+        });
+
+        const cells = slots
+          .map((sl) => {
+            // Use filter (not find) so ALL classes at this time are shown,
+            // including parallel classes in different streams.
+            const matches = (byDate[dateStr] || []).filter(
+              (s) => fmtTimeTo24(s.from_time) === fmtTimeTo24(sl.from),
+            );
+            if (!matches.length)
+              return `<td style="border:1px solid #ccc; padding:4px;"></td>`;
+
+            const blocks = matches
+              .map(
+                (m, idx) => `
+								<div style="${idx > 0 ? "border-top:1px dashed #ccc; margin-top:3px; padding-top:3px;" : ""}">
+									<strong style="font-size:11px;">${m.course}</strong><br>
+									<span style="font-size:10px; color:#444;">${m.instructor || ""}</span><br>
+									<span style="font-size:10px; color:#777;">
+										${m.student_group || ""}${m.room ? " · " + m.room : ""}
+									</span>
+								</div>`,
+              )
+              .join("");
+
+            return `<td style="border:1px solid #ccc; padding:4px; vertical-align:top;">${blocks}</td>`;
+          })
+          .join("");
+
+        return `<tr>
+					<td style="border:1px solid #ccc; padding:5px 7px; font-weight:700;
+						font-size:12px; background:#f8f8f8; white-space:nowrap; text-align:center;">
+						${dayAbbr}<br><span style="font-weight:400; font-size:10px;">${dateFmt}</span>
+					</td>
+					${cells}
+				</tr>`;
+      })
+      .join("");
+
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+			<title>${__("Timetable")} — ${label}</title>
+			<style>
+				body { font-family: Arial, sans-serif; margin: 12px; }
+				h2 { font-size: 14px; text-align: center; margin-bottom: 10px; }
+				table { border-collapse: collapse; width: 100%; }
+				th { border: 1px solid #ccc; padding: 5px; }
+				@media print { @page { size: A4 landscape; margin: 8mm; } }
+			</style></head><body>
+			<h2>${__("Timetable")} — ${label}</h2>
+			<table>
+				<thead><tr>
+					<th style="width:46px; background:#374151; color:#fff;">${__("Day")}</th>
+					${colHeaders}
+				</tr></thead>
+				<tbody>${rows}</tbody>
+			</table>
+		</body></html>`;
+
+    const win = window.open("", "_blank");
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    win.print();
   }
 };
