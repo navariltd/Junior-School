@@ -25,12 +25,14 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
+   "read_only": 1,
    "options": "\nComplete\nPartial\nFailed"
   },
   {
    "fieldname": "academic_term",
    "fieldtype": "Link",
    "label": "Academic Term",
+   "read_only": 1,
    "options": "Academic Term"
   },
   {
@@ -40,12 +42,14 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "read_only": 1
   },
   {
    "fieldname": "total_subjects",
    "fieldtype": "Int",
-   "label": "Total Subjects"
+   "label": "Total Subjects",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_yvhm",
@@ -54,12 +58,14 @@
   {
    "fieldname": "scheduled_count",
    "fieldtype": "Int",
-   "label": "Scheduled Count"
+   "label": "Scheduled Count",
+   "read_only": 1
   },
   {
    "fieldname": "unscheduled_count",
    "fieldtype": "Int",
-   "label": "Unscheduled Count"
+   "label": "Unscheduled Count",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_ijjv",
@@ -68,12 +74,14 @@
   {
    "fieldname": "saved_count",
    "fieldtype": "Int",
-   "label": "Saved Count"
+   "label": "Saved Count",
+   "read_only": 1
   },
   {
    "fieldname": "failed_count",
    "fieldtype": "Int",
-   "label": "Failed Count"
+   "label": "Failed Count",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_ksqh",
@@ -82,7 +90,8 @@
   {
    "fieldname": "unscheduled_subjects",
    "fieldtype": "Small Text",
-   "label": "Unscheduled Subjects"
+   "label": "Unscheduled Subjects",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,

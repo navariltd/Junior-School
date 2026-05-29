@@ -1,8 +1,677 @@
 // Copyright (c) 2025, Navari and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Timetable Generation Result", {
-// 	refresh(frm) {
+// Colour palette
+const TT_COLORS = [
+  "#4e79a7",
+  "#e15759",
+  "#59a14f",
+  "#f28e2b",
+  "#76b7b2",
+  "#b07aa1",
+  "#ff9da7",
+  "#9c755f",
+  "#edc948",
+  "#d37295",
+  "#a0cbe8",
+  "#fabfd2",
+  "#8cd17d",
+  "#b6992d",
+  "#86bcb6",
+];
 
-// 	},
-// });
+function pickColor(key, map) {
+  if (!map[key])
+    map[key] = TT_COLORS[Object.keys(map).length % TT_COLORS.length];
+  return map[key];
+}
+
+// Subject / teacher abbreviations (standard print)
+function abbrevSubject(name) {
+  if (!name) return "-";
+  const base = name.split(/\s*[-]\s*GRADE\s*\d+/i)[0].trim();
+  const words = base.split(/[\s&]+/).filter(Boolean);
+  return words.length === 1
+    ? words[0].substring(0, 4)
+    : words
+        .map((w) => w[0])
+        .join("")
+        .substring(0, 4);
+}
+
+function abbrevTeacher(name) {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/);
+  return (parts[parts.length - 1] || "").substring(0, 2);
+}
+
+function buildCell(entries, viewMode, colorMap) {
+  if (!entries.length)
+    return `<td style="border:1px solid var(--border-color); padding:4px; min-width:100px;"></td>`;
+
+  const bySubject = viewMode !== "teacher";
+
+  const blocks = entries
+    .map((e) => {
+      const colorKey = bySubject ? e.course : e.student_group;
+      const color = pickColor(colorKey, colorMap);
+
+      let primary, meta;
+      if (viewMode === "teacher") {
+        primary = e.student_group || "-";
+        meta = [e.course, e.room].filter(Boolean);
+      } else if (viewMode === "subject") {
+        primary = e.student_group || "-";
+        meta = [e.instructor, e.room].filter(Boolean);
+      } else {
+        primary = e.course || "-";
+        meta = [e.instructor, e.room].filter(Boolean);
+        if (viewMode === "school" && e.student_group)
+          meta.push(e.student_group);
+      }
+
+      const metaHtml = meta
+        .map((m, i) => {
+          if (viewMode === "school" && i === meta.length - 1) {
+            return `<span style="display:inline-block; margin-top:2px; font-size:10px;
+            background:${color}22; border:1px solid ${color}44;
+            padding:0 5px; border-radius:3px; color:${color};">${m}</span>`;
+          }
+          return `<span>${m}</span>`;
+        })
+        .join("<br>");
+
+      return `<div style="border-left:3px solid ${color}; background:${color}12;
+      padding:4px 7px; margin-bottom:3px;">
+      <div style="font-weight:600; font-size:11px; color:var(--text-color);">${primary}</div>
+      <div style="font-size:10px; color:var(--text-muted); line-height:1.5;">${metaHtml}</div>
+    </div>`;
+    })
+    .join("");
+
+  return `<td style="border:1px solid var(--border-color); padding:4px; vertical-align:top; min-width:100px;">${blocks}</td>`;
+}
+
+function renderTimetable(data, viewMode, filterValue, colorMap) {
+  const { time_slots, days, grid } = data;
+
+  const slotHeaders = time_slots
+    .map(
+      ({ from, to }) =>
+        `<th style="text-align:center; padding:6px 8px; background:#374151;
+      color:#fff; border:1px solid #1f2937; font-size:11px; white-space:nowrap;">
+      ${from} – ${to}
+    </th>`,
+    )
+    .join("");
+
+  const thead = `<thead><tr>
+    <th style="padding:8px 10px; background:#374151; color:#fff;
+      border:1px solid #1f2937; font-size:12px; min-width:75px;">
+      ${__("Day")}
+    </th>${slotHeaders}
+  </tr></thead>`;
+
+  const rows = days
+    .map((day, i) => {
+      const cells = time_slots
+        .map(({ from, to }) => {
+          let entries = (grid[`${from}-${to}`] || {})[day] || [];
+          if (filterValue) {
+            if (viewMode === "class")
+              entries = entries.filter((e) => e.student_group === filterValue);
+            else if (viewMode === "teacher")
+              entries = entries.filter((e) => e.instructor === filterValue);
+            else if (viewMode === "subject")
+              entries = entries.filter((e) => e.course === filterValue);
+          }
+          return buildCell(entries, viewMode, colorMap);
+        })
+        .join("");
+
+      return `<tr style="background:${i % 2 === 0 ? "var(--bg-color,#fff)" : "var(--control-bg,#f9f9f9)"};">
+      <td style="border:1px solid var(--border-color); padding:8px 10px;
+        font-weight:600; font-size:12px; background:var(--control-bg,#f4f5f6);
+        white-space:nowrap; vertical-align:middle;">${day}</td>
+      ${cells}
+    </tr>`;
+    })
+    .join("");
+
+  const legendItems = Object.entries(colorMap)
+    .map(
+      ([label, color]) =>
+        `<span style="display:inline-flex; align-items:center; gap:5px; margin:3px 8px; font-size:11px;">
+      <span style="display:inline-block; width:10px; height:10px; background:${color};"></span>
+      ${label}
+    </span>`,
+    )
+    .join("");
+
+  return `<div style="overflow-x:auto;">
+    <table class="table table-bordered" style="border-collapse:collapse; width:100%;">
+      ${thead}<tbody>${rows}</tbody>
+    </table>
+  </div>
+  ${
+    legendItems
+      ? `<div class="text-muted" style="margin-top:10px; padding:8px 10px;
+    border:1px solid var(--border-color); font-size:11px;">
+    <strong>${__("Legend")}:</strong> ${legendItems}
+  </div>`
+      : ""
+  }`;
+}
+
+function generateStandardPrintHtml(data, viewMode, filterValue, title) {
+  const { time_slots, days, grid } = data;
+
+  const colHeaders = time_slots
+    .map(
+      ({ from, to }, idx) =>
+        `<th class="period-hdr">
+      <span class="period-num">${idx + 1}</span><br>
+      <span class="period-time">${from} - ${to}</span>
+    </th>`,
+    )
+    .join("");
+
+  const rows = days
+    .map((day) => {
+      const cells = time_slots
+        .map(({ from, to }) => {
+          let entries = (grid[`${from}-${to}`] || {})[day] || [];
+          if (filterValue) {
+            if (viewMode === "class")
+              entries = entries.filter((e) => e.student_group === filterValue);
+            else if (viewMode === "teacher")
+              entries = entries.filter((e) => e.instructor === filterValue);
+            else if (viewMode === "subject")
+              entries = entries.filter((e) => e.course === filterValue);
+          }
+          if (!entries.length) return `<td class="tt-cell tt-empty"></td>`;
+
+          const blocks = entries
+            .map((e, i) => {
+              let subj, left, right;
+              if (viewMode === "teacher") {
+                subj = abbrevSubject(e.course);
+                left = abbrevTeacher(e.student_group || "");
+                right = e.room || "";
+              } else if (viewMode === "subject") {
+                subj = abbrevTeacher(e.student_group || "");
+                left = abbrevTeacher(e.instructor || "");
+                right = e.room || "";
+              } else {
+                subj = abbrevSubject(e.course);
+                left = abbrevTeacher(e.instructor || "");
+                right = e.room || "";
+              }
+              const groupLabel =
+                viewMode === "school" && e.student_group
+                  ? `<div class="tt-group">${e.student_group}</div>`
+                  : "";
+              return `${i > 0 ? `<hr class="tt-divider">` : ""}
+          <div class="tt-entry">
+            ${groupLabel}
+            <div class="tt-subject">${subj}</div>
+            <div class="tt-meta"><span>${left}</span><span>${right}</span></div>
+          </div>`;
+            })
+            .join("");
+
+          return `<td class="tt-cell">${blocks}</td>`;
+        })
+        .join("");
+
+      return `<tr><td class="day-cell">${day.substring(0, 2)}</td>${cells}</tr>`;
+    })
+    .join("");
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:Arial,Helvetica,sans-serif;font-size:10px;margin:12px;color:#000;}
+    h2{font-size:13px;text-align:center;margin-bottom:10px;font-weight:bold;}
+    table{border-collapse:collapse;width:100%;table-layout:fixed;}
+    th,td{border:1px solid #555;}
+    .period-hdr{text-align:center;padding:4px 2px;background:#f0f0f0;vertical-align:middle;}
+    .period-num{font-size:16px;font-weight:bold;display:block;line-height:1;}
+    .period-time{font-size:8px;color:#444;white-space:nowrap;}
+    .day-cell{font-size:22px;font-weight:bold;text-align:center;vertical-align:middle;padding:4px;width:36px;background:#f8f8f8;}
+    .tt-cell{padding:2px 3px;vertical-align:top;}
+    .tt-empty{background:#fafafa;}
+    .tt-entry{padding:1px 0;}
+    .tt-group{font-size:7px;color:#777;text-align:right;line-height:1.2;}
+    .tt-subject{font-size:15px;font-weight:bold;line-height:1.1;}
+    .tt-meta{display:flex;justify-content:space-between;font-size:8px;color:#333;margin-top:1px;}
+    .tt-divider{border:none;border-top:1px dashed #aaa;margin:3px 0;}
+    @media print{@page{size:A4 landscape;margin:8mm;}}
+  </style></head><body>
+  <h2>${title}</h2>
+  <table>
+    <thead><tr>
+      <th style="width:36px;background:#f0f0f0;"></th>${colHeaders}
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+</body></html>`;
+}
+
+function generateColorPrintHtml(data, viewMode, filterValue, colorMap, title) {
+  const { time_slots, days, grid } = data;
+
+  const slotHeaders = time_slots
+    .map(
+      ({ from, to }) =>
+        `<th style="text-align:center;padding:5px 3px;color:#fff;
+      border:1px solid #1a252f;font-size:10px;white-space:nowrap;">
+      ${from}<br><span style="font-size:9px;opacity:.75;">– ${to}</span>
+    </th>`,
+    )
+    .join("");
+
+  const rows = days
+    .map((day, di) => {
+      const rowBg = di % 2 === 0 ? "#fff" : "#f7f9fc";
+      const cells = time_slots
+        .map(({ from, to }) => {
+          let entries = (grid[`${from}-${to}`] || {})[day] || [];
+          if (filterValue) {
+            if (viewMode === "class")
+              entries = entries.filter((e) => e.student_group === filterValue);
+            else if (viewMode === "teacher")
+              entries = entries.filter((e) => e.instructor === filterValue);
+            else if (viewMode === "subject")
+              entries = entries.filter((e) => e.course === filterValue);
+          }
+          if (!entries.length)
+            return `<td style="border:1px solid #ddd;padding:2px;min-width:70px;background:${rowBg};"></td>`;
+
+          const blocks = entries
+            .map((e, i) => {
+              const colorKey =
+                viewMode !== "teacher" ? e.course : e.student_group;
+              const c = pickColor(colorKey, colorMap);
+              let primary, meta;
+              if (viewMode === "teacher") {
+                primary = e.student_group || "-";
+                meta = [e.course, e.room].filter(Boolean).join(" · ");
+              } else if (viewMode === "subject") {
+                primary = e.student_group || "-";
+                meta = [e.instructor, e.room].filter(Boolean).join(" · ");
+              } else {
+                primary = e.course || "-";
+                meta = [e.instructor, e.room].filter(Boolean).join(" · ");
+                if (viewMode === "school" && e.student_group)
+                  meta += `  [${e.student_group}]`;
+              }
+              return `<div style="border-left:3px solid ${c};background:${c}18;padding:3px 5px;
+          margin-bottom:${i < entries.length - 1 ? "3px" : "0"};">
+          <div style="font-weight:700;font-size:10px;">${primary}</div>
+          <div style="font-size:9px;color:#555;">${meta}</div>
+        </div>`;
+            })
+            .join("");
+
+          return `<td style="border:1px solid #ddd;padding:2px;vertical-align:top;background:${rowBg};">${blocks}</td>`;
+        })
+        .join("");
+
+      return `<tr>
+      <td style="border:1px solid #ddd;padding:5px 8px;font-weight:700;font-size:11px;
+        background:#edf2f7;white-space:nowrap;vertical-align:middle;">${day}</td>
+      ${cells}
+    </tr>`;
+    })
+    .join("");
+
+  const legendItems = Object.entries(colorMap)
+    .map(
+      ([label, color]) =>
+        `<span style="display:inline-flex;align-items:center;gap:4px;margin:2px 6px;font-size:9px;">
+      <span style="display:inline-block;width:9px;height:9px;background:${color};"></span>${label}
+    </span>`,
+    )
+    .join("");
+
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:12px;font-size:10px;}
+    h2{font-size:13px;text-align:center;margin-bottom:10px;}
+    table{border-collapse:collapse;width:100%;}
+    @media print{@page{size:A4 landscape;margin:8mm;}}
+  </style></head><body>
+  <h2>${title}</h2>
+  <table>
+    <thead><tr>
+      <th style="padding:8px;background:#2c3e50;color:#fff;border:1px solid #1a252f;min-width:60px;">${__("Day")}</th>
+      ${slotHeaders}
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  ${
+    legendItems
+      ? `<div style="margin-top:8px;padding:6px 10px;border:1px solid #ddd;font-size:9px;">
+    <strong>${__("Legend")}: </strong>${legendItems}
+  </div>`
+      : ""
+  }
+</body></html>`;
+}
+
+const VIEW_MODES = [
+  {
+    key: "school",
+    label: __("Whole School"),
+    filterLabel: null,
+    optionsKey: null,
+  },
+  {
+    key: "class",
+    label: __("By Class"),
+    filterLabel: __("Student Group"),
+    optionsKey: "student_groups",
+  },
+  {
+    key: "teacher",
+    label: __("By Teacher"),
+    filterLabel: __("Teacher"),
+    optionsKey: "instructors",
+  },
+  {
+    key: "subject",
+    label: __("By Subject"),
+    filterLabel: __("Subject"),
+    optionsKey: "subjects",
+  },
+];
+
+frappe.ui.form.on("Timetable Generation Result", {
+  refresh(frm) {
+    if (frm.doc.status !== "Failed") {
+      frm
+        .add_custom_button(__("View Timetable"), () => openTimetableDialog(frm))
+        .addClass("btn-primary");
+    }
+    if (frm.doc.unscheduled_count > 0) {
+      frm
+        .add_custom_button(__("Diagnose Unscheduled"), () =>
+          openDiagnosisDialog(frm),
+        )
+        .addClass("btn-danger");
+    }
+  },
+});
+
+function openTimetableDialog(frm) {
+  const dialog = new frappe.ui.Dialog({
+    title: __("Timetable") + " — " + (frm.doc.academic_term || ""),
+    size: "extra-large",
+  });
+  dialog.$wrapper
+    .find(".modal-dialog")
+    .css({ "max-width": "94vw", width: "94vw" });
+  dialog.$body.html(`<div class="text-center text-muted" style="padding:40px;">
+    <p>${__("Loading timetable...")}</p>
+  </div>`);
+  dialog.show();
+
+  frappe.call({
+    method:
+      "nl_school.junior_school_customization.doctype.timetable_generation_result" +
+      ".timetable_generation_result.get_timetable_view",
+    args: { result_name: frm.doc.name },
+    callback(r) {
+      if (!r.message) {
+        dialog.$body.html(
+          `<p class="text-danger" style="padding:20px;">${__("Failed to load timetable data.")}</p>`,
+        );
+        return;
+      }
+      const data = r.message;
+      if (!data.time_slots || !data.time_slots.length) {
+        dialog.$body.html(
+          `<p class="text-muted" style="padding:20px;">${__("No schedule entries found for the first week of this term.")}</p>`,
+        );
+        return;
+      }
+
+      let viewMode = "class";
+      let filterValue = data.student_groups[0] || "";
+      const colorMap = {};
+
+      function printTitle() {
+        const modeName =
+          VIEW_MODES.find((m) => m.key === viewMode)?.label || "";
+        return `${frm.doc.academic_term || __("Timetable")} — ${modeName}: ${filterValue || __("All")}`;
+      }
+
+      function openPrint(html) {
+        const win = window.open("", "_blank");
+        win.document.write(html);
+        win.document.close();
+        win.focus();
+        win.print();
+      }
+
+      function buildToolbar() {
+        const modeButtons = VIEW_MODES.map(
+          (m) =>
+            `<button data-mode="${m.key}" class="btn btn-sm ${m.key === viewMode ? "btn-primary" : "btn-default"}" style="margin-right:4px;">
+            ${m.label}
+          </button>`,
+        ).join("");
+
+        const cfg = VIEW_MODES.find((m) => m.key === viewMode);
+        let filterHtml = "";
+        if (cfg.optionsKey) {
+          const opts = (data[cfg.optionsKey] || [])
+            .map(
+              (v) =>
+                `<option value="${v}" ${v === filterValue ? "selected" : ""}>${v}</option>`,
+            )
+            .join("");
+          filterHtml = `<div style="display:flex; align-items:center; gap:8px; margin-left:12px;">
+            <label class="control-label" style="margin:0;">${cfg.filterLabel}:</label>
+            <select id="tt-filter" class="form-control form-control-sm" style="min-width:200px;">${opts}</select>
+          </div>`;
+        }
+
+        return `<div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;
+          padding:8px 12px; margin-bottom:12px; border-bottom:1px solid var(--border-color);">
+          <div>${modeButtons}</div>
+          ${filterHtml}
+          <div style="margin-left:auto; display:flex; gap:6px;">
+            <button id="tt-print-color" class="btn btn-sm btn-default">${__("Color Print")}</button>
+            <button id="tt-print-std"   class="btn btn-sm btn-default">${__("Standard Print")}</button>
+          </div>
+        </div>
+        <div id="tt-grid"></div>`;
+      }
+
+      function attachEvents() {
+        dialog.$body.find("[data-mode]").on("click", function () {
+          viewMode = $(this).data("mode");
+          const cfg2 = VIEW_MODES.find((m) => m.key === viewMode);
+          filterValue = cfg2.optionsKey
+            ? (data[cfg2.optionsKey] || [])[0] || ""
+            : "";
+          refresh();
+        });
+        dialog.$body.find("#tt-filter").on("change", function () {
+          filterValue = $(this).val();
+          redrawGrid();
+        });
+        dialog.$body
+          .find("#tt-print-color")
+          .on("click", () =>
+            openPrint(
+              generateColorPrintHtml(
+                data,
+                viewMode,
+                filterValue,
+                colorMap,
+                printTitle(),
+              ),
+            ),
+          );
+        dialog.$body
+          .find("#tt-print-std")
+          .on("click", () =>
+            openPrint(
+              generateStandardPrintHtml(
+                data,
+                viewMode,
+                filterValue,
+                printTitle(),
+              ),
+            ),
+          );
+      }
+
+      function redrawGrid() {
+        dialog.$body
+          .find("#tt-grid")
+          .html(renderTimetable(data, viewMode, filterValue, colorMap));
+      }
+
+      function refresh() {
+        dialog.$body.html(buildToolbar());
+        attachEvents();
+        redrawGrid();
+      }
+
+      refresh();
+    },
+  });
+}
+
+function openDiagnosisDialog(frm) {
+  const dialog = new frappe.ui.Dialog({
+    title: __("Unscheduled Items — Diagnosis"),
+    size: "large",
+  });
+  dialog.$wrapper.find(".modal-dialog").css({ "max-width": "780px" });
+  dialog.$body.html(`<div class="text-center text-muted" style="padding:30px;">
+    <p>${__("Running diagnosis...")}</p>
+  </div>`);
+  dialog.show();
+
+  frappe.call({
+    method:
+      "nl_school.junior_school_customization.doctype.timetable_generator" +
+      ".timetable_generator.get_unscheduled_diagnosis",
+    args: { result_name: frm.doc.name },
+    callback(r) {
+      if (!r.message || !r.message.success) {
+        dialog.$body.html(`<div class="alert alert-danger" style="margin:20px;">
+          ${r.message ? r.message.error : __("Failed to run diagnosis.")}
+        </div>`);
+        return;
+      }
+
+      const { diagnosed, source } = r.message;
+      if (!diagnosed || !diagnosed.length) {
+        dialog.$body.html(
+          `<p class="text-muted" style="padding:20px;">${__("No diagnosis data available.")}</p>`,
+        );
+        return;
+      }
+
+      const sourceNote =
+        source === "stored"
+          ? `<span class="text-muted">(${__("stored at generation time")})</span>`
+          : `<span class="text-muted">(${__("live — current config")})</span>`;
+
+      const sections = diagnosed
+        .map((d) => {
+          const statusPill = d.reasons.length
+            ? `<span class="indicator-pill red">${d.scheduled_this_week}/${d.frequency_per_week} ${__("per week")}</span>`
+            : `<span class="indicator-pill green">${d.scheduled_this_week}/${d.frequency_per_week} ${__("per week")}</span>`;
+
+          const reasonsList = d.reasons.map((r) => `<li>${r}</li>`).join("");
+
+          const teacherRows = Object.entries(d.teacher_loads || {})
+            .map(([t, info]) => {
+              const over = info.periods_scheduled >= info.max_per_week;
+              return `<tr>
+            <td>${t}</td>
+            <td class="text-center">
+              <span class="indicator-pill ${over ? "red" : "green"}">
+                ${info.periods_scheduled}/${info.max_per_week}
+              </span>
+            </td>
+            <td class="text-center">${info.max_per_day}/${__("day")}</td>
+          </tr>`;
+            })
+            .join("");
+
+          const teacherSection = teacherRows
+            ? `<table class="table table-bordered table-sm" style="margin-top:6px;">
+              <thead>
+                <tr>
+                  <th>${__("Teacher")}</th>
+                  <th class="text-center">${__("Used / Week Limit")}</th>
+                  <th class="text-center">${__("Day Limit")}</th>
+                </tr>
+              </thead>
+              <tbody>${teacherRows}</tbody>
+            </table>`
+            : `<p class="text-danger" style="font-size:12px; margin-top:4px;">${__("No teachers configured.")}</p>`;
+
+          const roomsText = d.configured_rooms.length
+            ? d.configured_rooms.join(", ")
+            : `<span class="indicator-pill red">${__("None configured")}</span>`;
+
+          const hintsSection = d.hints.length
+            ? `<div class="mt-3">
+              <strong style="font-size:12px;">${__("Suggested Fixes")}</strong>
+              <ul style="margin:4px 0 0 16px; font-size:12px;">${d.hints.map((h) => `<li>${h}</li>`).join("")}</ul>
+            </div>`
+            : "";
+
+          return `<div style="padding:12px 0; border-bottom:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+            <div>
+              <strong>${d.subject}</strong>
+              <span class="text-muted" style="margin-left:8px; font-size:12px;">${d.stream}</span>
+            </div>
+            <div class="text-right">
+              ${statusPill}
+              <div class="text-muted" style="font-size:11px; margin-top:2px;">
+                ${d.unscheduled_count} ${__("instance(s) not placed")}
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2">
+            <strong style="font-size:12px;">${__("Reasons")}</strong>
+            <ul style="margin:4px 0 0 16px; font-size:12px;">${reasonsList}</ul>
+          </div>
+
+          <div class="mt-2">
+            <strong style="font-size:12px;">${__("Capable Teachers")} (${d.capable_teachers.length})</strong>
+            ${teacherSection}
+          </div>
+
+          <div class="mt-2">
+            <strong style="font-size:12px;">${__("Configured Rooms")}</strong>
+            <div class="text-muted" style="font-size:12px; margin-top:3px;">${roomsText}</div>
+          </div>
+
+          ${hintsSection}
+        </div>`;
+        })
+        .join("");
+
+      dialog.$body.html(`<div style="padding:0 4px;">
+        <div style="margin-bottom:12px;">
+          <strong>${diagnosed.length}</strong> ${__("subject-stream group(s) with unscheduled instances")}
+          &nbsp;${sourceNote}
+        </div>
+        <div style="max-height:68vh; overflow-y:auto;">${sections}</div>
+      </div>`);
+    },
+  });
+}
