@@ -7,23 +7,23 @@ Junior School is a custom [Frappe](https://frappe.io/framework) application that
 ## Table of Contents
 
 - [📚 Frappe Education Extension Customization](#-frappe-education-extension-customization)
-- [🚀 Project Overview](#-project-overview)  
+- [🚀 Project Overview](#-project-overview)
 - [Key Features](#key-features)
-  - [1. 🗓️ School Timetable Page](#1-️-school-timetable-page)
-  - [2. ⚙️ Auto-Generation of Timetable](#2-️-auto-generation-of-timetable)
-  - [3. 🧑🏽‍🎓 Enhanced Student Attendance](#3--enhanced-student-attendance)
-  - [4. 🗂️ Subject Scheduling Tool](#4-️-subject-scheduling-tool)
-  - [5. 🧾 Student Report Generation Tool](#5--student-report-generation-tool)
-  - [6. 👨🏽‍💻 Student ID-Based Email and User Auto-Creation](#6--student-id-based-email-and-user-auto-creation)
-  - [7. 🏫 School as Company](#7--school-as-company)
-  - [8. 📊 Assessment Plan Status](#8--assessment-plan-status)
-  - [9. 🎓 Academic Year Setup & Automated Student Promotion System](#9--academic-year-setup--automated-student-promotion-system)
-  - [10. 🚪 Student Auto-Deactivation](#10--student-auto-deactivation)
-  - [11. 📅 Academic Term Update](#11--academic-term-update)
+    - [1. 🗓️ School Timetable Page](#1-️-school-timetable-page)
+    - [2. ⚙️ Auto-Generation of Timetable](#2-️-auto-generation-of-timetable)
+    - [3. 🧑🏽‍🎓 Enhanced Student Attendance](#3--enhanced-student-attendance)
+    - [4. 🗂️ Subject Scheduling Tool](#4-️-subject-scheduling-tool)
+    - [5. 🧾 Student Report Generation Tool](#5--student-report-generation-tool)
+    - [6. 👨🏽‍💻 Student ID-Based Email and User Auto-Creation](#6--student-id-based-email-and-user-auto-creation)
+    - [7. 🏫 School as Company](#7--school-as-company)
+    - [8. 📊 Assessment Plan Status](#8--assessment-plan-status)
+    - [9. 🎓 Academic Year Setup & Automated Student Promotion System](#9--academic-year-setup--automated-student-promotion-system)
+    - [10. 🚪 Student Auto-Deactivation](#10--student-auto-deactivation)
+    - [11. 📅 Academic Term Update](#11--academic-term-update)
 - [🛠️ Installation](#️-installation)
-  - [✅ Dependencies](#-dependencies)
-  - [☁️ Managed Hosting Frappe Cloud](#️-managed-hosting-frappe-cloud)
-  - [🧑🏿‍💻 Self Hosting](#-self-hosting)
+    - [✅ Dependencies](#-dependencies)
+    - [☁️ Managed Hosting Frappe Cloud](#️-managed-hosting-frappe-cloud)
+    - [🧑🏿‍💻 Self Hosting](#-self-hosting)
 - [Key DocTypes](#key-doctypes)
 - [Reports](#reports)
 - [Dashboards](#dashboards)
@@ -35,6 +35,7 @@ Junior School is a custom [Frappe](https://frappe.io/framework) application that
 This extension was built to address the unique needs of junior school management, providing sophisticated tools for educational institutions that require multi-campus support, flexible scheduling, and automated administrative processes. The system maintains compatibility with standard [Frappe Education](https://frappe.io/education) while adding specialized functionality for enhanced school operations.
 
 ---
+
 ## 🔄 System Workflows
 
 ### Core Process Flows
@@ -48,136 +49,174 @@ graph TD
     E --> F[Report Generation]
     F --> G[Year-End Promotion]
     G --> H[Auto-Deactivation if Leaving]
-    
+
     I[Timetable Setup] --> J[Define Subjects/Rules]
     J --> K[Assign Teachers/Rooms]
     K --> L[Generate Timetable]
     L --> M[Calendar View/Edits]
-    
+
     N[Academic Year] --> O[Auto-Create Year]
     O --> P[Update Terms]
     P --> Q[Close Assessments]
 ```
----
 
+---
 
 ## Key Features
 
 ### 1. 🗓️ School Timetable Page
 
-A new **School Timetable View** has been implemented using a calendar interface. Type `Timetable` in search bar and click on first suggestion `Open Timetable`.
+The School Timetable View is a read-only interactive calendar. Open it by typing `Timetable` in the search bar and click on first suggestion `Open Timetable`.
 
-![Screenshot 2025-04-14 at 16 59 16](https://github.com/user-attachments/assets/f749a945-0457-4116-bb91-0cc266148b78)
+#### Calendar
 
-The key features include:
+- Built on **FullCalendar 6** — `timeGridWeek` (default), `timeGridDay`, and `list/agenda` views.
+- Clicking any event shows a read-only popup with: course, date, time, class, teacher, and room.
 
--   **Calendar Display**: Weekly timetable view (Sun–Sat) showing subjects, teachers, and streams.
-    
--   **Filtering Options**:
-    
-    -   **Levels**: e.g., Pre-primary, Primary
-        
-    -   **Teachers**: Filter to view specific teacher schedules
-        
-        ![Screenshot 2025-04-14 at 17 03 03](https://github.com/user-attachments/assets/1449cf44-3351-4e17-a3a5-43657a2cac28)
-    -   **Streams**: Allows filtering based on class streams
-        
--   **Print Functionality**: Filter as required and print the timetable (e.g., per teacher or per stream).
-    
--   **Assumption**: The timetable repeats weekly, so only a one-week view is necessary.
-    ---
+#### Filters
 
-**Interactive Editing**:
+| Filter             | Behaviour                                                                |
+| ------------------ | ------------------------------------------------------------------------ |
+| **Academic Term**  | Jumps the calendar to the term's start date and narrows the data fetch   |
+| **Class (Stream)** | Narrows to that class's lessons; can be combined with the Teacher filter |
+| **Teacher**        | Narrows to that teacher's lessons; can be combined with the Class filter |
+| **Clear**          | Resets all filters                                                       |
 
--   Users can click any scheduled session to view details in a modal pop-up.
-    
--   The modal allows editing and submitting updates, which reflect on the backend immediately.
-    
-![Screenshot 2025-04-15 at 17 28 08](https://github.com/user-attachments/assets/a3135465-3e6c-4d56-ab64-a8bd81847b9f)
+All three filters are independent and can be active at the same time. For example, selecting both a stream and a teacher shows only that teacher's lessons within that specific class — useful for checking a teacher's workload in a particular grade.
 
-* The user can also click in a space and schedule a class.
+#### Print
+
+The **Print** button generates a printable A4 landscape table for exactly what is currently displayed:
+
+- **Week view** → Mon–Fri table with actual dates in each row header.
+- **Day view** → single-day table.
+- Each time-slot cell can contain multiple classes (parallel sessions are stacked and separated by a dashed line).
+
+> The print range is derived from `calendar.view.currentStart` / `currentEnd`
 
 ---
 
 ### 2. ⚙️ Auto-Generation of Timetable
 
-To streamline scheduling, an automated timetable generator has been introduced using a **Single Doctype**: `Timetable Generator`.
+The timetable generator is a **Single Doctype** (`Timetable Generator`) that schedules a full academic term automatically.
 
 ![Screenshot 2025-04-14 at 17 05 50](https://github.com/user-attachments/assets/3f8c5b49-30dd-4ae9-a449-827b3003e6cc)
 
-#### Structure:
+#### Configuration tabs
 
--   **Main Fields**:
-    
-    -   `Academic Year`
-    -   `Academic Term`
-    -  `Default Time Slots`
-    -  `Lesson Starts`
-    -  `Lesson Ends`
-        
-#### Child Tables:
+**Details** — Academic Year, Academic Term (the term whose Student Groups will be scheduled), School, default lesson hours, and default period duration.
 
-**a) Subject Rules**  
-Defines subject-level constraints:
+**Subject** — one row per subject with frequency per week, allow double lessons, and max double lessons per week.
 
--   Subject
-    
--   Max Time per Session
-    
--   Frequency Per Week
-    
--   Allow Double Lessons?
-    
--   Max Double Lessons Per Week
-    
+**Slot & Breaks**
 
-**b) Slot & Breaks Tab**
+- **Time Slots**: periods with start time and duration. `end_time` is read-only and calculated automatically (`start_time + duration`). New rows default the duration to the document's _Default Time Slot_ value.
+- **Breaks**: select from the `Break` master. `start_time`, `end_time`, and `duration` are all read-only and auto-populated from the selected break record.
 
--   **Time Slots Table**: Define periods (e.g., period 1, 2...) with start/end times and durations.
-    
--   **Breaks Table**: Define breaks like breakfast, lunch, etc.. The user must have created this in the `Breaks` doctypes, because it auto-populates the start and end time from the chosen break.
- 
 ![Screenshot 2025-05-28 at 21 25 14](https://github.com/user-attachments/assets/b43bbfb4-e528-4b99-a799-56d7088e7245)
-   
 
-**c) Teachers Tab**  
-Contains a child table `Teacher Preference` with:
+**Teachers** — one row per teacher–subject–stream combination with max periods per day/week and optional preferred days.
 
--   Teacher Name
-    
--   Assigned Subjects and Streams
-    
--   Max Periods per Day/Week
-    
-This helps define teaching limits and areas of specialization.
+**Teaching Rooms** — assign a room to each subject–stream combination.
 
-**d) Teaching Rooms**  
-In the `Teaching Rooms` child table:
+#### Smart link filters
 
--   Assign specific rooms to each subject-stream combination.
-    
--   Junior school rooms default to classes, with extras like labs or libraries.
-    
+To reduce configuration errors, all link dropdowns are pre-filtered:
 
-#### Generation Flow:
+| Dropdown                 | Filtered to                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| Teachers → Subject       | Subjects already in the Subject Rules tab                                        |
+| Teachers → Stream        | Student Groups belonging to the selected Academic Term                           |
+| Teaching Rooms → Subject | Subjects already in the Subject Rules tab                                        |
+| Teaching Rooms → Stream  | Streams already configured in the Teachers tab AND in the selected Academic Term |
 
-1.  User fills in all the above data and `save`.
-    
-2.  Clicks `Generate Timetable`.
-    
-3.  The process is queued for backend scheduling due to time complexity.
-    
-4.  The system manages duplicate and failed schedules with internal retry/rescheduling mechanisms.
-    
+#### Backend validation on save
 
-**🛠️ Status**:
+The document validates on every save and blocks saving with a clear error if any of these fail:
 
--   Work in progress.
-    
--   Some logic misbehaviors.
-    
--   Double lessons are yet to be fully implemented.
-  ---
+1. **Duplicate subjects** — each subject may appear only once in Subject Rules.
+2. **Teacher subject consistency** — every subject in the Teachers tab must exist in Subject Rules.
+3. **Room subject/stream consistency** — subjects and streams in Teaching Rooms must already be in Subject Rules and Teachers respectively.
+4. **Academic Term stream validation** — every stream must be a Student Group linked to the selected Academic Term. A stream from a different term would be silently skipped during generation; this check surfaces that error at save time.
+5. **Time slot alignment** — the first slot must start exactly at _Lesson Starts_; the last slot must end exactly at _Lesson Ends_; no slot may overlap any configured break.
+
+#### Scheduling algorithm
+
+Generates a base weekly template then replicates it across every week in the term. Subjects are spread evenly across Mon–Fri based on frequency (e.g. 3×/week → Mon/Wed/Fri) rather than front-loaded onto Monday.
+
+| Pass         | Room                    | Preferred days | Workload       |
+| ------------ | ----------------------- | -------------- | -------------- |
+| 1            | Subject+stream specific | Respected      | Daily + weekly |
+| 2            | Any available           | Ignored        | Daily + weekly |
+| 3 (fallback) | Force-assign            | Ignored        | Daily only     |
+
+Each run produces a different valid timetable through shuffled teacher order, randomized target-day rotation, and random ordering within same-priority subjects.
+
+#### Scoped generation
+
+Clicking **Generate Timetable** opens a dialog that groups streams by grade. The user selects which classes to (re-)generate; all other grades are left untouched.
+
+- Clearing is scoped: only the selected streams' existing schedules are deleted before new ones are created.
+- This allows generating Grade 6 first, then Grade 7, each run building on the previous without overwriting other classes.
+
+> At least one stream must be selected; clicking Generate with nothing checked shows a warning and keeps the dialog open.
+
+#### Cross-stream conflict prevention
+
+Before scheduling begins, existing Course Schedule records and Assessment Plan supervisor assignments for other streams are loaded into the scheduling engine's lookup table. This prevents the algorithm from assigning a teacher or room that is already occupied by another grade's confirmed schedule.
+
+#### Debug Info
+
+Before running generation, click **Debug Info** to verify the configuration without creating any records. It returns a read-only summary including:
+
+- Term date range and total school weeks
+- Period slots per day and lesson limits
+- Teacher, subject, classroom, and student group counts
+- Items to schedule per week and across the full term
+- Per-subject frequencies and per-stream subject assignments
+
+Use this to confirm everything is wired up correctly (right term, right streams, right subjects) before committing to a full generation run.
+
+#### Error handling
+
+- Every failed save is logged to **Frappe Error Log** with course, student group, instructor, date, time, room, and full Python traceback.
+- **Assessment Plan conflicts** (teacher is a supervisor at that time) are detected, counted separately, and logged with guidance — they do not count as hard failures.
+- A consolidated summary log groups all unique errors by frequency for quick pattern identification.
+
+#### Timetable Generation Result
+
+After generation, a `Timetable Generation Result` document is created with:
+
+- **Status**: `Complete` (zero failures, zero unscheduled), `Partial` (some issues), or `Failed`.
+- Scheduled count, unscheduled count, saved count, failed count.
+- Detailed JSON notes covering unscheduled items, diagnosis, save errors, and overlap skips.
+
+**View Timetable** — opens a full-width interactive grid with four view modes:
+
+| Mode         | Shows                         | Colour by     |
+| ------------ | ----------------------------- | ------------- |
+| Whole School | All streams simultaneously    | Subject       |
+| By Class     | One student group's full week | Subject       |
+| By Teacher   | All classes a teacher takes   | Student group |
+| By Subject   | All streams doing a subject   | Student group |
+
+The filter updates the grid client-side with no extra API calls.
+
+Two print formats are available:
+
+- **Color Print** — full-colour A4 landscape with a legend.
+- **Standard Print** — clean black-and-white layout with abbreviated subject names, period numbers, and two-letter day abbreviations (classic school timetable style).
+
+**Diagnose Unscheduled** — when any items could not be placed, a Diagnose button appears on the result. It explains for each subject–stream group exactly why it failed:
+
+1. No teacher assigned to this subject for this stream.
+2. Teacher hit their weekly/daily period cap.
+3. No room configured for this subject.
+4. Resource contention — teacher, room, and stream were simultaneously occupied in every remaining period.
+
+Each entry includes a suggested fix and a teacher workload table with colour-coded status badges.
+
+---
 
 ### 3. 🧑🏽‍🎓 Enhanced Student Attendance
 
@@ -316,7 +355,7 @@ To support **multi-school** or **multi-campus** setups within one ERPNext instan
     
 -   Allows clear scoping for:
     
-    -   Financials
+    -   Financial
         
     -   Student data
         
@@ -689,7 +728,7 @@ Use this report to:
 - 
 ### 7. Academic Performance Summary Report
 ![perf ](https://github.com/user-attachments/assets/ff2771b5-bd59-4be3-89eb-2bec520103e3)
-![perfomance summary](https://github.com/user-attachments/assets/833b1ade-9aee-41b6-81af-d118819de611)
+![performance summary](https://github.com/user-attachments/assets/833b1ade-9aee-41b6-81af-d118819de611)
 
 The **Academic Performance Summary Report** provides schools with a comprehensive overview of student academic performance across a selected academic term. It aggregates total and average scores, assigns letter grades based on a defined grading scale, and includes a visual breakdown of grade distribution for quick insights.
 
