@@ -92,6 +92,9 @@ The **Print** button generates a printable A4 landscape table for exactly what i
 - **Day view** → single-day table.
 - Each time-slot cell can contain multiple classes (parallel sessions are stacked and separated by a dashed line).
 
+<img width="1308" height="776" alt="OpenTimetable" src="https://github.com/user-attachments/assets/49150bb9-3aba-45cf-9753-eb7aaca3acb7" />
+
+
 > The print range is derived from `calendar.view.currentStart` / `currentEnd`
 
 ---
@@ -100,13 +103,15 @@ The **Print** button generates a printable A4 landscape table for exactly what i
 
 The timetable generator is a **Single Doctype** (`Timetable Generator`) that schedules a full academic term automatically.
 
-![Screenshot 2025-04-14 at 17 05 50](https://github.com/user-attachments/assets/3f8c5b49-30dd-4ae9-a449-827b3003e6cc)
+<img width="1092" height="543" alt="TimeTable Generator" src="https://github.com/user-attachments/assets/6f3a359b-2ba3-44b3-b330-1b7c7d37b232" />
 
 #### Configuration tabs
 
 **Details** — Academic Year, Academic Term (the term whose Student Groups will be scheduled), School, default lesson hours, and default period duration.
 
 **Subject** — one row per subject with frequency per week, allow double lessons, and max double lessons per week.
+
+
 
 **Slot & Breaks**
 
@@ -159,6 +164,8 @@ Clicking **Generate Timetable** opens a dialog that groups streams by grade. The
 - Clearing is scoped: only the selected streams' existing schedules are deleted before new ones are created.
 - This allows generating Grade 6 first, then Grade 7, each run building on the previous without overwriting other classes.
 
+<img width="856" height="479" alt="ScopedGeneration" src="https://github.com/user-attachments/assets/3e6d6415-f3ff-40b6-b3ce-f615650f3ec5" />
+
 > At least one stream must be selected; clicking Generate with nothing checked shows a warning and keeps the dialog open.
 
 #### Cross-stream conflict prevention
@@ -174,6 +181,8 @@ Before running generation, click **Debug Info** to verify the configuration with
 - Teacher, subject, classroom, and student group counts
 - Items to schedule per week and across the full term
 - Per-subject frequencies and per-stream subject assignments
+
+<img width="625" height="797" alt="DebugInfo" src="https://github.com/user-attachments/assets/c2a3bf31-7331-490c-b35f-5b81df469b2b" />
 
 Use this to confirm everything is wired up correctly (right term, right streams, right subjects) before committing to a full generation run.
 
@@ -207,6 +216,8 @@ Two print formats are available:
 - **Color Print** — full-colour A4 landscape with a legend.
 - **Standard Print** — clean black-and-white layout with abbreviated subject names, period numbers, and two-letter day abbreviations (classic school timetable style).
 
+<img width="1453" height="638" alt="TimeTableViewer" src="https://github.com/user-attachments/assets/75da346f-df13-4369-a7a5-a534950dd574" />
+
 **Diagnose Unscheduled** — when any items could not be placed, a Diagnose button appears on the result. It explains for each subject–stream group exactly why it failed:
 
 1. No teacher assigned to this subject for this stream.
@@ -215,6 +226,8 @@ Two print formats are available:
 4. Resource contention — teacher, room, and stream were simultaneously occupied in every remaining period.
 
 Each entry includes a suggested fix and a teacher workload table with colour-coded status badges.
+
+<img width="822" height="537" alt="Diagnose" src="https://github.com/user-attachments/assets/a207f5dd-3dc6-4dc1-b75b-4b033f78e97a" />
 
 ---
 
