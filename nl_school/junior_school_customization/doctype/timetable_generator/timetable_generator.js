@@ -239,9 +239,7 @@ function runPrefill(frm, class_program) {
       const data = r.message;
 
       const addRows = (parentfield, candidates, keyFn, onCreate) => {
-        const existing = new Set(
-          (frm.doc[parentfield] || []).map(keyFn),
-        );
+        const existing = new Set((frm.doc[parentfield] || []).map(keyFn));
         let added = 0;
         (candidates || []).forEach((c) => {
           const key = keyFn(c);
