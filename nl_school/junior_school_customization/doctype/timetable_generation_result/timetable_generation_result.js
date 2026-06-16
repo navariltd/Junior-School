@@ -56,16 +56,17 @@ function buildCell(entries, viewMode, colorMap) {
       const colorKey = bySubject ? e.course : e.student_group;
       const color = pickColor(colorKey, colorMap);
 
+      const roomDisp = e.room_name || e.room;
       let primary, meta;
       if (viewMode === "teacher") {
         primary = e.student_group || "-";
-        meta = [e.course, e.room].filter(Boolean);
+        meta = [e.course, roomDisp].filter(Boolean);
       } else if (viewMode === "subject") {
         primary = e.student_group || "-";
-        meta = [e.instructor, e.room].filter(Boolean);
+        meta = [e.instructor, roomDisp].filter(Boolean);
       } else {
         primary = e.course || "-";
-        meta = [e.instructor, e.room].filter(Boolean);
+        meta = [e.instructor, roomDisp].filter(Boolean);
         if (viewMode === "school" && e.student_group)
           meta.push(e.student_group);
       }
@@ -96,13 +97,19 @@ function renderTimetable(data, viewMode, filterValue, colorMap) {
   const { time_slots, days, grid } = data;
 
   const slotHeaders = time_slots
-    .map(
-      ({ from, to }) =>
-        `<th style="text-align:center; padding:6px 8px; background:#374151;
+    .map((slot) => {
+      if (slot.type === "break") {
+        return `<th style="text-align:center; padding:6px 8px; background:#6b7280;
+        color:#fff; border:1px solid #1f2937; font-size:10px; white-space:nowrap;">
+        ${slot.label || __("Break")}<br>
+        <span style="font-weight:400; opacity:.8;">${slot.from} – ${slot.to}</span>
+      </th>`;
+      }
+      return `<th style="text-align:center; padding:6px 8px; background:#374151;
       color:#fff; border:1px solid #1f2937; font-size:11px; white-space:nowrap;">
-      ${from} – ${to}
-    </th>`,
-    )
+      ${slot.from} – ${slot.to}
+    </th>`;
+    })
     .join("");
 
   const thead = `<thead><tr>
@@ -115,8 +122,12 @@ function renderTimetable(data, viewMode, filterValue, colorMap) {
   const rows = days
     .map((day, i) => {
       const cells = time_slots
-        .map(({ from, to }) => {
-          let entries = (grid[`${from}-${to}`] || {})[day] || [];
+        .map((slot) => {
+          if (slot.type === "break") {
+            return `<td style="border:1px solid var(--border-color); min-width:46px;
+            background:repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 5px,#e9eaec 5px,#e9eaec 10px);"></td>`;
+          }
+          let entries = (grid[`${slot.from}-${slot.to}`] || {})[day] || [];
           if (filterValue) {
             if (viewMode === "class")
               entries = entries.filter((e) => e.student_group === filterValue);
@@ -163,23 +174,35 @@ function renderTimetable(data, viewMode, filterValue, colorMap) {
   }`;
 }
 
-function generateStandardPrintHtml(data, viewMode, filterValue, title) {
+function generateStandardPrintHtml(data, viewMode, filterValue, title, opts) {
+  opts = opts || { fullNames: false, showTeacher: true, showRoom: true };
   const { time_slots, days, grid } = data;
 
+  let periodNum = 0;
   const colHeaders = time_slots
-    .map(
-      ({ from, to }, idx) =>
-        `<th class="period-hdr">
-      <span class="period-num">${idx + 1}</span><br>
-      <span class="period-time">${from} - ${to}</span>
-    </th>`,
-    )
+    .map((slot) => {
+      if (slot.type === "break") {
+        return `<th class="period-hdr break-hdr">
+      <span class="period-time" style="font-weight:bold;">${slot.label || "Break"}</span><br>
+      <span class="period-time">${slot.from}-${slot.to}</span>
+    </th>`;
+      }
+      periodNum += 1;
+      return `<th class="period-hdr">
+      <span class="period-num">${periodNum}</span><br>
+      <span class="period-time">${slot.from} - ${slot.to}</span>
+    </th>`;
+    })
     .join("");
 
   const rows = days
     .map((day) => {
       const cells = time_slots
-        .map(({ from, to }) => {
+        .map((slot) => {
+          if (slot.type === "break") {
+            return `<td class="tt-cell tt-break"></td>`;
+          }
+          const { from, to } = slot;
           let entries = (grid[`${from}-${to}`] || {})[day] || [];
           if (filterValue) {
             if (viewMode === "class")
@@ -193,19 +216,30 @@ function generateStandardPrintHtml(data, viewMode, filterValue, title) {
 
           const blocks = entries
             .map((e, i) => {
+              const course = opts.fullNames
+                ? e.course || "-"
+                : abbrevSubject(e.course);
+              const teacher = opts.fullNames
+                ? e.instructor || ""
+                : abbrevTeacher(e.instructor || "");
+              const group = opts.fullNames
+                ? e.student_group || "-"
+                : abbrevTeacher(e.student_group || "");
+              const room = opts.showRoom ? e.room_name || e.room || "" : "";
+
               let subj, left, right;
               if (viewMode === "teacher") {
-                subj = abbrevSubject(e.course);
-                left = abbrevTeacher(e.student_group || "");
-                right = e.room || "";
+                subj = course;
+                left = group;
+                right = room;
               } else if (viewMode === "subject") {
-                subj = abbrevTeacher(e.student_group || "");
-                left = abbrevTeacher(e.instructor || "");
-                right = e.room || "";
+                subj = group;
+                left = opts.showTeacher ? teacher : "";
+                right = room;
               } else {
-                subj = abbrevSubject(e.course);
-                left = abbrevTeacher(e.instructor || "");
-                right = e.room || "";
+                subj = course;
+                left = opts.showTeacher ? teacher : "";
+                right = room;
               }
               const groupLabel =
                 viewMode === "school" && e.student_group
@@ -241,6 +275,8 @@ function generateStandardPrintHtml(data, viewMode, filterValue, title) {
     .day-cell{font-size:22px;font-weight:bold;text-align:center;vertical-align:middle;padding:4px;width:36px;background:#f8f8f8;}
     .tt-cell{padding:2px 3px;vertical-align:top;}
     .tt-empty{background:#fafafa;}
+    .tt-break{background:repeating-linear-gradient(45deg,#f0f0f0,#f0f0f0 4px,#e2e2e2 4px,#e2e2e2 8px);}
+    .break-hdr{background:#dcdcdc;}
     .tt-entry{padding:1px 0;}
     .tt-group{font-size:7px;color:#777;text-align:right;line-height:1.2;}
     .tt-subject{font-size:15px;font-weight:bold;line-height:1.1;}
@@ -258,24 +294,35 @@ function generateStandardPrintHtml(data, viewMode, filterValue, title) {
 </body></html>`;
 }
 
-function generateColorPrintHtml(data, viewMode, filterValue, colorMap, title) {
+function generateColorPrintHtml(data, viewMode, filterValue, colorMap, title, opts) {
+  opts = opts || { fullNames: true, showTeacher: true, showRoom: true };
   const { time_slots, days, grid } = data;
 
   const slotHeaders = time_slots
-    .map(
-      ({ from, to }) =>
-        `<th style="text-align:center;padding:5px 3px;color:#fff;
+    .map((slot) => {
+      if (slot.type === "break") {
+        return `<th style="text-align:center;padding:5px 3px;color:#fff;
+      background:#6b7280;border:1px solid #1a252f;font-size:9px;white-space:nowrap;">
+      ${slot.label || "Break"}<br><span style="opacity:.8;">${slot.from} – ${slot.to}</span>
+    </th>`;
+      }
+      return `<th style="text-align:center;padding:5px 3px;color:#fff;
       border:1px solid #1a252f;font-size:10px;white-space:nowrap;">
-      ${from}<br><span style="font-size:9px;opacity:.75;">– ${to}</span>
-    </th>`,
-    )
+      ${slot.from}<br><span style="font-size:9px;opacity:.75;">– ${slot.to}</span>
+    </th>`;
+    })
     .join("");
 
   const rows = days
     .map((day, di) => {
       const rowBg = di % 2 === 0 ? "#fff" : "#f7f9fc";
       const cells = time_slots
-        .map(({ from, to }) => {
+        .map((slot) => {
+          if (slot.type === "break") {
+            return `<td style="border:1px solid #ddd;min-width:40px;
+            background:repeating-linear-gradient(45deg,#f0f0f0,#f0f0f0 4px,#e2e2e2 4px,#e2e2e2 8px);"></td>`;
+          }
+          const { from, to } = slot;
           let entries = (grid[`${from}-${to}`] || {})[day] || [];
           if (filterValue) {
             if (viewMode === "class")
@@ -293,16 +340,29 @@ function generateColorPrintHtml(data, viewMode, filterValue, colorMap, title) {
               const colorKey =
                 viewMode !== "teacher" ? e.course : e.student_group;
               const c = pickColor(colorKey, colorMap);
+              const course = opts.fullNames
+                ? e.course || "-"
+                : abbrevSubject(e.course);
+              const teacher = opts.fullNames
+                ? e.instructor || ""
+                : abbrevTeacher(e.instructor || "");
+              const group = e.student_group || "-";
+              const room = opts.showRoom ? e.room_name || e.room || "" : "";
+
               let primary, meta;
               if (viewMode === "teacher") {
-                primary = e.student_group || "-";
-                meta = [e.course, e.room].filter(Boolean).join(" · ");
+                primary = group;
+                meta = [course, room].filter(Boolean).join(" · ");
               } else if (viewMode === "subject") {
-                primary = e.student_group || "-";
-                meta = [e.instructor, e.room].filter(Boolean).join(" · ");
+                primary = group;
+                meta = [opts.showTeacher ? teacher : "", room]
+                  .filter(Boolean)
+                  .join(" · ");
               } else {
-                primary = e.course || "-";
-                meta = [e.instructor, e.room].filter(Boolean).join(" · ");
+                primary = course;
+                meta = [opts.showTeacher ? teacher : "", room]
+                  .filter(Boolean)
+                  .join(" · ");
                 if (viewMode === "school" && e.student_group)
                   meta += `  [${e.student_group}]`;
               }
@@ -404,6 +464,45 @@ frappe.ui.form.on("Timetable Generation Result", {
   },
 });
 
+// Collect per-print display preferences, then hand them to the generator.
+function openPrintOptions(onConfirm) {
+  const d = new frappe.ui.Dialog({
+    title: __("Print Options"),
+    fields: [
+      {
+        fieldname: "name_style",
+        label: __("Subject / Teacher Names"),
+        fieldtype: "Select",
+        options: ["Abbreviated", "Full"].join("\n"),
+        default: "Abbreviated",
+      },
+      { fieldname: "cb", fieldtype: "Column Break" },
+      {
+        fieldname: "show_teacher",
+        label: __("Show Teacher"),
+        fieldtype: "Check",
+        default: 1,
+      },
+      {
+        fieldname: "show_room",
+        label: __("Show Room"),
+        fieldtype: "Check",
+        default: 1,
+      },
+    ],
+    primary_action_label: __("Print"),
+    primary_action(v) {
+      d.hide();
+      onConfirm({
+        fullNames: v.name_style === "Full",
+        showTeacher: !!v.show_teacher,
+        showRoom: !!v.show_room,
+      });
+    },
+  });
+  d.show();
+}
+
 function openTimetableDialog(frm) {
   const dialog = new frappe.ui.Dialog({
     title: __("Timetable") + " — " + (frm.doc.academic_term || ""),
@@ -503,9 +602,8 @@ function openTimetableDialog(frm) {
           filterValue = $(this).val();
           redrawGrid();
         });
-        dialog.$body
-          .find("#tt-print-color")
-          .on("click", () =>
+        dialog.$body.find("#tt-print-color").on("click", () =>
+          openPrintOptions((opts) =>
             openPrint(
               generateColorPrintHtml(
                 data,
@@ -513,21 +611,24 @@ function openTimetableDialog(frm) {
                 filterValue,
                 colorMap,
                 printTitle(),
+                opts,
               ),
             ),
-          );
-        dialog.$body
-          .find("#tt-print-std")
-          .on("click", () =>
+          ),
+        );
+        dialog.$body.find("#tt-print-std").on("click", () =>
+          openPrintOptions((opts) =>
             openPrint(
               generateStandardPrintHtml(
                 data,
                 viewMode,
                 filterValue,
                 printTitle(),
+                opts,
               ),
             ),
-          );
+          ),
+        );
       }
 
       function redrawGrid() {
