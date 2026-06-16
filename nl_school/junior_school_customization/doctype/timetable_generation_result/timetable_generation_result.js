@@ -282,8 +282,10 @@ function generateStandardPrintHtml(data, viewMode, filterValue, title, opts) {
     .tt-subject{font-size:15px;font-weight:bold;line-height:1.1;}
     .tt-meta{display:flex;justify-content:space-between;font-size:8px;color:#333;margin-top:1px;}
     .tt-divider{border:none;border-top:1px dashed #aaa;margin:3px 0;}
+    .tt-letterhead{margin-bottom:8px;}
     @media print{@page{size:A4 landscape;margin:8mm;}}
   </style></head><body>
+  ${opts.letterHeadHtml ? `<div class="tt-letterhead">${opts.letterHeadHtml}</div>` : ""}
   <h2>${title}</h2>
   <table>
     <thead><tr>
@@ -400,8 +402,10 @@ function generateColorPrintHtml(data, viewMode, filterValue, colorMap, title, op
     body{font-family:Arial,sans-serif;margin:12px;font-size:10px;}
     h2{font-size:13px;text-align:center;margin-bottom:10px;}
     table{border-collapse:collapse;width:100%;}
+    .tt-letterhead{margin-bottom:8px;}
     @media print{@page{size:A4 landscape;margin:8mm;}}
   </style></head><body>
+  ${opts.letterHeadHtml ? `<div class="tt-letterhead">${opts.letterHeadHtml}</div>` : ""}
   <h2>${title}</h2>
   <table>
     <thead><tr>
@@ -466,6 +470,14 @@ frappe.ui.form.on("Timetable Generation Result", {
 
 // Collect per-print display preferences, then hand them to the generator.
 function openPrintOptions(onConfirm) {
+  const finish = (v, letterHeadHtml) =>
+    onConfirm({
+      fullNames: v.name_style === "Full",
+      showTeacher: !!v.show_teacher,
+      showRoom: !!v.show_room,
+      letterHeadHtml: letterHeadHtml || "",
+    });
+
   const d = new frappe.ui.Dialog({
     title: __("Print Options"),
     fields: [
@@ -489,17 +501,32 @@ function openPrintOptions(onConfirm) {
         fieldtype: "Check",
         default: 1,
       },
+      { fieldname: "sb", fieldtype: "Section Break" },
+      {
+        fieldname: "letter_head",
+        label: __("Letter Head"),
+        fieldtype: "Link",
+        options: "Letter Head",
+        description: __("Leave blank to print without a letter head."),
+      },
     ],
     primary_action_label: __("Print"),
     primary_action(v) {
       d.hide();
-      onConfirm({
-        fullNames: v.name_style === "Full",
-        showTeacher: !!v.show_teacher,
-        showRoom: !!v.show_room,
-      });
+      if (!v.letter_head) return finish(v, "");
+      frappe.db
+        .get_value("Letter Head", v.letter_head, "content")
+        .then((r) => finish(v, (r.message && r.message.content) || ""));
     },
   });
+
+  // Default to the site's default letter head, if any.
+  frappe.db
+    .get_value("Letter Head", { is_default: 1 }, "name")
+    .then((r) => {
+      if (r.message && r.message.name) d.set_value("letter_head", r.message.name);
+    });
+
   d.show();
 }
 
