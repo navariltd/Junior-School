@@ -1681,6 +1681,89 @@ def get_unscheduled_diagnosis(result_name):
 
 
 @frappe.whitelist()
+def get_class_prefill(class_program, academic_term=None):
+    """
+    Build prefill rows for the Subject, Teachers and Teaching Rooms tabs from a
+    selected Class (Program).
+
+    - subject_rules        — every Course whose custom_class == class_program.
+    - teachers_preference  — each Course's Subject Stream Assignment rows
+                             (stream + teacher) scoped to academic_term.
+    - teaching_rooms       — (subject, stream) using the stream's
+                             custom_default_room.
+
+    Returns candidate rows only. Nothing is written: the client dedups against
+    the current grid rows and lets the user review before saving.
+    """
+    if not class_program:
+        frappe.throw("Select a Class first.")
+
+    courses = frappe.get_all(
+        "Course",
+        filters={"custom_class": class_program},
+        pluck="name",
+        order_by="name asc",
+    )
+    if not courses:
+        frappe.throw(f"No subjects (Courses) found for class {class_program}.")
+
+    subject_rules = [{"subject": c} for c in courses]
+    teachers_preference = []
+    teaching_rooms = []
+
+    if academic_term:
+        assignments = frappe.get_all(
+            "Subject Stream Assignment",
+            filters={
+                "parenttype": "Course",
+                "parentfield": "custom_assignments",
+                "parent": ["in", courses],
+                "academic_term": academic_term,
+            },
+            fields=["parent as subject", "stream", "teacher"],
+        )
+
+        # Default room per stream, fetched in one query.
+        streams = list({a.stream for a in assignments if a.stream})
+        room_map = {}
+        if streams:
+            for sg in frappe.get_all(
+                "Student Group",
+                filters={"name": ["in", streams]},
+                fields=["name", "custom_default_room"],
+            ):
+                room_map[sg.name] = sg.custom_default_room
+
+        seen_teacher = set()
+        seen_room = set()
+        for a in assignments:
+            if not a.stream:
+                continue
+
+            key = (a.subject, a.stream)
+            if a.teacher and key not in seen_teacher:
+                seen_teacher.add(key)
+                teachers_preference.append(
+                    {"subject": a.subject, "stream": a.stream, "teacher": a.teacher}
+                )
+
+            room = room_map.get(a.stream)
+            if room and key not in seen_room:
+                seen_room.add(key)
+                teaching_rooms.append(
+                    {"subject": a.subject, "stream": a.stream, "room": room}
+                )
+
+    return {
+        "subject_rules": subject_rules,
+        "teachers_preference": teachers_preference,
+        "teaching_rooms": teaching_rooms,
+        "course_count": len(courses),
+        "has_term": bool(academic_term),
+    }
+
+
+@frappe.whitelist()
 def generate_timetable(student_groups=None):
     """
     Validate config then queue a scoped background generation job.
