@@ -191,6 +191,106 @@ function showGenerateDialog(frm) {
   dialog.show();
 }
 
+// Prefill the Subject, Teachers and Teaching Rooms tabs from a Class (Program).
+function showPrefillDialog(frm) {
+  if (!frm.doc.academic_term) {
+    frappe.msgprint({
+      title: __("Academic Term Required"),
+      message: __(
+        "Set the Academic Term first — it scopes which streams and teachers are pulled from each subject.",
+      ),
+      indicator: "orange",
+    });
+    return;
+  }
+
+  const dialog = new frappe.ui.Dialog({
+    title: __("Prefill from Class"),
+    fields: [
+      {
+        label: __("Class"),
+        fieldname: "class_program",
+        fieldtype: "Link",
+        options: "Program",
+        reqd: 1,
+        description: __(
+          "All subjects under this class are loaded, then their per-term streams, teachers and default rooms.",
+        ),
+      },
+    ],
+    primary_action_label: __("Prefill"),
+    primary_action(values) {
+      dialog.hide();
+      runPrefill(frm, values.class_program);
+    },
+  });
+  dialog.show();
+}
+
+function runPrefill(frm, class_program) {
+  frappe.call({
+    method:
+      "nl_school.junior_school_customization.doctype.timetable_generator.timetable_generator.get_class_prefill",
+    args: { class_program, academic_term: frm.doc.academic_term },
+    freeze: true,
+    freeze_message: __("Loading class configuration..."),
+    callback(r) {
+      if (!r.message) return;
+      const data = r.message;
+
+      const addRows = (parentfield, candidates, keyFn, onCreate) => {
+        const existing = new Set((frm.doc[parentfield] || []).map(keyFn));
+        let added = 0;
+        (candidates || []).forEach((c) => {
+          const key = keyFn(c);
+          if (existing.has(key)) return;
+          existing.add(key);
+          const row = frm.add_child(parentfield, c);
+          if (onCreate) onCreate(row, c);
+          added += 1;
+        });
+        frm.refresh_field(parentfield);
+        return added;
+      };
+
+      const subjKey = (r) => r.subject;
+      const pairKey = (r) => `${r.subject}||${r.stream}`;
+
+      const nSubjects = addRows(
+        "subject_rules",
+        data.subject_rules,
+        subjKey,
+        (row) => {
+          if (!row.frequency_per_week) row.frequency_per_week = 1;
+        },
+      );
+
+      // Fixed teacher-row defaults.
+      (data.teachers_preference || []).forEach((c) => {
+        c.max_period_per_day = 1;
+        c.max_period_per_week = 5;
+      });
+      const nTeachers = addRows(
+        "teachers_preference",
+        data.teachers_preference,
+        pairKey,
+      );
+      const nRooms = addRows("teaching_rooms", data.teaching_rooms, pairKey);
+
+      frm.dirty();
+      frappe.show_alert(
+        {
+          message: __(
+            `Added ${nSubjects} subject(s), ${nTeachers} teacher row(s), ${nRooms} room row(s). Review and save.`,
+          ),
+          indicator: "green",
+        },
+        7,
+      );
+    },
+  });
+}
+
 function runGeneration(frm, selected) {
   frappe.call({
     method:
@@ -276,6 +376,10 @@ frappe.ui.form.on("Timetable Generator", {
         if (fromTeachers.length) f.push(["name", "in", fromTeachers]);
         return { filters: f };
       };
+
+    frm.add_custom_button(__("Prefill from Class"), () =>
+      showPrefillDialog(frm),
+    );
 
     frm
       .add_custom_button(__("Generate Timetable"), () =>

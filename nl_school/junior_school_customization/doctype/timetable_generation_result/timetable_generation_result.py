@@ -52,16 +52,38 @@ def get_timetable_view(result_name):
         order_by="from_time ASC, schedule_date ASC",
     )
 
-    # Build sorted unique time slots
-    slot_set = {}
-    for s in raw:
-        key = (_fmt_time(s.from_time), _fmt_time(s.to_time))
-        slot_set[key] = True
-    time_slots = sorted(slot_set.keys())
+    # Map each Room id (autoname like HTL-ROOM-2026-00001) to its display name.
+    room_ids = {s.room for s in raw if s.room}
+    room_names = {}
+    if room_ids:
+        for r in frappe.get_all(
+            "Room",
+            filters={"name": ["in", list(room_ids)]},
+            fields=["name", "room_name"],
+        ):
+            room_names[r.name] = r.room_name or r.name
 
-    # Build the grid: slot_key → day_name → [entry, ...]
+    # Columns come from the generator's configured Time Slots + Breaks so the
+    # full school day is shown (with breaks), not just the periods that happen
+    # to have a saved schedule. Fall back to the schedules themselves if the
+    # generator has no slots configured.
+    columns = _build_slot_columns()
+    if not columns:
+        slot_set = {}
+        for s in raw:
+            slot_set[(_fmt_time(s.from_time), _fmt_time(s.to_time))] = True
+        columns = [
+            {"from": f, "to": t, "type": "lesson"}
+            for f, t in sorted(slot_set.keys())
+        ]
+
+    # Build the grid only for teaching slots: slot_key → day_name → [entry, ...]
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-    grid = {f"{slot[0]}-{slot[1]}": {day: [] for day in days} for slot in time_slots}
+    grid = {
+        f"{c['from']}-{c['to']}": {day: [] for day in days}
+        for c in columns
+        if c["type"] == "lesson"
+    }
 
     for s in raw:
         date_val = (
@@ -82,11 +104,12 @@ def get_timetable_view(result_name):
                     "instructor": s.instructor,
                     "student_group": s.student_group,
                     "room": s.room,
+                    "room_name": room_names.get(s.room, s.room),
                 }
             )
 
     return {
-        "time_slots": [{"from": s[0], "to": s[1]} for s in time_slots],
+        "time_slots": columns,
         "days": days,
         "grid": grid,
         # Metadata for filter dropdowns — sorted, de-duplicated
@@ -94,6 +117,47 @@ def get_timetable_view(result_name):
         "instructors": sorted({s.instructor for s in raw if s.instructor}),
         "subjects": sorted({s.course for s in raw if s.course}),
     }
+
+
+def _build_slot_columns():
+    """
+    Ordered column layout for the timetable view: every configured teaching
+    Time Slot plus every Break, sorted by start time. Breaks are marked so the
+    viewer can render them distinctly.
+    """
+    doc_name = "Timetable Generator"
+    columns = []
+
+    for s in frappe.get_all(
+        "Time Slots",
+        filters={"parent": doc_name},
+        fields=["period", "start_time", "end_time"],
+    ):
+        columns.append(
+            {
+                "from": _fmt_time(s.start_time),
+                "to": _fmt_time(s.end_time),
+                "type": "lesson",
+                "period": s.period,
+            }
+        )
+
+    for b in frappe.get_all(
+        "Breaks",
+        filters={"parent": doc_name},
+        fields=["break_name", "start_time", "end_time"],
+    ):
+        columns.append(
+            {
+                "from": _fmt_time(b.start_time),
+                "to": _fmt_time(b.end_time),
+                "type": "break",
+                "label": b.break_name or "Break",
+            }
+        )
+
+    columns.sort(key=lambda c: (c["from"], c["to"]))
+    return columns
 
 
 def _fmt_time(val):
