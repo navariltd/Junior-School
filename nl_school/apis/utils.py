@@ -178,6 +178,10 @@ class ModifiedStudent(Student):
     def validate_user(self):
         """Create a website user for student creation if not already exists"""
 
+        if not self.custom_student_id:
+            super().validate_user()
+            return 
+
         safe_username = re.sub(r"\W+", "", self.custom_student_id)
 
         if not frappe.db.get_single_value(
