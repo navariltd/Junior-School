@@ -175,7 +175,7 @@ class ModifiedStudentAttendance(StudentAttendance):
 
 
 class ModifiedStudent(Student):
-    def validate(self):
+    def validate_user(self):
         """Create a website user for student creation if not already exists"""
 
         safe_username = re.sub(r"\W+", "", self.custom_student_id)
